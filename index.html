@@ -31,6 +31,16 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 /* gatekeeper */
 #gatekeeper{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:24px;text-align:center;position:relative;z-index:3;}
 .cake{width:120px;}
+.cakeStage{position:relative;display:inline-block;cursor:pointer;}
+#smokeWrap{position:absolute;top:6%;left:50%;width:1px;height:1px;pointer-events:none;}
+.smoke{position:absolute;bottom:0;left:0;width:8px;height:8px;background:rgba(140,140,140,.55);border-radius:2px;animation:smokeRise 1.4s ease-out forwards;}
+@keyframes smokeRise{
+  0%{opacity:.7;transform:translate(-50%,0) scale(.6);}
+  40%{opacity:.55;transform:translate(-70%,-22px) scale(1);}
+  100%{opacity:0;transform:translate(-30%,-52px) scale(1.6);}
+}
+.success-banner{text-align:center;font-size:1.1rem;color:var(--rose);margin-top:10px;opacity:0;transition:opacity .5s ease;}
+.success-banner.show{opacity:1;}
 .q{font-size:1.2rem;}
 .btnrow{display:flex;gap:16px;}
 .popup{background:#fff;border:3px solid var(--deep);box-shadow:5px 5px 0 var(--rose);padding:20px;display:flex;flex-direction:column;gap:14px;align-items:center;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;max-width:280px;}
@@ -161,12 +171,16 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 <div id="cameraFlash"></div>
 
 <div id="gatekeeper">
-  <img src="assets/cake.png" class="pixel cake" alt="cake">
-  <p class="q">Will you blow the candle?</p>
-  <div class="btnrow">
-    <button class="pxbtn" id="yesBtn">Yes</button>
-    <button class="pxbtn" id="noBtn">No</button>
+  <div class="cakeStage" id="cakeStage">
+    <img src="assets/cake_lit.png" class="pixel cake" id="cakeImg" alt="cake">
+    <div id="smokeWrap"></div>
   </div>
+  <p class="q" id="candleQ">Make a wish &amp; blow out the candle! 🎂</p>
+  <div class="btnrow" id="blowBtnRow">
+    <button class="pxbtn" id="micBtn">🎤 Enable Mic to Blow</button>
+    <button class="pxbtn" id="tapBtn">👆 Tap to Blow Out</button>
+  </div>
+  <p id="successBanner" class="success-banner hidden">May all your wishes come true, Celyn! 🎉✨</p>
 </div>
 
 <div id="overlay" class="hidden"><div class="modal" id="modalBox"></div></div>
@@ -206,81 +220,105 @@ for(let i=0;i<16;i++){
   document.getElementById('particles').appendChild(p);
 }
 
-/* ---------- gatekeeper ---------- */
-let noCount=0;
-const pleas=[
-  "Please?\nJust one tap on Yes~",
-  "Please, please?\nPretty please?",
-  "PLEASE, PLEASE, PLEASE!\nI'm really trying here.",
-  "please please please...\nlook, the No button is tiny now!"
-];
-function noScale(){ return Math.max(1-noCount*0.15, 0.18); }
-function yesScale(){ return noCount<=1 ? 1 : Math.min(1+(noCount-1)*0.2, 2.6); }
-function updateBtnScale(){
-  const yb=document.getElementById('yesBtn'), nb=document.getElementById('noBtn');
-  yb.style.setProperty('--scale', yesScale());
-  nb.style.setProperty('--scale', noScale());
-  if(noScale()<=0.2) nb.style.pointerEvents='none';
+/* ---------- gatekeeper: blow out the candle ---------- */
+let blownAlready=false;
+
+function spawnSmoke(){
+  const wrap=document.getElementById('smokeWrap');
+  let n=0;
+  const puff=setInterval(()=>{
+    if(n++>10){ clearInterval(puff); return; }
+    const s=document.createElement('div');
+    s.className='smoke';
+    s.style.left=(Math.random()*10-5)+'px';
+    s.style.animationDuration=(1+Math.random()*.6)+'s';
+    wrap.appendChild(s);
+    setTimeout(()=>s.remove(),1600);
+  },140);
 }
-function errText(){
-  if(noCount===1) return "OOOPS ERROR!\nTry it, please.";
-  if(noCount===2) return "Are you sure about that?\nGive me a chance.";
-  const idx=Math.min(noCount-3, pleas.length-1);
-  return pleas[idx];
+
+function burstCelebration(){
+  spawnConfetti();
+  const t1=setTimeout(spawnConfetti,500);
+  const t2=setTimeout(spawnConfetti,1000);
+  const t3=setTimeout(spawnConfetti,1500);
 }
-document.getElementById('noBtn').addEventListener('click',()=>{
-  noCount++;
-  updateBtnScale();
-  showErr();
-});
-function showErr(){
-  const origBtnrow=document.querySelector('#gatekeeper .btnrow');
-  if(origBtnrow) origBtnrow.classList.add('hidden');
-  const pop=document.createElement('div');
-  pop.className='popup';
-  const giveUp=noScale()<=0.2;
-  pop.innerHTML=`<p style="white-space:pre-line;text-align:center">${errText()}</p>
-    <div class="btnrow">
-      <button class="pxbtn go-yes" style="--scale:${yesScale()}">Yes</button>
-      ${giveUp?'':`<button class="pxbtn go-no" style="--scale:${noScale()}">No</button>`}
-    </div>`;
-  document.body.appendChild(pop);
-  pop.querySelector('.go-yes').addEventListener('click',()=>{ pop.remove(); blowCandle(); },{once:true});
-  const popNo=pop.querySelector('.go-no');
-  if(popNo){
-    popNo.addEventListener('click',()=>{
-      pop.remove();
-      noCount++;
-      updateBtnScale();
-      showErr();
-    },{once:true});
+
+function triggerBlowOut(){
+  if(blownAlready) return;
+  blownAlready=true;
+
+  document.getElementById('cakeImg').src='assets/cake_off.png';
+  spawnSmoke();
+  burstCelebration();
+  try{ new Audio('assets/audio/blow_candle.mp3').play(); }catch(e){}
+
+  const q=document.getElementById('candleQ');
+  const row=document.getElementById('blowBtnRow');
+  const banner=document.getElementById('successBanner');
+  if(q) q.classList.add('fadeOut');
+  if(row) row.classList.add('fadeOut');
+  banner.classList.remove('hidden');
+  requestAnimationFrame(()=>banner.classList.add('show'));
+
+  setTimeout(()=>{
+    banner.classList.add('fadeOut');
+    const blackout=document.createElement('div');
+    blackout.id='blackout';
+    document.body.appendChild(blackout);
+    requestAnimationFrame(()=>{ blackout.style.opacity='1'; });
+    setTimeout(()=>{
+      document.getElementById('gatekeeper').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+      revealDashboard();
+      blackout.style.transition='none';
+      blackout.style.opacity='0';
+      setTimeout(()=>blackout.remove(), 50);
+    },2400);
+  },2600);
+}
+
+/* mic-based blow detection via Web Audio API */
+const BLOW_THRESHOLD=42; // 0-255 average frequency level; tune if too sensitive/insensitive
+async function enableMicBlow(){
+  const micBtn=document.getElementById('micBtn');
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    const AudioCtx=window.AudioContext||window.webkitAudioContext;
+    const ctx=new AudioCtx();
+    const source=ctx.createMediaStreamSource(stream);
+    const analyser=ctx.createAnalyser();
+    analyser.fftSize=512;
+    source.connect(analyser);
+    const data=new Uint8Array(analyser.frequencyBinCount);
+    micBtn.textContent='🎤 Listening… blow now!';
+    micBtn.disabled=true;
+    function stopMic(){
+      stream.getTracks().forEach(t=>t.stop());
+      ctx.close();
+    }
+    function checkLevel(){
+      if(blownAlready){ stopMic(); return; }
+      analyser.getByteFrequencyData(data);
+      let sum=0;
+      for(let i=0;i<data.length;i++) sum+=data[i];
+      const avg=sum/data.length;
+      if(avg>BLOW_THRESHOLD){
+        stopMic();
+        triggerBlowOut();
+      }else{
+        requestAnimationFrame(checkLevel);
+      }
+    }
+    checkLevel();
+  }catch(e){
+    /* mic blocked or unsupported: fall back to tap */
+    micBtn.classList.add('hidden');
   }
 }
-document.getElementById('yesBtn').addEventListener('click',blowCandle);
-function blowCandle(){
-  const q=document.querySelector('#gatekeeper .q');
-  const btnrow=document.querySelector('#gatekeeper .btnrow');
-  if(q) q.classList.add('fadeOut');
-  if(btnrow) btnrow.classList.add('fadeOut');
-  setTimeout(()=>{
-    /* only the cake is visible now — hold for 2s of quiet before the blow sound */
-    setTimeout(()=>{
-      try{ new Audio('assets/audio/blow_candle.mp3').play(); }catch(e){}
-      const blackout=document.createElement('div');
-      blackout.id='blackout';
-      document.body.appendChild(blackout);
-      requestAnimationFrame(()=>{ blackout.style.opacity='1'; });
-      setTimeout(()=>{
-        document.getElementById('gatekeeper').classList.add('hidden');
-        document.getElementById('dashboard').classList.remove('hidden');
-        revealDashboard();
-        blackout.style.transition='none';
-        blackout.style.opacity='0';
-        setTimeout(()=>blackout.remove(), 50);
-      },2400);
-    },2000);
-  },550);
-}
+document.getElementById('micBtn').addEventListener('click',enableMicBlow);
+document.getElementById('tapBtn').addEventListener('click',triggerBlowOut);
+document.getElementById('cakeStage').addEventListener('click',triggerBlowOut);
 
 /* ---------- title drop, then tap-to-continue ---------- */
 let bgMusic=null;
