@@ -91,7 +91,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 
 /* gallery */
 .gallery-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.gframe{background:#fff;border:3px solid var(--deep);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--deep);opacity:.6;}
+.gframe{background:#fff;border:3px solid var(--deep);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--deep);overflow:hidden;}
 /* Swap each .gframe's content with <img src="yourphoto.jpg" style="width:100%;height:100%;object-fit:cover"> */
 
 /* letter */
@@ -249,10 +249,10 @@ const templates={
     <h2>your Seasons</h2>
     <p style="text-align:center;font-style:italic;margin-bottom:14px;">cheers to every version of you</p>
     <div class="gallery-grid">
-      <div class="gframe">photo 1</div>
-      <div class="gframe">photo 2</div>
-      <div class="gframe">photo 3</div>
-      <div class="gframe">photo 4</div>
+      <div class="gframe"><img src="assets/gallery_1.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
+      <div class="gframe"><img src="assets/gallery_2.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
+      <div class="gframe"><img src="assets/gallery_3.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
+      <div class="gframe"><img src="assets/gallery_4.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
     </div>`,
   letter:()=>`
     <div class="letter-bg">
