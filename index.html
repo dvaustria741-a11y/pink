@@ -254,7 +254,7 @@ function blowCandle(){
 
 /* ---------- title drop, then tap-to-continue ---------- */
 function revealDashboard(){
-  try{ new Audio('assets/audio/happy_birthday.mp3').play(); }catch(e){}
+  try{ const bg=new Audio('assets/audio/happy_birthday.mp3'); bg.loop=true; bg.play(); }catch(e){}
   spawnConfetti();
   const words=[['w1',100],['w2',500],['w3',900]];
   words.forEach(([id,delay])=>{
