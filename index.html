@@ -42,9 +42,30 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 .titlestack img.show{opacity:1;transform:translateY(0) scale(1);}
 .titlestack img.sparkle.show{animation:sparklePop .6s ease .5s;}
 @keyframes sparklePop{0%,100%{filter:none;}40%{filter:drop-shadow(0 0 10px #f6c9d6) drop-shadow(0 0 4px #fff);}}
+.titlestack{cursor:pointer;}
+.titlestack.dissolve{opacity:0;transform:scale(.92);transition:opacity .5s ease, transform .5s ease;pointer-events:none;}
+.tapHint{text-align:center;font-size:.85rem;color:var(--rose);opacity:0;animation:blink 1.4s ease infinite;margin-top:6px;}
+.tapHint.show{opacity:.85;}
+@keyframes blink{0%,100%{opacity:.85;}50%{opacity:.25;}}
+#balloonLayer{position:fixed;inset:0;pointer-events:none;z-index:15;overflow:hidden;}
+.balloon{position:absolute;bottom:-140px;animation:balloonRise 3.2s ease-out forwards;}
+.balloon svg{display:block;filter:drop-shadow(2px 2px 0 rgba(0,0,0,.12));}
+@keyframes balloonRise{
+  0%{transform:translateY(0) translateX(0);}
+  45%{transform:translateY(-55vh) translateX(14px);}
+  70%{transform:translateY(-85vh) translateX(-10px);}
+  100%{transform:translateY(-125vh) translateX(6px);opacity:0;}
+}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:40px 30px;max-width:420px;margin:0 auto;}
-.appicon{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;transform:scale(.6);transition:opacity .4s ease, transform .4s cubic-bezier(.34,1.56,.64,1);}
-.appicon.show{opacity:1;transform:scale(1);}
+.appicon{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;}
+.appicon.crawl{animation:crawlIn .7s steps(4) forwards;}
+@keyframes crawlIn{
+  0%{opacity:0;transform:scale(0) translateY(18px);}
+  25%{opacity:1;transform:scale(1.3) translateY(8px);}
+  55%{opacity:1;transform:scale(.8) translateY(3px);}
+  80%{opacity:1;transform:scale(1.05) translateY(0);}
+  100%{opacity:1;transform:scale(1) translateY(0);}
+}
 .appicon img{width:64px;height:64px;}
 .appicon span{font-size:.9rem;color:var(--deep);}
 
@@ -100,11 +121,13 @@ button{font-family:'VT323',monospace;cursor:pointer;}
   <div class="banner-wrap">
     <img src="assets/banner_landscape.png" class="pixel banner" alt="">
     <div class="titlestack">
-      <img src="assets/card_happy.png" class="pixel" alt="happy" id="w1">
-      <img src="assets/card_birthday.png" class="pixel" alt="birthday" id="w2">
-      <img src="assets/card_name.png" class="pixel sparkle" alt="Celyn!" id="w3">
+      <img src="assets/happy_card.png" class="pixel" alt="happy" id="w1">
+      <img src="assets/birthday_card.png" class="pixel" alt="birthday" id="w2">
+      <img src="assets/celyn_card.png" class="pixel sparkle" alt="Celyn!" id="w3">
     </div>
+    <p class="tapHint hidden" id="tapHint">tap</p>
   </div>
+  <div id="balloonLayer"></div>
   <div class="grid">
     <button class="appicon" data-modal="music" style="animation-delay:.1s"><img class="pixel" src="assets/record.png" alt=""><span>Music</span></button>
     <button class="appicon" data-modal="gallery" style="animation-delay:.2s"><img class="pixel" src="assets/camera.png" alt=""><span>Gallery</span></button>
@@ -156,14 +179,50 @@ function startLoad(){
   },{once:true});
 }
 
-/* ---------- staggered reveal (runs once, elements stay visible forever after) ---------- */
+/* ---------- title drop, then tap-to-continue ---------- */
 function revealDashboard(){
-  const words=[['w1',200],['w2',500],['w3',800]];
+  const words=[['w1',100],['w2',500],['w3',900]];
   words.forEach(([id,delay])=>{
     setTimeout(()=>document.getElementById(id).classList.add('show'), delay);
   });
+  setTimeout(()=>{
+    document.getElementById('tapHint').classList.add('show');
+    document.querySelector('.titlestack').addEventListener('click', onTitleTap, {once:true});
+  }, 1500);
+}
+
+function onTitleTap(){
+  document.getElementById('tapHint').classList.add('hidden');
+  document.querySelector('.titlestack').classList.add('dissolve');
+  spawnBalloons();
+  setTimeout(revealIcons, 1500);
+}
+
+const balloonColors=['#f6c9d6','#c9dbb0','#cdbfe8','#faf3e0'];
+function balloonSVG(color){
+  return `<svg viewBox="0 0 40 70" width="${34+Math.random()*16}" xmlns="http://www.w3.org/2000/svg">
+    <polyline points="20,50 17,55 23,60 17,65 20,70" fill="none" stroke="#3c2b30" stroke-width="2"/>
+    <polygon points="16,44 24,44 20,50" fill="${color}" stroke="#3c2b30" stroke-width="1"/>
+    <ellipse cx="20" cy="24" rx="18" ry="22" fill="${color}" stroke="#3c2b30" stroke-width="2"/>
+    <rect x="9" y="13" width="5" height="11" fill="#fff" opacity=".6"/>
+  </svg>`;
+}
+function spawnBalloons(){
+  const layer=document.getElementById('balloonLayer');
+  const count=4+Math.floor(Math.random()*3);
+  for(let i=0;i<count;i++){
+    const b=document.createElement('div');
+    b.className='balloon';
+    b.style.left=(8+Math.random()*80)+'%';
+    b.style.animationDelay=(i*0.18)+'s';
+    b.innerHTML=balloonSVG(balloonColors[i%balloonColors.length]);
+    layer.appendChild(b);
+    setTimeout(()=>b.remove(), 4200+i*180);
+  }
+}
+function revealIcons(){
   document.querySelectorAll('.appicon').forEach((el,i)=>{
-    setTimeout(()=>el.classList.add('show'), 1100 + i*150);
+    setTimeout(()=>el.classList.add('crawl'), i*150);
   });
 }
 
