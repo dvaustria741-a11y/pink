@@ -159,7 +159,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
       <button class="appicon" data-modal="gallery"><img class="pixel" src="assets/camera.png" alt=""><span>Gallery</span></button>
       <button class="appicon" data-modal="letter"><img class="pixel" src="assets/envelope.png" alt=""><span>Letter</span></button>
       <button class="appicon" data-modal="traits"><img class="pixel" src="assets/question_block.png" alt=""><span>Traits</span></button>
-      <button class="appicon hidden" id="messageIcon" data-modal="message"><span class="emojiIcon" aria-hidden="true">💌</span><span>Message</span></button>
+      <button class="appicon hidden" id="messageIcon" data-modal="message"><span class="emojiIcon" aria-hidden="true">💌</span><span>Message (optional)</span></button>
     </div>
   </div>
 </div>
@@ -318,6 +318,7 @@ function spawnBalloons(){
 }
 function revealIcons(){
   document.querySelectorAll('.appicon').forEach((el,i)=>{
+    if(el.id==='messageIcon') return;
     setTimeout(()=>el.classList.add('crawl'), i*150);
   });
 }
@@ -371,7 +372,7 @@ document.querySelectorAll('.appicon').forEach(btn=>{
 });
 function unlockMessageIcon(){
   const icon=document.getElementById('messageIcon');
-  if(!icon || icon.classList.contains('crawl')) return;
+  if(!icon || !icon.classList.contains('hidden')) return;
   icon.classList.remove('hidden');
   requestAnimationFrame(()=>icon.classList.add('crawl'));
 }
@@ -424,7 +425,7 @@ const templates={
     </div>`,
   message:()=>`
     <h2>Leave me a message 💌</h2>
-    <p style="text-align:center;font-size:.95rem;margin-bottom:12px;">Whatever you're feeling right now — it comes straight to me.</p>
+    <p style="text-align:center;font-size:.95rem;margin-bottom:12px;">Totally optional — no pressure at all. But if you want to say anything, it comes straight to me.</p>
     <textarea id="msgText" rows="5" style="width:100%;font-family:'VT323',monospace;font-size:1.1rem;padding:10px;border:3px solid var(--deep);resize:vertical;background:#fff;color:var(--ink);"></textarea>
     <button class="pxbtn" id="sendMsgBtn" style="margin-top:12px;">Send</button>
     <p id="msgStatus" style="margin-top:8px;font-size:.9rem;text-align:center;min-height:1.2em;"></p>`
