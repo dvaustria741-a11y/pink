@@ -37,11 +37,14 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 .banner-wrap{position:relative;width:100%;text-align:center;padding-top:20px;}
 .banner{width:100%;max-width:480px;opacity:0;transform:translateY(-20px);animation:slideIn .6s ease forwards;}
 @keyframes slideIn{to{opacity:1;transform:translateY(0);}}
-.titlecards{width:70%;max-width:300px;margin-top:-30px;opacity:0;animation:drop .6s cubic-bezier(.34,1.56,.64,1) forwards .8s;}
-@keyframes drop{0%{opacity:0;transform:translateY(-40px) scale(.8);}60%{opacity:1;transform:translateY(6px) scale(1.05);}100%{transform:translateY(0) scale(1);}}
+.titlestack{max-width:300px;margin:-30px auto 0;display:flex;flex-direction:column;align-items:center;}
+.titlestack img{width:100%;margin-top:-18px;opacity:0;transform:translateY(-30px) scale(.85);transition:opacity .5s cubic-bezier(.34,1.56,.64,1), transform .5s cubic-bezier(.34,1.56,.64,1);}
+.titlestack img.show{opacity:1;transform:translateY(0) scale(1);}
+.titlestack img.sparkle.show{animation:sparklePop .6s ease .5s;}
+@keyframes sparklePop{0%,100%{filter:none;}40%{filter:drop-shadow(0 0 10px #f6c9d6) drop-shadow(0 0 4px #fff);}}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:40px 30px;max-width:420px;margin:0 auto;}
-.appicon{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:pop .5s ease forwards;}
-@keyframes pop{0%{opacity:0;transform:scale(.6);}70%{opacity:1;transform:scale(1.1);}100%{transform:scale(1);}}
+.appicon{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;transform:scale(.6);transition:opacity .4s ease, transform .4s cubic-bezier(.34,1.56,.64,1);}
+.appicon.show{opacity:1;transform:scale(1);}
 .appicon img{width:64px;height:64px;}
 .appicon span{font-size:.9rem;color:var(--deep);}
 
@@ -96,7 +99,11 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 <div id="dashboard" class="hidden">
   <div class="banner-wrap">
     <img src="assets/banner_landscape.png" class="pixel banner" alt="">
-    <img src="assets/title_cards.png" class="pixel titlecards" alt="happy birthday Celyn">
+    <div class="titlestack">
+      <img src="assets/card_happy.png" class="pixel" alt="happy" id="w1">
+      <img src="assets/card_birthday.png" class="pixel" alt="birthday" id="w2">
+      <img src="assets/card_name.png" class="pixel sparkle" alt="Celyn!" id="w3">
+    </div>
   </div>
   <div class="grid">
     <button class="appicon" data-modal="music" style="animation-delay:.1s"><img class="pixel" src="assets/record.png" alt=""><span>Music</span></button>
@@ -144,8 +151,20 @@ function startLoad(){
     setTimeout(()=>{
       document.getElementById('gatekeeper').classList.add('hidden');
       document.getElementById('dashboard').classList.remove('hidden');
+      revealDashboard();
     },500);
   },{once:true});
+}
+
+/* ---------- staggered reveal (runs once, elements stay visible forever after) ---------- */
+function revealDashboard(){
+  const words=[['w1',200],['w2',500],['w3',800]];
+  words.forEach(([id,delay])=>{
+    setTimeout(()=>document.getElementById(id).classList.add('show'), delay);
+  });
+  document.querySelectorAll('.appicon').forEach((el,i)=>{
+    setTimeout(()=>el.classList.add('show'), 1100 + i*150);
+  });
 }
 
 /* ---------- modals ---------- */
