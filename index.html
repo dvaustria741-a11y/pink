@@ -15,8 +15,8 @@ img.pixel{image-rendering:pixelated;image-rendering:crisp-edges;}
 .hidden{display:none !important;}
 h1,h2,.pxfont{font-family:'Press Start 2P',cursive;}
 button{font-family:'VT323',monospace;cursor:pointer;}
-.pxbtn{min-width:44px;min-height:44px;padding:10px 22px;background:var(--pink);border:3px solid var(--deep);color:var(--deep);font-size:18px;box-shadow:3px 3px 0 var(--deep);}
-.pxbtn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--deep);}
+.pxbtn{--scale:1;min-width:44px;min-height:44px;padding:10px 22px;background:var(--pink);border:3px solid var(--deep);color:var(--deep);font-size:18px;box-shadow:3px 3px 0 var(--deep);transform:scale(var(--scale));transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+.pxbtn:active{transform:scale(var(--scale)) translate(2px,2px);box-shadow:1px 1px 0 var(--deep);}
 
 /* particles */
 #particles{position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden;}
@@ -173,23 +173,52 @@ for(let i=0;i<16;i++){
 }
 
 /* ---------- gatekeeper ---------- */
-const errs=[
-  {t:"OOOPS ERROR!\nTry it, please.",b:"Start"},
-  {t:"Are you sure about that?\nGive me a chance.",b:"Ok"}
+let noCount=0;
+const pleas=[
+  "Please?\nJust one tap on Yes~",
+  "Please, please?\nPretty please?",
+  "PLEASE, PLEASE, PLEASE!\nI'm really trying here.",
+  "please please please...\nlook, the No button is tiny now!"
 ];
-let errStep=0;
-document.getElementById('noBtn').addEventListener('click',showErr);
+function noScale(){ return Math.max(1-noCount*0.15, 0.18); }
+function yesScale(){ return Math.min(1+noCount*0.2, 2.6); }
+function updateBtnScale(){
+  const yb=document.getElementById('yesBtn'), nb=document.getElementById('noBtn');
+  yb.style.setProperty('--scale', yesScale());
+  nb.style.setProperty('--scale', noScale());
+  if(noScale()<=0.2) nb.style.pointerEvents='none';
+}
+function errText(){
+  if(noCount===1) return "OOOPS ERROR!\nTry it, please.";
+  if(noCount===2) return "Are you sure about that?\nGive me a chance.";
+  const idx=Math.min(noCount-3, pleas.length-1);
+  return pleas[idx];
+}
+document.getElementById('noBtn').addEventListener('click',()=>{
+  noCount++;
+  updateBtnScale();
+  showErr();
+});
 function showErr(){
   const pop=document.createElement('div');
   pop.className='popup';
-  const step=errs[Math.min(errStep,errs.length-1)];
-  pop.innerHTML=`<p style="white-space:pre-line;text-align:center">${step.t}</p><button class="pxbtn go">${step.b}</button>`;
+  const giveUp=noScale()<=0.2;
+  pop.innerHTML=`<p style="white-space:pre-line;text-align:center">${errText()}</p>
+    <div class="btnrow">
+      <button class="pxbtn go-yes" style="--scale:${yesScale()}">Yes</button>
+      ${giveUp?'':`<button class="pxbtn go-no" style="--scale:${noScale()}">No</button>`}
+    </div>`;
   document.body.appendChild(pop);
-  pop.querySelector('.go').addEventListener('click',()=>{
-    pop.remove();
-    errStep++;
-    if(errStep<errs.length) showErr(); else startLoad();
-  },{once:true});
+  pop.querySelector('.go-yes').addEventListener('click',()=>{ pop.remove(); startLoad(); },{once:true});
+  const popNo=pop.querySelector('.go-no');
+  if(popNo){
+    popNo.addEventListener('click',()=>{
+      pop.remove();
+      noCount++;
+      updateBtnScale();
+      showErr();
+    },{once:true});
+  }
 }
 document.getElementById('yesBtn').addEventListener('click',startLoad);
 function startLoad(){
