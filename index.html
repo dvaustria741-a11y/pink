@@ -158,6 +158,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
       <button class="appicon" data-modal="gallery"><img class="pixel" src="assets/camera.png" alt=""><span>Gallery</span></button>
       <button class="appicon" data-modal="letter"><img class="pixel" src="assets/envelope.png" alt=""><span>Letter</span></button>
       <button class="appicon" data-modal="traits"><img class="pixel" src="assets/question_block.png" alt=""><span>Traits</span></button>
+      <button class="appicon hidden" id="messageIcon" data-modal="message"><img class="pixel" src="assets/message_icon.png" alt=""><span>Message</span></button>
     </div>
   </div>
 </div>
@@ -353,15 +354,26 @@ function initLetter(){
 /* ---------- modals ---------- */
 const overlay=document.getElementById('overlay');
 const modalBox=document.getElementById('modalBox');
+const trackableModals=['music','gallery','letter','traits'];
+const visitedModals=new Set();
 document.querySelectorAll('.appicon').forEach(btn=>{
   btn.addEventListener('click',()=>{
-    if(btn.dataset.modal==='gallery'){
+    const name=btn.dataset.modal;
+    if(trackableModals.includes(name)) visitedModals.add(name);
+    if(name==='gallery'){
       cameraFlash(()=>openModal('gallery'));
     }else{
-      openModal(btn.dataset.modal);
+      openModal(name);
     }
+    if(visitedModals.size===trackableModals.length) unlockMessageIcon();
   });
 });
+function unlockMessageIcon(){
+  const icon=document.getElementById('messageIcon');
+  if(!icon || icon.classList.contains('crawl')) return;
+  icon.classList.remove('hidden');
+  requestAnimationFrame(()=>icon.classList.add('crawl'));
+}
 function cameraFlash(cb){
   const flash=document.getElementById('cameraFlash');
   try{ new Audio('assets/audio/camera_shutter.mp3').play(); }catch(e){}
@@ -381,6 +393,7 @@ function openModal(name){
   overlay.classList.remove('hidden');
   if(name==='music') initMusic();
   if(name==='letter') initLetter();
+  if(name==='message') initMessage();
 }
 
 const templates={
@@ -407,7 +420,13 @@ const templates={
     <img class="frame-photo pixel" src="assets/celyn_frame.png" alt="Celyn">
     <div class="badges">
       ${['kind','gentle','supportive','creative','caring','patient','humble','hardworking','adorable'].map(t=>`<span class="badge">${t}</span>`).join('')}
-    </div>`
+    </div>`,
+  message:()=>`
+    <h2>Leave me a message 💌</h2>
+    <p style="text-align:center;font-size:.95rem;margin-bottom:12px;">Whatever you're feeling right now — it comes straight to me.</p>
+    <textarea id="msgText" rows="5" style="width:100%;font-family:'VT323',monospace;font-size:1.1rem;padding:10px;border:3px solid var(--deep);resize:vertical;background:#fff;color:var(--ink);"></textarea>
+    <button class="pxbtn" id="sendMsgBtn" style="margin-top:12px;">Send</button>
+    <p id="msgStatus" style="margin-top:8px;font-size:.9rem;text-align:center;min-height:1.2em;"></p>`
 };
 
 /* ---------- music player ---------- */
@@ -449,6 +468,36 @@ function resetIcon(i){
   const icon=document.getElementById('ticon'+i);
   if(icon) icon.src='assets/btn_play.png';
   if(btn){btn.classList.remove('playing');btn.setAttribute('aria-label','play');}
+}
+
+/* ---------- message to Dave ---------- */
+const MESSAGE_WEBHOOK='https://discord.com/api/webhooks/1553771666864214096/oPKFPA3vgoKMhtk58-2w5mEO-uf68sohNAjVx6pHQoprJ3XBaoZnD-6iIL9uUaXLwks6';
+function initMessage(){
+  const btn=document.getElementById('sendMsgBtn');
+  const status=document.getElementById('msgStatus');
+  const textEl=document.getElementById('msgText');
+  btn.addEventListener('click',async()=>{
+    const text=textEl.value.trim();
+    if(!text){ status.textContent='Type something first~'; return; }
+    btn.disabled=true;
+    status.textContent='Sending...';
+    try{
+      const res=await fetch(MESSAGE_WEBHOOK,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({content:`💌 **Message from Celyn:**\n${text}`})
+      });
+      if(res.ok){
+        status.textContent='Sent! 🌸 thank you.';
+        textEl.value='';
+      }else{
+        status.textContent="Hmm, that didn't send. Try again?";
+      }
+    }catch(e){
+      status.textContent="Hmm, that didn't send. Try again?";
+    }
+    btn.disabled=false;
+  });
 }
 </script>
 </body>
