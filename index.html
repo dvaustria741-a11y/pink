@@ -91,8 +91,13 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
 
 /* gallery */
-.gallery-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.gframe{background:#fff;border:3px solid var(--deep);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--deep);overflow:hidden;}
+.gallery-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px 18px;padding:10px 8px 4px;}
+.gframe{background:#fff;border:3px solid var(--deep);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--deep);overflow:hidden;box-shadow:4px 4px 0 rgba(60,43,48,.25);opacity:0;transform:scale(.6) rotate(0deg);animation:polaroidIn .55s cubic-bezier(.34,1.56,.64,1) forwards;}
+.gframe:nth-child(1){--rot:-8deg;margin-top:-6px;animation-delay:.1s;}
+.gframe:nth-child(2){--rot:6deg;margin-top:16px;animation-delay:.4s;}
+.gframe:nth-child(3){--rot:5deg;margin-top:10px;animation-delay:.7s;}
+.gframe:nth-child(4){--rot:-6deg;margin-top:-10px;animation-delay:1s;}
+@keyframes polaroidIn{0%{opacity:0;transform:scale(.6) rotate(0deg);}100%{opacity:1;transform:scale(1) rotate(var(--rot));}}
 /* Swap each .gframe's content with <img src="yourphoto.jpg" style="width:100%;height:100%;object-fit:cover"> */
 
 /* letter */
@@ -106,11 +111,15 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 .frame-photo{width:140px;display:block;margin:0 auto 16px;}
 .badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
 .badge{background:var(--pink);border:2px solid var(--deep);padding:6px 12px;font-size:.9rem;color:var(--deep);}
+
+/* camera flash */
+#cameraFlash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:999;}
 </style>
 </head>
 <body>
 
 <div id="particles"></div>
+<div id="cameraFlash"></div>
 
 <div id="gatekeeper">
   <img src="assets/cake.png" class="pixel cake" alt="cake">
@@ -269,8 +278,27 @@ function initLetter(){
 const overlay=document.getElementById('overlay');
 const modalBox=document.getElementById('modalBox');
 document.querySelectorAll('.appicon').forEach(btn=>{
-  btn.addEventListener('click',()=>openModal(btn.dataset.modal));
+  btn.addEventListener('click',()=>{
+    if(btn.dataset.modal==='gallery'){
+      cameraFlash(()=>openModal('gallery'));
+    }else{
+      openModal(btn.dataset.modal);
+    }
+  });
 });
+function cameraFlash(cb){
+  const flash=document.getElementById('cameraFlash');
+  try{ new Audio('assets/audio/camera_shutter.mp3').play(); }catch(e){}
+  flash.style.transition='none';
+  flash.style.opacity='1';
+  cb();
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      flash.style.transition='opacity .5s ease';
+      flash.style.opacity='0';
+    });
+  });
+}
 function closeModal(){overlay.classList.add('hidden');modalBox.innerHTML='';if(audioEl){audioEl.pause();}if(typeTimer){clearInterval(typeTimer);typeTimer=null;}}
 function openModal(name){
   modalBox.innerHTML='<button class="closeX" onclick="closeModal()">X</button>'+templates[name]();
