@@ -32,7 +32,42 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 #gatekeeper{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:24px;text-align:center;position:relative;z-index:3;}
 .cake{width:120px;}
 .cakeStage{position:relative;display:inline-block;cursor:pointer;}
-#smokeWrap{position:absolute;top:6%;left:50%;width:1px;height:1px;pointer-events:none;}
+.flame{
+  position:absolute;
+  left:50%; top:10%;
+  width:3px;height:3px;
+  background:#ff8533;
+  transform:translate(-50%,-100%);
+  transform-origin:50% 100%;
+  box-shadow:
+    0 -9px #fff4cc,
+    0 -6px #ffe066,
+    -3px -3px #ffcc4d,
+    0 -3px #ffb84d,
+    3px -3px #ffcc4d,
+    -6px 0 #ff9933,
+    -3px 0 #ff9933,
+    3px 0 #ff9933,
+    6px 0 #ff9933;
+  z-index:3;
+  pointer-events:none;
+  animation:flameFlicker 1s ease-in-out infinite;
+  transition:opacity .3s ease;
+}
+@keyframes flameFlicker{
+  0%,100%{transform:translate(-50%,-100%) scale(1) rotate(0deg);filter:brightness(1);}
+  25%{transform:translate(-53%,-102%) scale(1.05) rotate(-3deg);filter:brightness(1.15);}
+  50%{transform:translate(-50%,-97%) scale(.95) rotate(2deg);filter:brightness(.95);}
+  75%{transform:translate(-48%,-101%) scale(1.03) rotate(-2deg);filter:brightness(1.1);}
+}
+.flame.blowing{animation:flameBlowFlicker .18s ease-in-out infinite;opacity:.8;}
+@keyframes flameBlowFlicker{
+  0%{transform:translate(-50%,-100%) skewX(-25deg) scaleY(.7) scaleX(.85);}
+  50%{transform:translate(-62%,-94%) skewX(-38deg) scaleY(.55) scaleX(.75);}
+  100%{transform:translate(-50%,-100%) skewX(-25deg) scaleY(.7) scaleX(.85);}
+}
+.flame.out{animation:none;opacity:0;}
+#smokeWrap{position:absolute;top:10%;left:50%;width:1px;height:1px;pointer-events:none;}
 .smoke{position:absolute;bottom:0;left:0;width:8px;height:8px;background:rgba(140,140,140,.55);border-radius:2px;animation:smokeRise 1.4s ease-out forwards;}
 @keyframes smokeRise{
   0%{opacity:.7;transform:translate(-50%,0) scale(.6);}
@@ -173,6 +208,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 <div id="gatekeeper">
   <div class="cakeStage" id="cakeStage">
     <img src="assets/cake_lit.png" class="pixel cake" id="cakeImg" alt="cake">
+    <div class="flame" id="flame"></div>
     <div id="smokeWrap"></div>
   </div>
   <p class="q" id="candleQ">Make a wish &amp; blow out the candle! 🎂</p>
@@ -225,33 +261,42 @@ let blownAlready=false;
 
 function spawnSmoke(){
   const wrap=document.getElementById('smokeWrap');
-  let n=0;
-  const puff=setInterval(()=>{
-    if(n++>10){ clearInterval(puff); return; }
-    const s=document.createElement('div');
-    s.className='smoke';
-    s.style.left=(Math.random()*10-5)+'px';
-    s.style.animationDuration=(1+Math.random()*.6)+'s';
-    wrap.appendChild(s);
-    setTimeout(()=>s.remove(),1600);
-  },140);
+  const count=3+Math.floor(Math.random()*3); // 3-5 particles
+  for(let i=0;i<count;i++){
+    setTimeout(()=>{
+      const s=document.createElement('div');
+      s.className='smoke';
+      s.style.left=(Math.random()*10-5)+'px';
+      s.style.animationDuration=(1+Math.random()*.6)+'s';
+      wrap.appendChild(s);
+      setTimeout(()=>s.remove(),1600);
+    }, i*150);
+  }
 }
 
 function burstCelebration(){
   spawnConfetti();
-  const t1=setTimeout(spawnConfetti,500);
-  const t2=setTimeout(spawnConfetti,1000);
-  const t3=setTimeout(spawnConfetti,1500);
+  setTimeout(spawnConfetti,500);
+  setTimeout(spawnConfetti,1000);
+  setTimeout(spawnConfetti,1500);
 }
 
-function triggerBlowOut(){
+function triggerBlowOut(source){
   if(blownAlready) return;
   blownAlready=true;
+
+  const flame=document.getElementById('flame');
+  flame.classList.remove('blowing');
+  flame.classList.add('out');
 
   document.getElementById('cakeImg').src='assets/cake_off.png';
   spawnSmoke();
   burstCelebration();
-  try{ new Audio('assets/audio/blow_candle.mp3').play(); }catch(e){}
+  if(source!=='mic'){
+    /* the person's real blow already made the sound when caught by the mic,
+       so only play the effect for the tap fallback */
+    try{ new Audio('assets/audio/blow_candle.mp3').play(); }catch(e){}
+  }
 
   const q=document.getElementById('candleQ');
   const row=document.getElementById('blowBtnRow');
@@ -280,8 +325,10 @@ function triggerBlowOut(){
 
 /* mic-based blow detection via Web Audio API */
 const BLOW_THRESHOLD=42; // 0-255 average frequency level; tune if too sensitive/insensitive
+const WIND_THRESHOLD=18; // lower level that just makes the flame flicker in the "wind"
 async function enableMicBlow(){
   const micBtn=document.getElementById('micBtn');
+  const flame=document.getElementById('flame');
   try{
     const stream=await navigator.mediaDevices.getUserMedia({audio:true});
     const AudioCtx=window.AudioContext||window.webkitAudioContext;
@@ -305,8 +352,9 @@ async function enableMicBlow(){
       const avg=sum/data.length;
       if(avg>BLOW_THRESHOLD){
         stopMic();
-        triggerBlowOut();
+        triggerBlowOut('mic');
       }else{
+        flame.classList.toggle('blowing', avg>WIND_THRESHOLD);
         requestAnimationFrame(checkLevel);
       }
     }
@@ -317,8 +365,15 @@ async function enableMicBlow(){
   }
 }
 document.getElementById('micBtn').addEventListener('click',enableMicBlow);
-document.getElementById('tapBtn').addEventListener('click',triggerBlowOut);
-document.getElementById('cakeStage').addEventListener('click',triggerBlowOut);
+
+function tapBlow(){
+  if(blownAlready) return;
+  const flame=document.getElementById('flame');
+  flame.classList.add('blowing');
+  setTimeout(()=>triggerBlowOut('tap'),450);
+}
+document.getElementById('tapBtn').addEventListener('click',tapBlow);
+document.getElementById('cakeStage').addEventListener('click',tapBlow);
 
 /* ---------- title drop, then tap-to-continue ---------- */
 let bgMusic=null;
