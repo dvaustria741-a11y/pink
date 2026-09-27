@@ -90,8 +90,9 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 .scenic-card > *{grid-area:stack;}
 .scenic-card > img.banner{width:100%;height:100%;object-fit:cover;z-index:1;}
 .titlestack{z-index:3;width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:6% 8%;cursor:pointer;position:relative;}
-.card-stack{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:75%;max-width:220px;}
-.card-stack img{width:100%;opacity:0;transform:translateY(-30px) scale(.85);transition:opacity .5s cubic-bezier(.34,1.56,.64,1), transform .5s cubic-bezier(.34,1.56,.64,1);}
+.card-stack{display:flex;flex-direction:column;align-items:center;justify-content:center;width:75%;max-width:220px;}
+.card-stack img{width:100%;margin-top:-7%;opacity:0;transform:translateY(-30px) scale(.85);transition:opacity .5s cubic-bezier(.34,1.56,.64,1), transform .5s cubic-bezier(.34,1.56,.64,1);}
+.card-stack img:first-child{margin-top:0;}
 .card-stack img.show{opacity:1;transform:translateY(0) scale(1);}
 .card-stack img.sparkle.show{animation:sparklePop .6s ease .5s;}
 @keyframes sparklePop{0%,100%{filter:none;}40%{filter:drop-shadow(0 0 10px #f6c9d6) drop-shadow(0 0 4px #fff);}}
