@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>for Celyn</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <style>
@@ -34,10 +35,11 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 
 /* dashboard */
 #dashboard{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:22px;position:relative;z-index:3;}
-.scenic-card{position:relative;width:90%;max-width:380px;height:62vh;max-height:640px;border:4px solid var(--deep);box-shadow:6px 6px 0 var(--rose);overflow:hidden;background:#eee;opacity:0;transform:translateY(-16px);animation:slideIn .6s ease forwards;}
+.scenic-card{position:relative;display:grid;grid-template-areas:"stack";width:90%;max-width:380px;aspect-ratio:940/1672;max-height:min(640px,70dvh);border:4px solid var(--deep);box-shadow:6px 6px 0 var(--rose);overflow:hidden;background:#eee;opacity:0;transform:translateY(-16px);animation:slideIn .6s ease forwards;}
 @keyframes slideIn{to{opacity:1;transform:translateY(0);}}
-.scenic-card > img.banner{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-.titlestack{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6% 8%;cursor:pointer;}
+.scenic-card > *{grid-area:stack;}
+.scenic-card > img.banner{width:100%;height:100%;object-fit:cover;z-index:1;}
+.titlestack{z-index:3;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6% 8%;cursor:pointer;}
 .titlestack img{width:88%;max-width:230px;margin-top:-14%;opacity:0;transform:translateY(-30px) scale(.85);transition:opacity .5s cubic-bezier(.34,1.56,.64,1), transform .5s cubic-bezier(.34,1.56,.64,1);}
 .titlestack img:first-child{margin-top:0;}
 .titlestack img.show{opacity:1;transform:translateY(0) scale(1);}
@@ -47,7 +49,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 .tapHint{position:absolute;bottom:6%;left:50%;transform:translateX(-50%);font-size:.85rem;color:var(--rose);opacity:0;animation:blink 1.4s ease infinite;background:rgba(255,255,255,.6);padding:2px 10px;}
 .tapHint.show{opacity:.85;}
 @keyframes blink{0%,100%{opacity:.85;}50%{opacity:.25;}}
-#balloonLayer{position:absolute;inset:0;pointer-events:none;z-index:6;overflow:hidden;}
+#balloonLayer{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden;}
 .balloon{position:absolute;bottom:-90px;animation:balloonRise 3s ease-out forwards;}
 .balloon svg{display:block;filter:drop-shadow(2px 2px 0 rgba(0,0,0,.12));}
 @keyframes balloonRise{
@@ -56,7 +58,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
   70%{transform:translateY(-65vh) translateX(-8px);}
   100%{transform:translateY(-90vh) translateX(4px);opacity:0;}
 }
-.grid{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;place-items:center;gap:6% 4%;padding:10%;}
+.grid{z-index:4;width:100%;height:100%;display:grid;grid-template-columns:1fr 1fr;place-items:center;gap:6% 4%;padding:10%;}
 .appicon{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0;}
 .appicon.crawl{animation:crawlIn .7s steps(4) forwards;}
 @keyframes crawlIn{
