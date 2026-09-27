@@ -381,6 +381,8 @@ function pauseBg(){ if(bgMusic && !bgMusic.paused) bgMusic.pause(); }
 function resumeBg(){ if(bgMusic && bgMusic.paused) bgMusic.play().catch(()=>{}); }
 function revealDashboard(){
   try{ bgMusic=new Audio('assets/audio/happy_birthday.mp3'); bgMusic.loop=true; bgMusic.play(); }catch(e){}
+  try{ new Audio('assets/audio/confetti_pop.mp3').play(); }catch(e){}
+  try{ new Audio('assets/audio/party_horn.mp3').play(); }catch(e){}
   spawnConfetti();
   const words=[['w1',100],['w2',500],['w3',900]];
   words.forEach(([id,delay])=>{
