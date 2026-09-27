@@ -255,8 +255,11 @@ function blowCandle(){
 }
 
 /* ---------- title drop, then tap-to-continue ---------- */
+let bgMusic=null;
+function pauseBg(){ if(bgMusic && !bgMusic.paused) bgMusic.pause(); }
+function resumeBg(){ if(bgMusic && bgMusic.paused) bgMusic.play().catch(()=>{}); }
 function revealDashboard(){
-  try{ const bg=new Audio('assets/audio/happy_birthday.mp3'); bg.loop=true; bg.play(); }catch(e){}
+  try{ bgMusic=new Audio('assets/audio/happy_birthday.mp3'); bgMusic.loop=true; bgMusic.play(); }catch(e){}
   spawnConfetti();
   const words=[['w1',100],['w2',500],['w3',900]];
   words.forEach(([id,delay])=>{
@@ -389,7 +392,7 @@ function cameraFlash(cb){
     });
   });
 }
-function closeModal(){overlay.classList.add('hidden');modalBox.innerHTML='';if(audioEl){audioEl.pause();}if(typeTimer){clearInterval(typeTimer);typeTimer=null;}}
+function closeModal(){overlay.classList.add('hidden');modalBox.innerHTML='';if(audioEl){audioEl.pause();}if(currentIdx!==null){currentIdx=null;resumeBg();}if(typeTimer){clearInterval(typeTimer);typeTimer=null;}}
 function openModal(name){
   modalBox.innerHTML='<button class="closeX" onclick="closeModal()">X</button>'+templates[name]();
   overlay.classList.remove('hidden');
@@ -446,16 +449,18 @@ function initMusic(){
   tracks.forEach((t,i)=>{
     document.getElementById('tbtn'+i).addEventListener('click',()=>toggleTrack(i));
   });
-  audioEl.addEventListener('ended',()=>resetIcon(currentIdx));
+  audioEl.addEventListener('ended',()=>{ resetIcon(currentIdx); currentIdx=null; resumeBg(); });
 }
 function toggleTrack(i){
   if(currentIdx===i && !audioEl.paused){
     audioEl.pause();
     resetIcon(i);
     currentIdx=null;
+    resumeBg();
     return;
   }
   if(currentIdx!==null) resetIcon(currentIdx);
+  pauseBg();
   audioEl.src=tracks[i].src;
   audioEl.play();
   currentIdx=i;
