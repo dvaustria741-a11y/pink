@@ -95,8 +95,11 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 /* Swap each .gframe's content with <img src="yourphoto.jpg" style="width:100%;height:100%;object-fit:cover"> */
 
 /* letter */
-.letter-bg{background:url('assets/letter_card.png') center/contain no-repeat;padding:30px 22px;min-height:380px;}
-.letter-bg p{white-space:pre-line;font-size:1.05rem;line-height:1.5;}
+.letter-bg{border-style:solid;border-width:78px 28px 148px 28px;border-image-source:url('assets/letter_card.png');border-image-slice:100 34 190 34 fill;border-image-repeat:round;background:#fdf3ec;padding:6px 14px 10px;}
+.letter-bg h2{margin-bottom:10px;}
+.letter-bg p{white-space:pre-line;font-size:1.05rem;line-height:1.6;}
+.typewriter{border-right:2px solid var(--rose);white-space:pre-wrap;overflow:hidden;}
+.typewriter.done{border-right:none;}
 
 /* traits */
 .frame-photo{width:140px;display:block;margin:0 auto 16px;}
@@ -228,17 +231,48 @@ function revealIcons(){
   });
 }
 
+/* ---------- letter typewriter ---------- */
+const LETTER_TEXT=`Happy Birthday!
+
+I wanted to build something special for you today instead of just sending a quick "Happy Birthday" message, because I really appreciate having you around. Getting to know you has been one of the absolute highlights of my year. You have a great sense of humor, kindness, and a gentle nature that just makes everything feel a little brighter whenever you're around. Even on days when I'm not in the best mood, seeing you smile always turns things around.
+
+I hope this new year brings you all the peace, happiness, and beautiful moments you deserve. Keep being your hardworking, adorable, and creative self.
+
+Thank you for just being you. Enjoy your special day!
+
+— Dave`;
+let typeTimer=null;
+function initLetter(){
+  const el=document.getElementById('letterText');
+  let i=0;
+  el.textContent='';
+  el.classList.remove('done');
+  function finishNow(){
+    if(typeTimer){clearInterval(typeTimer);typeTimer=null;}
+    el.textContent=LETTER_TEXT;
+    el.classList.add('done');
+    el.removeEventListener('click',finishNow);
+  }
+  el.addEventListener('click',finishNow);
+  typeTimer=setInterval(()=>{
+    i+=2;
+    el.textContent=LETTER_TEXT.slice(0,i);
+    if(i>=LETTER_TEXT.length) finishNow();
+  },16);
+}
+
 /* ---------- modals ---------- */
 const overlay=document.getElementById('overlay');
 const modalBox=document.getElementById('modalBox');
 document.querySelectorAll('.appicon').forEach(btn=>{
   btn.addEventListener('click',()=>openModal(btn.dataset.modal));
 });
-function closeModal(){overlay.classList.add('hidden');modalBox.innerHTML='';if(audioEl){audioEl.pause();}}
+function closeModal(){overlay.classList.add('hidden');modalBox.innerHTML='';if(audioEl){audioEl.pause();}if(typeTimer){clearInterval(typeTimer);typeTimer=null;}}
 function openModal(name){
   modalBox.innerHTML='<button class="closeX" onclick="closeModal()">X</button>'+templates[name]();
   overlay.classList.remove('hidden');
   if(name==='music') initMusic();
+  if(name==='letter') initLetter();
 }
 
 const templates={
@@ -257,15 +291,7 @@ const templates={
   letter:()=>`
     <div class="letter-bg">
       <h2>Happy Birthday, Celyn! 🌸</h2>
-      <p>Happy Birthday!
-
-I wanted to build something special for you today instead of just sending a quick "Happy Birthday" message, because I really appreciate having you around. Getting to know you has been one of the absolute highlights of my year. You have a great sense of humor, kindness, and a gentle nature that just makes everything feel a little brighter whenever you're around. Even on days when I'm not in the best mood, seeing you smile always turns things around.
-
-I hope this new year brings you all the peace, happiness, and beautiful moments you deserve. Keep being your hardworking, adorable, and creative self.
-
-Thank you for just being you. Enjoy your special day!
-
-— Dave</p>
+      <p id="letterText" class="typewriter"></p>
     </div>`,
   traits:()=>`
     <img class="frame-photo pixel" src="assets/celyn_frame.png" alt="Celyn">
