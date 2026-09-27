@@ -99,11 +99,10 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 @keyframes wishRise{0%{opacity:0;transform:translateY(0) scale(.4);}20%{opacity:1;}100%{opacity:0;transform:translateY(-150px) scale(1.2);}}
 
 /* step 2: strike the match */
-.match-scene{position:relative;width:220px;height:110px;touch-action:none;}
-.matchbox{position:absolute;left:10px;bottom:10px;width:90px;height:46px;background:#8a5a34;border:3px solid #4a2f1a;box-shadow:2px 2px 0 rgba(0,0,0,.35);}
-.matchbox::after{content:"";position:absolute;left:6px;right:6px;top:8px;height:10px;background:repeating-linear-gradient(90deg,#c98b4f 0 4px,#a86a35 4px 8px);}
-.matchstick{position:absolute;left:60px;bottom:48px;width:6px;height:56px;background:#d8b48a;border-radius:2px;transform-origin:50% 100%;transform:rotate(-6deg);touch-action:none;}
-.matchstick::before{content:"";position:absolute;top:-8px;left:-3px;width:12px;height:14px;background:#c1443a;border-radius:40% 40% 50% 50%;transition:background .15s ease;}
+.match-scene{position:relative;width:240px;height:150px;touch-action:none;}
+.matchbox{position:absolute;left:0;bottom:0;width:130px;height:auto;pointer-events:none;}
+.matchstick{position:absolute;left:158px;bottom:8px;width:auto;height:105px;transform-origin:50% 100%;transform:rotate(-6deg);touch-action:none;user-select:none;-webkit-user-drag:none;}
+.matchstick.lit{height:131px;left:155px;cursor:grab;animation:matchFlicker .3s ease-in-out infinite;}
 .matchstick.struck{animation:strikeMatch .5s ease forwards;}
 @keyframes strikeMatch{
   0%{transform:rotate(-6deg);}
@@ -113,10 +112,8 @@ button{font-family:'VT323',monospace;cursor:pointer;}
   80%{transform:rotate(-12deg);}
   100%{transform:rotate(-6deg);}
 }
-.matchstick.lit::before{background:#ffb84d;box-shadow:0 0 8px 3px #ffcf66,0 0 14px 6px #ff9933;animation:matchFlicker .3s ease-in-out infinite;}
-.matchstick.lit{cursor:grab;}
-.matchstick.dragging{cursor:grabbing;transition:none !important;z-index:50;}
-@keyframes matchFlicker{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
+.matchstick.dragging{cursor:grabbing;transition:none !important;z-index:50;animation:none;}
+@keyframes matchFlicker{0%,100%{filter:brightness(1);}50%{filter:brightness(1.12);}}
 #sparkWrap{position:absolute;inset:0;pointer-events:none;}
 .spark{position:absolute;width:4px;height:4px;background:#ffe066;box-shadow:0 0 4px 2px #ff9933;border-radius:50%;animation:sparkFly .5s ease-out forwards;}
 @keyframes sparkFly{0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.3);}}
@@ -265,10 +262,10 @@ button{font-family:'VT323',monospace;cursor:pointer;}
       <div class="flame hidden" id="flameMatch"></div>
       <div class="candle-target" id="candleTarget"></div>
     </div>
-    <p class="q light-q">Strike the match to light Celyn's candle! 🕯️</p>
+    <p class="q light-q">Strike the match to light the candle!</p>
     <div class="match-scene" id="matchScene">
-      <div class="matchbox"></div>
-      <div class="matchstick" id="matchstick"></div>
+      <img src="assets/matchbox.png" class="matchbox" alt="matchbox" draggable="false">
+      <img src="assets/match_unlit.png" class="matchstick" id="matchstick" alt="match" draggable="false">
       <div id="sparkWrap"></div>
     </div>
     <p class="strike-hint" id="strikeHint">tap or swipe the match</p>
@@ -368,8 +365,8 @@ function spawnSparks(){
     const dist=14+Math.random()*22;
     s.style.setProperty('--dx',(Math.cos(ang)*dist)+'px');
     s.style.setProperty('--dy',(Math.sin(ang)*dist-10)+'px');
-    s.style.left='58px';
-    s.style.top='42px';
+    s.style.left='164px';
+    s.style.top='44px';
     wrap.appendChild(s);
     setTimeout(()=>s.remove(),550);
   }
@@ -399,6 +396,7 @@ function doStrike(){
   setTimeout(()=>{
     const stick=document.getElementById('matchstick');
     stick.classList.remove('struck');
+    stick.src='assets/match_lit.png';
     stick.classList.add('lit');
     matchLit=true;
     const hint=document.getElementById('strikeHint');
