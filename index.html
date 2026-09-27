@@ -89,11 +89,11 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 @keyframes slideIn{to{opacity:1;transform:translateY(0);}}
 .scenic-card > *{grid-area:stack;}
 .scenic-card > img.banner{width:100%;height:100%;object-fit:cover;z-index:1;}
-.titlestack{z-index:3;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6% 8%;cursor:pointer;}
-.titlestack img{width:88%;max-width:230px;margin-top:-14%;opacity:0;transform:translateY(-30px) scale(.85);transition:opacity .5s cubic-bezier(.34,1.56,.64,1), transform .5s cubic-bezier(.34,1.56,.64,1);}
-.titlestack img:first-child{margin-top:0;}
-.titlestack img.show{opacity:1;transform:translateY(0) scale(1);}
-.titlestack img.sparkle.show{animation:sparklePop .6s ease .5s;}
+.titlestack{z-index:3;width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:6% 8%;cursor:pointer;position:relative;}
+.card-stack{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:75%;max-width:220px;}
+.card-stack img{width:100%;opacity:0;transform:translateY(-30px) scale(.85);transition:opacity .5s cubic-bezier(.34,1.56,.64,1), transform .5s cubic-bezier(.34,1.56,.64,1);}
+.card-stack img.show{opacity:1;transform:translateY(0) scale(1);}
+.card-stack img.sparkle.show{animation:sparklePop .6s ease .5s;}
 @keyframes sparklePop{0%,100%{filter:none;}40%{filter:drop-shadow(0 0 10px #f6c9d6) drop-shadow(0 0 4px #fff);}}
 .titlestack.dissolve{opacity:0;transform:scale(.92);transition:opacity .5s ease, transform .5s ease;pointer-events:none;}
 .tapHint{position:absolute;bottom:6%;left:50%;transform:translateX(-50%);font-size:.85rem;color:var(--rose);opacity:0;animation:blink 1.4s ease infinite;background:rgba(255,255,255,.6);padding:2px 10px;}
@@ -226,9 +226,11 @@ button{font-family:'VT323',monospace;cursor:pointer;}
     <img src="assets/banner_landscape.png" class="pixel banner" alt="">
     <div id="balloonLayer"></div>
     <div class="titlestack" id="titlestack">
-      <img src="assets/happy_card.png" class="pixel" alt="happy" id="w1">
-      <img src="assets/birthday_card.png" class="pixel" alt="birthday" id="w2">
-      <img src="assets/celyn_card.png" class="pixel sparkle" alt="Celyn!" id="w3">
+      <div class="card-stack">
+        <img src="assets/happy_card.png" class="pixel" alt="happy" id="w1">
+        <img src="assets/birthday_card.png" class="pixel" alt="birthday" id="w2">
+        <img src="assets/celyn_card.png" class="pixel sparkle" alt="Celyn!" id="w3">
+      </div>
       <p class="tapHint hidden" id="tapHint">tap</p>
       <img src="assets/cursor_hand.png" class="pixel cursorHint" id="cursorHint" alt="">
     </div>
