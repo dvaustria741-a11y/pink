@@ -204,6 +204,8 @@ document.getElementById('noBtn').addEventListener('click',()=>{
   showErr();
 });
 function showErr(){
+  const origBtnrow=document.querySelector('#gatekeeper .btnrow');
+  if(origBtnrow) origBtnrow.classList.add('hidden');
   const pop=document.createElement('div');
   pop.className='popup';
   const giveUp=noScale()<=0.2;
