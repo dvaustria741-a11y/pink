@@ -83,6 +83,41 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 .fill{height:100%;width:0;background:var(--rose);transition:width .4s linear;}
 .tap{margin-top:8px;text-decoration:underline;}
 
+/* prelude stages */
+.stage{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;width:100%;}
+#gatekeeper.dark-mode{background:#1a1220;transition:background .6s ease;}
+.light-q{color:#ffe4d6;}
+
+/* step 1: write your wish */
+#stageWish{position:relative;}
+.dialogue-box{background:#fff;border:3px solid var(--deep);box-shadow:5px 5px 0 var(--rose);padding:24px 20px;max-width:320px;width:90%;display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;}
+.dialogue-text{font-size:1.05rem;line-height:1.4;}
+.wish-input{width:100%;font-family:'VT323',monospace;font-size:1.1rem;padding:10px;border:3px solid var(--deep);background:var(--cream);color:var(--ink);}
+.wish-input:focus{outline:2px solid var(--rose);}
+#wishParticles{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.wish-particle{position:absolute;bottom:42%;width:6px;height:6px;background:#fff8dc;box-shadow:0 0 6px 2px #ffe066,0 0 2px #fff;border-radius:1px;animation:wishRise 1.3s ease-out forwards;}
+@keyframes wishRise{0%{opacity:0;transform:translateY(0) scale(.4);}20%{opacity:1;}100%{opacity:0;transform:translateY(-150px) scale(1.2);}}
+
+/* step 2: strike the match */
+.match-scene{position:relative;width:220px;height:110px;touch-action:none;}
+.matchbox{position:absolute;left:10px;bottom:10px;width:90px;height:46px;background:#8a5a34;border:3px solid #4a2f1a;box-shadow:2px 2px 0 rgba(0,0,0,.35);}
+.matchbox::after{content:"";position:absolute;left:6px;right:6px;top:8px;height:10px;background:repeating-linear-gradient(90deg,#c98b4f 0 4px,#a86a35 4px 8px);}
+.matchstick{position:absolute;left:60px;bottom:48px;width:6px;height:56px;background:#d8b48a;border-radius:2px;transform-origin:50% 100%;}
+.matchstick::before{content:"";position:absolute;top:-8px;left:-3px;width:12px;height:14px;background:#c1443a;border-radius:40% 40% 50% 50%;transition:background .15s ease;}
+.matchstick.struck{animation:strikeMatch .5s ease forwards;}
+@keyframes strikeMatch{
+  0%{transform:rotate(0) translate(0,0);}
+  30%{transform:rotate(-18deg) translate(-14px,-4px);}
+  55%{transform:rotate(10deg) translate(10px,2px);}
+  100%{transform:rotate(-4deg) translate(-6px,-2px);}
+}
+.matchstick.lit::before{background:#ffb84d;box-shadow:0 0 8px 3px #ffcf66,0 0 14px 6px #ff9933;animation:matchFlicker .3s ease-in-out infinite;}
+@keyframes matchFlicker{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
+#sparkWrap{position:absolute;inset:0;pointer-events:none;}
+.spark{position:absolute;width:4px;height:4px;background:#ffe066;box-shadow:0 0 4px 2px #ff9933;border-radius:50%;animation:sparkFly .5s ease-out forwards;}
+@keyframes sparkFly{0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.3);}}
+.strike-hint{font-size:.85rem;color:#ffd9c2;opacity:.85;animation:blink 1.4s ease infinite;}
+
 /* dashboard */
 #dashboard{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:22px;position:relative;z-index:3;}
 .scenic-card{position:relative;display:grid;grid-template-areas:"stack";width:92%;max-width:400px;height:70dvh;max-height:680px;border:4px solid var(--deep);box-shadow:6px 6px 0 var(--rose);overflow:hidden;background:#eee;opacity:0;transform:translateY(-16px);animation:slideIn .6s ease forwards;}
@@ -208,17 +243,44 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 <div id="cameraFlash"></div>
 
 <div id="gatekeeper">
-  <div class="cakeStage" id="cakeStage">
-    <img src="assets/cake_lit.png" class="pixel cake" id="cakeImg" alt="cake">
-    <div class="flame" id="flame"></div>
-    <div id="smokeWrap"></div>
+
+  <div class="stage" id="stageWish">
+    <div class="dialogue-box">
+      <p class="dialogue-text">Before we bring out the cake, write down your wish for this year... ✨</p>
+      <input type="text" id="wishInput" class="wish-input" maxlength="80" placeholder="I wish for...">
+      <button class="pxbtn" id="lockWishBtn">🔒 Lock In Wish</button>
+    </div>
+    <div id="wishParticles"></div>
   </div>
-  <p class="q" id="candleQ">Make a wish &amp; blow out the candle! 🎂</p>
-  <div class="btnrow" id="blowBtnRow">
-    <button class="pxbtn" id="micBtn"> Enable Mic to Blow</button>
-    <button class="pxbtn" id="tapBtn"> Tap to Blow Out</button>
+
+  <div class="stage hidden" id="stageMatch">
+    <div class="cakeStage" id="cakeStageMatch">
+      <img src="assets/cake_off.png" class="pixel cake" id="cakeImgMatch" alt="cake">
+      <div class="flame hidden" id="flameMatch"></div>
+    </div>
+    <p class="q light-q">Strike the match to light Celyn's candle! 🕯️</p>
+    <div class="match-scene" id="matchScene">
+      <div class="matchbox"></div>
+      <div class="matchstick" id="matchstick"></div>
+      <div id="sparkWrap"></div>
+    </div>
+    <p class="strike-hint">tap or swipe the match</p>
   </div>
-  <p id="successBanner" class="success-banner hidden">May all your wishes come true, Celyn! 🎉✨</p>
+
+  <div class="stage hidden" id="stageBlow">
+    <div class="cakeStage" id="cakeStage">
+      <img src="assets/cake_lit.png" class="pixel cake" id="cakeImg" alt="cake">
+      <div class="flame" id="flame"></div>
+      <div id="smokeWrap"></div>
+    </div>
+    <p class="q" id="candleQ">Make a wish &amp; blow out the candle! 🎂</p>
+    <div class="btnrow" id="blowBtnRow">
+      <button class="pxbtn" id="micBtn"> Enable Mic to Blow</button>
+      <button class="pxbtn" id="tapBtn"> Tap to Blow Out</button>
+    </div>
+    <p id="successBanner" class="success-banner hidden">May all your wishes come true, Celyn! 🎉✨</p>
+  </div>
+
 </div>
 
 <div id="overlay" class="hidden"><div class="modal" id="modalBox"></div></div>
@@ -261,6 +323,79 @@ for(let i=0;i<16;i++){
 
 /* ---------- gatekeeper: blow out the candle ---------- */
 let blownAlready=false;
+
+/* step 1: write your wish */
+function spawnWishParticles(){
+  const wrap=document.getElementById('wishParticles');
+  for(let i=0;i<20;i++){
+    const p=document.createElement('div');
+    p.className='wish-particle';
+    p.style.left=(20+Math.random()*60)+'%';
+    p.style.animationDelay=(Math.random()*.4)+'s';
+    p.style.animationDuration=(1+Math.random()*.6)+'s';
+    wrap.appendChild(p);
+    setTimeout(()=>p.remove(),2200);
+  }
+}
+function lockInWish(){
+  const box=document.querySelector('#stageWish .dialogue-box');
+  box.classList.add('fadeOut');
+  spawnWishParticles();
+  setTimeout(()=>{
+    document.getElementById('stageWish').classList.add('hidden');
+    document.getElementById('stageMatch').classList.remove('hidden');
+    document.getElementById('gatekeeper').classList.add('dark-mode');
+  }, 1300);
+}
+document.getElementById('lockWishBtn').addEventListener('click', lockInWish);
+
+/* step 2: strike the match to light the candle */
+let matchStruck=false;
+function spawnSparks(){
+  const wrap=document.getElementById('sparkWrap');
+  for(let i=0;i<12;i++){
+    const s=document.createElement('div');
+    s.className='spark';
+    const ang=Math.random()*Math.PI*2;
+    const dist=14+Math.random()*22;
+    s.style.setProperty('--dx',(Math.cos(ang)*dist)+'px');
+    s.style.setProperty('--dy',(Math.sin(ang)*dist-10)+'px');
+    s.style.left='58px';
+    s.style.top='42px';
+    wrap.appendChild(s);
+    setTimeout(()=>s.remove(),550);
+  }
+}
+function lightCandle(){
+  document.getElementById('cakeImgMatch').src='assets/cake_lit.png';
+  document.getElementById('flameMatch').classList.remove('hidden');
+  setTimeout(()=>{
+    document.getElementById('stageMatch').classList.add('fadeOut');
+    document.getElementById('gatekeeper').classList.remove('dark-mode');
+    setTimeout(()=>{
+      document.getElementById('stageMatch').classList.add('hidden');
+      document.getElementById('stageMatch').classList.remove('fadeOut');
+      document.getElementById('stageBlow').classList.remove('hidden');
+    }, 500);
+  }, 900);
+}
+function doStrike(){
+  if(matchStruck) return;
+  matchStruck=true;
+  document.getElementById('matchstick').classList.add('struck');
+  spawnSparks();
+  setTimeout(()=>{
+    document.getElementById('matchstick').classList.add('lit');
+    lightCandle();
+  }, 420);
+}
+document.getElementById('matchScene').addEventListener('click', doStrike);
+let matchDragX=null;
+document.getElementById('matchstick').addEventListener('pointerdown', e=>{ matchDragX=e.clientX; });
+document.getElementById('matchstick').addEventListener('pointerup', e=>{
+  if(matchDragX!==null && Math.abs(e.clientX-matchDragX)>18) doStrike();
+  matchDragX=null;
+});
 
 function spawnSmoke(){
   const wrap=document.getElementById('smokeWrap');
