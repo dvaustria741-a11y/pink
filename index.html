@@ -102,21 +102,27 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 .match-scene{position:relative;width:220px;height:110px;touch-action:none;}
 .matchbox{position:absolute;left:10px;bottom:10px;width:90px;height:46px;background:#8a5a34;border:3px solid #4a2f1a;box-shadow:2px 2px 0 rgba(0,0,0,.35);}
 .matchbox::after{content:"";position:absolute;left:6px;right:6px;top:8px;height:10px;background:repeating-linear-gradient(90deg,#c98b4f 0 4px,#a86a35 4px 8px);}
-.matchstick{position:absolute;left:60px;bottom:48px;width:6px;height:56px;background:#d8b48a;border-radius:2px;transform-origin:50% 100%;}
+.matchstick{position:absolute;left:60px;bottom:48px;width:6px;height:56px;background:#d8b48a;border-radius:2px;transform-origin:50% 100%;transform:rotate(-6deg);touch-action:none;}
 .matchstick::before{content:"";position:absolute;top:-8px;left:-3px;width:12px;height:14px;background:#c1443a;border-radius:40% 40% 50% 50%;transition:background .15s ease;}
 .matchstick.struck{animation:strikeMatch .5s ease forwards;}
 @keyframes strikeMatch{
-  0%{transform:rotate(0) translate(0,0);}
-  30%{transform:rotate(-18deg) translate(-14px,-4px);}
-  55%{transform:rotate(10deg) translate(10px,2px);}
-  100%{transform:rotate(-4deg) translate(-6px,-2px);}
+  0%{transform:rotate(-6deg);}
+  20%{transform:rotate(12deg);}
+  40%{transform:rotate(-16deg);}
+  60%{transform:rotate(10deg);}
+  80%{transform:rotate(-12deg);}
+  100%{transform:rotate(-6deg);}
 }
 .matchstick.lit::before{background:#ffb84d;box-shadow:0 0 8px 3px #ffcf66,0 0 14px 6px #ff9933;animation:matchFlicker .3s ease-in-out infinite;}
+.matchstick.lit{cursor:grab;}
+.matchstick.dragging{cursor:grabbing;transition:none !important;z-index:50;}
 @keyframes matchFlicker{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
 #sparkWrap{position:absolute;inset:0;pointer-events:none;}
 .spark{position:absolute;width:4px;height:4px;background:#ffe066;box-shadow:0 0 4px 2px #ff9933;border-radius:50%;animation:sparkFly .5s ease-out forwards;}
 @keyframes sparkFly{0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.3);}}
 .strike-hint{font-size:.85rem;color:#ffd9c2;opacity:.85;animation:blink 1.4s ease infinite;}
+.strike-hint.fadeOut{animation:none;}
+.candle-target{position:absolute;left:50%;top:22%;width:50px;height:74px;transform:translate(-50%,0);pointer-events:none;}
 
 /* dashboard */
 #dashboard{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:22px;position:relative;z-index:3;}
@@ -255,8 +261,9 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 
   <div class="stage hidden" id="stageMatch">
     <div class="cakeStage" id="cakeStageMatch">
-      <img src="assets/cake_off.png" class="pixel cake" id="cakeImgMatch" alt="cake">
+      <img src="assets/cake_unlit.png" class="pixel cake" id="cakeImgMatch" alt="cake">
       <div class="flame hidden" id="flameMatch"></div>
+      <div class="candle-target" id="candleTarget"></div>
     </div>
     <p class="q light-q">Strike the match to light Celyn's candle! 🕯️</p>
     <div class="match-scene" id="matchScene">
@@ -264,7 +271,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
       <div class="matchstick" id="matchstick"></div>
       <div id="sparkWrap"></div>
     </div>
-    <p class="strike-hint">tap or swipe the match</p>
+    <p class="strike-hint" id="strikeHint">tap or swipe the match</p>
   </div>
 
   <div class="stage hidden" id="stageBlow">
@@ -349,8 +356,9 @@ function lockInWish(){
 }
 document.getElementById('lockWishBtn').addEventListener('click', lockInWish);
 
-/* step 2: strike the match to light the candle */
+/* step 2: strike the match, then drag it to the candle to light it */
 let matchStruck=false;
+let matchLit=false;
 function spawnSparks(){
   const wrap=document.getElementById('sparkWrap');
   for(let i=0;i<12;i++){
@@ -367,9 +375,13 @@ function spawnSparks(){
   }
 }
 function lightCandle(){
+  const stick=document.getElementById('matchstick');
+  stick.style.transition='opacity .25s ease';
+  stick.style.opacity='0';
   document.getElementById('cakeImgMatch').src='assets/cake_lit.png';
   document.getElementById('flameMatch').classList.remove('hidden');
   setTimeout(()=>{
+    stick.remove();
     document.getElementById('stageMatch').classList.add('fadeOut');
     document.getElementById('gatekeeper').classList.remove('dark-mode');
     setTimeout(()=>{
@@ -385,17 +397,76 @@ function doStrike(){
   document.getElementById('matchstick').classList.add('struck');
   spawnSparks();
   setTimeout(()=>{
-    document.getElementById('matchstick').classList.add('lit');
-    lightCandle();
+    const stick=document.getElementById('matchstick');
+    stick.classList.remove('struck');
+    stick.classList.add('lit');
+    matchLit=true;
+    const hint=document.getElementById('strikeHint');
+    hint.textContent='now drag the match to the candle';
+    hint.classList.add('fadeOut');
+    requestAnimationFrame(()=>hint.classList.remove('fadeOut'));
   }, 420);
 }
 document.getElementById('matchScene').addEventListener('click', doStrike);
 let matchDragX=null;
-document.getElementById('matchstick').addEventListener('pointerdown', e=>{ matchDragX=e.clientX; });
+document.getElementById('matchstick').addEventListener('pointerdown', e=>{
+  if(!matchLit){ matchDragX=e.clientX; return; }
+  startMatchDrag(e);
+});
 document.getElementById('matchstick').addEventListener('pointerup', e=>{
   if(matchDragX!==null && Math.abs(e.clientX-matchDragX)>18) doStrike();
   matchDragX=null;
 });
+
+/* dragging the lit match up to the candle */
+let dragging=false, dragOffX=0, dragOffY=0;
+function startMatchDrag(e){
+  const stick=document.getElementById('matchstick');
+  dragging=true;
+  stick.setPointerCapture(e.pointerId);
+  stick.classList.add('dragging');
+  const rect=stick.getBoundingClientRect();
+  dragOffX=e.clientX-rect.left;
+  dragOffY=e.clientY-rect.top;
+  stick.style.transform='none';
+  stick.style.position='fixed';
+  stick.style.left=rect.left+'px';
+  stick.style.top=rect.top+'px';
+  stick.style.bottom='auto';
+  stick.addEventListener('pointermove', moveMatchDrag);
+  stick.addEventListener('pointerup', endMatchDrag, {once:true});
+  stick.addEventListener('pointercancel', endMatchDrag, {once:true});
+}
+function moveMatchDrag(e){
+  if(!dragging) return;
+  const stick=document.getElementById('matchstick');
+  stick.style.left=(e.clientX-dragOffX)+'px';
+  stick.style.top=(e.clientY-dragOffY)+'px';
+}
+function nearCandle(){
+  const stick=document.getElementById('matchstick');
+  const target=document.getElementById('candleTarget');
+  const sr=stick.getBoundingClientRect();
+  const tr=target.getBoundingClientRect();
+  return !(sr.right<tr.left||sr.left>tr.right||sr.bottom<tr.top||sr.top>tr.bottom);
+}
+function endMatchDrag(e){
+  dragging=false;
+  const stick=document.getElementById('matchstick');
+  stick.classList.remove('dragging');
+  stick.removeEventListener('pointermove', moveMatchDrag);
+  if(nearCandle()){
+    lightCandle();
+  }else{
+    stick.style.transition='left .3s ease, top .3s ease';
+    stick.style.position='';
+    stick.style.left='';
+    stick.style.top='';
+    stick.style.bottom='';
+    stick.style.transform='';
+    setTimeout(()=>{ stick.style.transition=''; }, 320);
+  }
+}
 
 function spawnSmoke(){
   const wrap=document.getElementById('smokeWrap');
