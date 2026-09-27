@@ -233,19 +233,22 @@ function blowCandle(){
   if(q) q.classList.add('fadeOut');
   if(btnrow) btnrow.classList.add('fadeOut');
   setTimeout(()=>{
-    try{ new Audio('assets/audio/blow_candle.mp3').play(); }catch(e){}
-    const blackout=document.createElement('div');
-    blackout.id='blackout';
-    document.body.appendChild(blackout);
-    requestAnimationFrame(()=>{ blackout.style.opacity='1'; });
+    /* only the cake is visible now — hold for 2s of quiet before the blow sound */
     setTimeout(()=>{
-      document.getElementById('gatekeeper').classList.add('hidden');
-      document.getElementById('dashboard').classList.remove('hidden');
-      revealDashboard();
-      blackout.style.transition='none';
-      blackout.style.opacity='0';
-      setTimeout(()=>blackout.remove(), 50);
-    },2400);
+      try{ new Audio('assets/audio/blow_candle.mp3').play(); }catch(e){}
+      const blackout=document.createElement('div');
+      blackout.id='blackout';
+      document.body.appendChild(blackout);
+      requestAnimationFrame(()=>{ blackout.style.opacity='1'; });
+      setTimeout(()=>{
+        document.getElementById('gatekeeper').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        revealDashboard();
+        blackout.style.transition='none';
+        blackout.style.opacity='0';
+        setTimeout(()=>blackout.remove(), 50);
+      },2400);
+    },2000);
   },550);
 }
 
