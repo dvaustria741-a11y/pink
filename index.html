@@ -91,6 +91,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 /* music */
 .playlist-wrap{position:relative;line-height:0;}
 .playlist-wrap img.wide{display:block;}
+.playlist-note{line-height:1.4;text-align:center;font-size:1rem;color:var(--rose);margin-top:12px;padding:0 6px;}
 .track-btn{position:absolute;left:88.8%;width:8%;height:auto;transform:translate(-50%,-50%);background:none;border:none;padding:0;line-height:0;}
 .track-btn img{width:100%;height:auto;display:block;}
 .track-btn.playing img{animation:pulse .8s ease-in-out infinite;}
@@ -410,7 +411,8 @@ const templates={
     <div class="playlist-wrap">
       <img class="wide pixel" src="assets/playlist_card.png" alt="playlist">
       ${trackPositions.map((top,i)=>`<button class="track-btn" id="tbtn${i}" style="top:${top}%" aria-label="play"><img class="pixel" id="ticon${i}" src="assets/btn_play.png" alt="play"></button>`).join('')}
-    </div>`,
+    </div>
+    <p class="playlist-note">pasensya random lang itong mga music baka kasi mahalata mo kapag tinanong kuna may ginagawa ako na ganito HAHAHA</p>`,
   gallery:()=>`
     <h2>your Seasons</h2>
     <p style="text-align:center;font-style:italic;margin-bottom:14px;">cheers to every version of you</p>
