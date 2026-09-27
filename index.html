@@ -103,7 +103,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 .titlestack .cursorHint{position:absolute;right:18%;bottom:24%;top:auto;left:auto;width:11%;max-width:42px;margin:0;opacity:0;pointer-events:none;transform-origin:75% 15%;transition:none;}
 .titlestack .cursorHint.show{opacity:1;animation:cursorTap 1.2s ease-in-out infinite;}
 @keyframes cursorTap{0%,100%{transform:translateY(0) scale(1);}45%{transform:translateY(10px) scale(.88);}60%{transform:translateY(10px) scale(.88);}}
-#balloonLayer{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden;}
+#balloonLayer{position:fixed;inset:0;pointer-events:none;z-index:6;overflow:hidden;}
 .balloon{position:absolute;bottom:-90px;animation:balloonRise 3s ease-out forwards;}
 .balloon svg{display:block;filter:drop-shadow(2px 2px 0 rgba(0,0,0,.12));}
 @keyframes balloonRise{
@@ -204,6 +204,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 
 <div id="particles"></div>
 <div id="confettiLayer"></div>
+<div id="balloonLayer"></div>
 <div id="cameraFlash"></div>
 
 <div id="gatekeeper">
@@ -225,7 +226,6 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 <div id="dashboard" class="hidden">
   <div class="scenic-card">
     <img src="assets/banner_landscape.png" class="pixel banner" alt="">
-    <div id="balloonLayer"></div>
     <div class="titlestack" id="titlestack">
       <div class="card-stack">
         <img src="assets/happy_card.png" class="pixel" alt="happy" id="w1">
@@ -434,7 +434,7 @@ function balloonSVG(color){
 }
 function spawnBalloons(){
   const layer=document.getElementById('balloonLayer');
-  const count=4+Math.floor(Math.random()*3);
+  const count=6+Math.floor(Math.random()*4);
   for(let i=0;i<count;i++){
     const b=document.createElement('div');
     b.className='balloon';
