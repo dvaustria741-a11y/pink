@@ -114,10 +114,12 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 .typewriter.done{border-right:none;}
 
 /* traits */
-.frame-photo{width:140px;display:block;margin:0 auto 16px;}
-.traits-scene{display:flex;align-items:flex-end;justify-content:center;gap:2px;margin:0 auto 4px;}
-.traits-scene .side{width:64px;}
-.badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.frame-photo{width:140px;display:block;margin:0 auto 16px;position:relative;z-index:2;}
+.traits-scene{display:flex;align-items:flex-end;justify-content:center;gap:0;margin:0 auto 4px;}
+.traits-scene .side{width:72px;position:relative;z-index:1;}
+.traits-scene .side.left{margin-right:-22px;}
+.traits-scene .side.right{margin-left:-22px;}
+.badges{display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:center;padding:6px 0;}
 .badge{background:var(--pink);border:2px solid var(--deep);padding:6px 12px;font-size:.9rem;color:var(--deep);}
 
 /* camera flash */
@@ -425,12 +427,16 @@ const templates={
     </div>`,
   traits:()=>`
     <div class="traits-scene">
-      <img class="pixel side" src="assets/cake.png" alt="">
+      <img class="pixel side left" src="assets/cake.png" alt="">
       <img class="frame-photo pixel" src="assets/celyn_frame.png" alt="Celyn">
-      <img class="pixel side" src="assets/flower_bouquet.png" alt="">
+      <img class="pixel side right" src="assets/flower_bouquet.png" alt="">
     </div>
     <div class="badges">
-      ${['kind','gentle','supportive','creative','caring','patient','humble','hardworking','adorable'].map(t=>`<span class="badge">${t}</span>`).join('')}
+      ${['kind','supportive','creative','caring','patient','hardworking','adorable'].map((t,i)=>{
+        const rots=[-7,5,-4,6,-5,4,-6];
+        const lifts=[2,-4,3,-2,4,-3,2];
+        return `<span class="badge" style="transform:rotate(${rots[i%rots.length]}deg) translateY(${lifts[i%lifts.length]}px)">${t}</span>`;
+      }).join('')}
     </div>`,
   message:()=>`
     <h2>Leave me a message 💌</h2>
