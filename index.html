@@ -119,6 +119,10 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 
 /* camera flash */
 #cameraFlash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:999;}
+
+/* blow-candle transition */
+.fadeOut{opacity:0 !important;transition:opacity .5s ease;pointer-events:none;}
+#blackout{position:fixed;inset:0;background:#000;opacity:0;z-index:998;pointer-events:none;transition:opacity .4s ease;}
 </style>
 </head>
 <body>
@@ -181,7 +185,7 @@ const pleas=[
   "please please please...\nlook, the No button is tiny now!"
 ];
 function noScale(){ return Math.max(1-noCount*0.15, 0.18); }
-function yesScale(){ return Math.min(1+noCount*0.2, 2.6); }
+function yesScale(){ return noCount<=1 ? 1 : Math.min(1+(noCount-1)*0.2, 2.6); }
 function updateBtnScale(){
   const yb=document.getElementById('yesBtn'), nb=document.getElementById('noBtn');
   yb.style.setProperty('--scale', yesScale());
@@ -209,7 +213,7 @@ function showErr(){
       ${giveUp?'':`<button class="pxbtn go-no" style="--scale:${noScale()}">No</button>`}
     </div>`;
   document.body.appendChild(pop);
-  pop.querySelector('.go-yes').addEventListener('click',()=>{ pop.remove(); startLoad(); },{once:true});
+  pop.querySelector('.go-yes').addEventListener('click',()=>{ pop.remove(); blowCandle(); },{once:true});
   const popNo=pop.querySelector('.go-no');
   if(popNo){
     popNo.addEventListener('click',()=>{
@@ -220,17 +224,27 @@ function showErr(){
     },{once:true});
   }
 }
-document.getElementById('yesBtn').addEventListener('click',startLoad);
-function startLoad(){
-  document.getElementById('gatekeeper').innerHTML='<div class="bar"><div class="fill" id="fill"></div></div><p class="tap" id="tapLoad">TAP TO LOAD</p>';
-  document.getElementById('tapLoad').addEventListener('click',()=>{
-    document.getElementById('fill').style.width='100%';
+document.getElementById('yesBtn').addEventListener('click',blowCandle);
+function blowCandle(){
+  const q=document.querySelector('#gatekeeper .q');
+  const btnrow=document.querySelector('#gatekeeper .btnrow');
+  if(q) q.classList.add('fadeOut');
+  if(btnrow) btnrow.classList.add('fadeOut');
+  setTimeout(()=>{
+    try{ new Audio('assets/audio/blow_candle.mp3').play(); }catch(e){}
+    const blackout=document.createElement('div');
+    blackout.id='blackout';
+    document.body.appendChild(blackout);
+    requestAnimationFrame(()=>{ blackout.style.opacity='1'; });
     setTimeout(()=>{
       document.getElementById('gatekeeper').classList.add('hidden');
       document.getElementById('dashboard').classList.remove('hidden');
       revealDashboard();
-    },500);
-  },{once:true});
+      blackout.style.transition='none';
+      blackout.style.opacity='0';
+      setTimeout(()=>blackout.remove(), 50);
+    },2400);
+  },550);
 }
 
 /* ---------- title drop, then tap-to-continue ---------- */
