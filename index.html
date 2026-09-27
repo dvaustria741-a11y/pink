@@ -49,8 +49,8 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 .tapHint{position:absolute;bottom:6%;left:50%;transform:translateX(-50%);font-size:.85rem;color:var(--rose);opacity:0;animation:blink 1.4s ease infinite;background:rgba(255,255,255,.6);padding:2px 10px;}
 .tapHint.show{opacity:.85;}
 @keyframes blink{0%,100%{opacity:.85;}50%{opacity:.25;}}
-.cursorHint{position:absolute;right:5%;bottom:11%;width:16%;max-width:58px;opacity:0;pointer-events:none;transform-origin:75% 15%;}
-.cursorHint.show{opacity:1;animation:cursorTap 1.2s ease-in-out infinite;}
+.titlestack .cursorHint{position:absolute;right:5%;bottom:11%;top:auto;left:auto;width:11%;max-width:40px;margin:0;opacity:0;pointer-events:none;transform-origin:75% 15%;transition:none;}
+.titlestack .cursorHint.show{opacity:1;animation:cursorTap 1.2s ease-in-out infinite;}
 @keyframes cursorTap{0%,100%{transform:translateY(0) scale(1);}45%{transform:translateY(10px) scale(.88);}60%{transform:translateY(10px) scale(.88);}}
 #balloonLayer{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden;}
 .balloon{position:absolute;bottom:-90px;animation:balloonRise 3s ease-out forwards;}
