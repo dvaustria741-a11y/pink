@@ -80,14 +80,12 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 .modal h2{font-size:1rem;color:var(--deep);text-align:center;margin-bottom:14px;}
 
 /* music */
-.track{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--pink);}
-.track .info{flex:1;}
-.track .info b{display:block;font-size:1rem;}
-.track img{width:44px;height:44px;}
-.vinyl{width:36px;height:36px;border-radius:50%;background:#222;position:relative;flex:0 0 auto;}
-.vinyl.spin{animation:spin 2s linear infinite;}
-.vinyl::after{content:"";position:absolute;inset:35%;background:var(--rose);border-radius:50%;}
-@keyframes spin{to{transform:rotate(360deg);}}
+.playlist-wrap{position:relative;line-height:0;}
+.playlist-wrap img.wide{display:block;}
+.track-btn{position:absolute;left:88.8%;width:8%;height:auto;transform:translate(-50%,-50%);background:none;border:none;padding:0;line-height:0;}
+.track-btn img{width:100%;height:auto;display:block;}
+.track-btn.playing img{animation:pulse .8s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
 
 /* gallery */
 .gallery-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
@@ -277,8 +275,10 @@ function openModal(name){
 
 const templates={
   music:()=>`
-    <img class="wide pixel" src="assets/playlist_card.png" alt="playlist">
-    <div id="trackList"></div>`,
+    <div class="playlist-wrap">
+      <img class="wide pixel" src="assets/playlist_card.png" alt="playlist">
+      ${trackPositions.map((top,i)=>`<button class="track-btn" id="tbtn${i}" style="top:${top}%" aria-label="play"><img class="pixel" id="ticon${i}" src="assets/btn_play.png" alt="play"></button>`).join('')}
+    </div>`,
   gallery:()=>`
     <h2>your Seasons</h2>
     <p style="text-align:center;font-style:italic;margin-bottom:14px;">cheers to every version of you</p>
@@ -308,18 +308,12 @@ const tracks=[
   {title:"Ripples",artist:"beabadoobee",src:"assets/audio/4_ripples.mp3"},
   {title:"About You",artist:"The 1975",src:"assets/audio/5_about_you.mp3"}
 ];
+const trackPositions=[28.7,42.55,56.5,70.2,84.4];
 let audioEl=null,currentIdx=null;
 function initMusic(){
   audioEl=new Audio();
-  const list=document.getElementById('trackList');
-  list.innerHTML=tracks.map((t,i)=>`
-    <div class="track" data-i="${i}">
-      <div class="vinyl" id="vinyl${i}"></div>
-      <div class="info"><b>${t.title}</b>${t.artist}</div>
-      <img class="pixel toggle" id="toggle${i}" src="assets/btn_play.png" alt="play" style="cursor:pointer">
-    </div>`).join('');
   tracks.forEach((t,i)=>{
-    document.getElementById('toggle'+i).addEventListener('click',()=>toggleTrack(i));
+    document.getElementById('tbtn'+i).addEventListener('click',()=>toggleTrack(i));
   });
   audioEl.addEventListener('ended',()=>resetIcon(currentIdx));
 }
@@ -334,15 +328,17 @@ function toggleTrack(i){
   audioEl.src=tracks[i].src;
   audioEl.play();
   currentIdx=i;
-  document.getElementById('toggle'+i).src='assets/btn_pause.png';
-  document.getElementById('vinyl'+i).classList.add('spin');
+  const btn=document.getElementById('tbtn'+i);
+  document.getElementById('ticon'+i).src='assets/btn_pause.png';
+  btn.classList.add('playing');
+  btn.setAttribute('aria-label','pause');
 }
 function resetIcon(i){
   if(i===null) return;
-  const tg=document.getElementById('toggle'+i);
-  const vy=document.getElementById('vinyl'+i);
-  if(tg) tg.src='assets/btn_play.png';
-  if(vy) vy.classList.remove('spin');
+  const btn=document.getElementById('tbtn'+i);
+  const icon=document.getElementById('ticon'+i);
+  if(icon) icon.src='assets/btn_play.png';
+  if(btn){btn.classList.remove('playing');btn.setAttribute('aria-label','play');}
 }
 </script>
 </body>
