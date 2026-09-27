@@ -137,7 +137,14 @@ button{font-family:'VT323',monospace;cursor:pointer;}
   100%{opacity:1;transform:translate(0,0) scale(1);}
 }
 .badges{display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:center;padding:6px 0;}
-.badge{background:var(--pink);border:2px solid var(--deep);padding:6px 12px;font-size:.9rem;color:var(--deep);}
+.badge{background:var(--pink);border:2px solid var(--deep);padding:6px 12px;font-size:.9rem;color:var(--deep);--rot:0deg;--lift:0px;opacity:0;transform:scale(.3) rotate(calc(var(--rot) * -2)) translateY(24px);}
+.badge.show{animation:badgePop .6s steps(6) forwards;}
+@keyframes badgePop{
+  0%{opacity:0;transform:scale(.3) rotate(calc(var(--rot) * -2)) translateY(24px);}
+  40%{opacity:1;transform:scale(1.2) rotate(calc(var(--rot) * -1)) translateY(-5px);}
+  70%{opacity:1;transform:scale(.9) rotate(calc(var(--rot) * 1.2)) translateY(2px);}
+  100%{opacity:1;transform:scale(1) rotate(var(--rot)) translateY(var(--lift));}
+}
 
 /* camera flash */
 #cameraFlash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:999;}
@@ -426,6 +433,9 @@ function initTraits(){
   document.querySelectorAll('.traits-scene .side').forEach((el,i)=>{
     setTimeout(()=>el.classList.add('crawl'), 200+i*220);
   });
+  document.querySelectorAll('.badges .badge').forEach((el,i)=>{
+    setTimeout(()=>el.classList.add('show'), 700+i*110);
+  });
 }
 
 const templates={
@@ -459,7 +469,7 @@ const templates={
       ${['kind','supportive','creative','caring','patient','hardworking','adorable'].map((t,i)=>{
         const rots=[-7,5,-4,6,-5,4,-6];
         const lifts=[2,-4,3,-2,4,-3,2];
-        return `<span class="badge" style="transform:rotate(${rots[i%rots.length]}deg) translateY(${lifts[i%lifts.length]}px)">${t}</span>`;
+        return `<span class="badge" style="--rot:${rots[i%rots.length]}deg;--lift:${lifts[i%lifts.length]}px">${t}</span>`;
       }).join('')}
     </div>`,
   message:()=>`
