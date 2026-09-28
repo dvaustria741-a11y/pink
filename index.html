@@ -1071,7 +1071,6 @@ function returnEnvelope(){
     o.remove();
     plStage=0; plReturning=false;
     document.getElementById('pupImg').src='assets/puppy.png'; /* envelope is back in its mouth */
-    document.getElementById('pupPrompt').classList.remove('gone');
   },850);
 }
 function openPuppyLetter(){
@@ -1144,7 +1143,6 @@ function plEnvTap(){
 document.getElementById('pupBtn').addEventListener('click',openPuppyLetter);
 function openGift(){
   giftBtn.disabled=true;
-  setTimeout(spawnPuppy,900);
   flashbang(()=>{
     giftImg.classList.remove('shake1','shake2');
     giftImg.src='assets/gift_box_open.png';
@@ -1299,8 +1297,12 @@ function cameraFlash(cb){
     });
   });
 }
-function closeModal(){if(typeof closeCakeFrame==='function') closeCakeFrame();if(typeof closeFlowerFrame==='function') closeFlowerFrame();overlay.classList.add('hidden');galleryTimers.forEach(clearTimeout);galleryTimers=[];if(messagePending){messagePending=false;lockIcons();setTimeout(flyMessageIcon,400);}musicVol=1;applyVol();modalBox.innerHTML='';if(typeTimer){clearInterval(typeTimer);typeTimer=null;}}
+function closeModal(){if(currentModalName==='letter' && !puppySpawned){puppySpawned=true;setTimeout(spawnPuppy,700);} /* the puppy shows up after she leaves the Letter */
+  currentModalName=null;
+  if(typeof closeCakeFrame==='function') closeCakeFrame();if(typeof closeFlowerFrame==='function') closeFlowerFrame();overlay.classList.add('hidden');galleryTimers.forEach(clearTimeout);galleryTimers=[];if(messagePending){messagePending=false;lockIcons();setTimeout(flyMessageIcon,400);}musicVol=1;applyVol();modalBox.innerHTML='';if(typeTimer){clearInterval(typeTimer);typeTimer=null;}}
+let currentModalName=null, puppySpawned=false;
 function openModal(name){
+  currentModalName=name;
   modalBox.innerHTML='<button class="closeX" onclick="closeModal()">X</button>'+templates[name]();
   overlay.classList.remove('hidden');
   if(name==='letter'){ musicVol=0.25; applyVol(); } /* duck the music while reading the letter */
