@@ -222,6 +222,20 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 .gframe:nth-child(3){--rot:5deg;margin-top:10px;animation-delay:.7s;}
 .gframe:nth-child(4){--rot:-6deg;margin-top:-10px;animation-delay:1s;}
 @keyframes polaroidIn{0%{opacity:0;transform:scale(.6) rotate(0deg);}100%{opacity:1;transform:scale(1) rotate(var(--rot));}}
+/* animated caption: letters pop in one by one, then ripple gently */
+.cheers{text-align:center;font-style:italic;margin-bottom:14px;}
+.cheers .cw{display:inline-block;white-space:nowrap;}
+.cheers .cl{display:inline-block;opacity:0;animation:cheerIn .45s ease-out forwards,cheerWave 2.6s ease-in-out infinite;animation-delay:calc(var(--i)*55ms),calc(var(--i)*55ms + 1.6s);}
+@keyframes cheerIn{0%{opacity:0;transform:translateY(8px) scale(.6);}100%{opacity:1;transform:translateY(0) scale(1);}}
+@keyframes cheerWave{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
+/* Elsa and Anna at the bottom of the gallery */
+.frozen-duo{display:flex;justify-content:center;align-items:flex-end;gap:14px;margin-top:22px;padding-bottom:4px;}
+.frozen-duo img{height:130px;width:auto;opacity:0;transform:translateY(14px) scale(.7);animation:duoIn .6s cubic-bezier(.34,1.56,.64,1) forwards,duoBob 2.4s ease-in-out infinite;transform-origin:50% 100%;}
+.frozen-duo .elsa{animation-delay:1.5s,2.2s;}
+.frozen-duo .anna{animation-delay:1.8s,2.6s;}
+@keyframes duoIn{to{opacity:1;transform:translateY(0) scale(1);}}
+@keyframes duoBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+@media (prefers-reduced-motion:reduce){.cheers .cl{opacity:1;animation:none;}.frozen-duo img{opacity:1;transform:none;animation:none;}}
 /* Swap each .gframe's content with <img src="yourphoto.jpg" style="width:100%;height:100%;object-fit:cover"> */
 
 /* letter */
@@ -916,6 +930,10 @@ function initTraits(){
   });
 }
 
+function cheersHTML(text){
+  let i=0;
+  return text.split(' ').map(w=>'<span class="cw">'+[...w].map(ch=>'<span class="cl" style="--i:'+(i++)+'">'+ch+'</span>').join('')+'</span>').join(' ');
+}
 const templates={
   music:()=>`
     <div class="playlist-wrap">
@@ -925,12 +943,16 @@ const templates={
     <p class="playlist-note">pasensya random lang itong mga music baka kasi mahalata mo kapag tinanong kuna may ginagawa ako na ganito HAHAHA</p>`,
   gallery:()=>`
     <h2>your Seasons</h2>
-    <p style="text-align:center;font-style:italic;margin-bottom:14px;">cheers to every version of you</p>
+    <p class="cheers" aria-label="cheers to every version of you">${cheersHTML('cheers to every version of you')}</p>
     <div class="gallery-grid">
       <div class="gframe"><img src="assets/gallery_1.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
       <div class="gframe"><img src="assets/gallery_2.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
       <div class="gframe"><img src="assets/gallery_3.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
       <div class="gframe"><img src="assets/gallery_4.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
+    </div>
+    <div class="frozen-duo">
+      <img class="pixel elsa" src="assets/elsa.png" alt="Elsa">
+      <img class="pixel anna" src="assets/anna.png" alt="Anna">
     </div>`,
   letter:()=>`
     <div class="letter-bg">
