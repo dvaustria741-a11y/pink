@@ -206,6 +206,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 .dust.big{width:9px;height:9px;box-shadow:0 0 6px 2px var(--c,#fff);}
 @keyframes dustFly{0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.4);}}
 .appicon.gift{opacity:0;pointer-events:none;}
+body.iconsLocked .appicon,body.iconsLocked .appicon.crawl{pointer-events:none !important;}
 .appicon.gift.fly{animation:flyOut .75s cubic-bezier(0.175,0.885,0.32,1.275) forwards;}
 .appicon.gift.landed{opacity:1;}
 @keyframes flyOut{from{opacity:0;transform:translate(var(--fx),var(--fy)) scale(.2);}to{opacity:1;transform:translate(0,0) scale(1);}}
@@ -1030,6 +1031,7 @@ const trackableModals=['music','gallery','letter','traits'];
 const visitedModals=new Set();
 document.querySelectorAll('.appicon').forEach(btn=>{
   btn.addEventListener('click',()=>{
+    if(iconsLocked) return;
     const name=btn.dataset.modal;
     if(trackableModals.includes(name)) visitedModals.add(name);
     if(name==='gallery'){
@@ -1041,6 +1043,19 @@ document.querySelectorAll('.appicon').forEach(btn=>{
   });
 });
 let messagePending=false;
+let iconsLocked=false, iconsLockTimer=null;
+/* icons can't be tapped while the message icon flies out of the gift box */
+function lockIcons(){
+  iconsLocked=true;
+  document.body.classList.add('iconsLocked');
+  clearTimeout(iconsLockTimer);
+  iconsLockTimer=setTimeout(unlockIcons,4500); /* safety net */
+}
+function unlockIcons(){
+  iconsLocked=false;
+  clearTimeout(iconsLockTimer); iconsLockTimer=null;
+  document.body.classList.remove('iconsLocked');
+}
 function unlockMessageIcon(){
   const icon=document.getElementById('messageIcon');
   if(!icon || !icon.classList.contains('hidden')) return;
@@ -1048,7 +1063,7 @@ function unlockMessageIcon(){
 }
 function flyMessageIcon(){
   const icon=document.getElementById('messageIcon');
-  if(!icon || !icon.classList.contains('hidden')) return;
+  if(!icon || !icon.classList.contains('hidden')){ unlockIcons(); return; }
   icon.classList.remove('hidden');
   const b=giftImg.getBoundingClientRect();
   const r=icon.getBoundingClientRect();
@@ -1073,6 +1088,7 @@ function vanishGift(){
   giftArea.addEventListener('animationend',e=>{
     if(e.target!==giftArea) return;
     document.getElementById('giftWrap').style.display='none';
+    unlockIcons();
   });
 }
 function cameraFlash(cb){
@@ -1088,7 +1104,7 @@ function cameraFlash(cb){
     });
   });
 }
-function closeModal(){if(typeof closeCakeFrame==='function') closeCakeFrame();if(typeof closeFlowerFrame==='function') closeFlowerFrame();overlay.classList.add('hidden');galleryTimers.forEach(clearTimeout);galleryTimers=[];if(messagePending){messagePending=false;setTimeout(flyMessageIcon,400);}musicVol=1;applyVol();modalBox.innerHTML='';if(typeTimer){clearInterval(typeTimer);typeTimer=null;}}
+function closeModal(){if(typeof closeCakeFrame==='function') closeCakeFrame();if(typeof closeFlowerFrame==='function') closeFlowerFrame();overlay.classList.add('hidden');galleryTimers.forEach(clearTimeout);galleryTimers=[];if(messagePending){messagePending=false;lockIcons();setTimeout(flyMessageIcon,400);}musicVol=1;applyVol();modalBox.innerHTML='';if(typeTimer){clearInterval(typeTimer);typeTimer=null;}}
 function openModal(name){
   modalBox.innerHTML='<button class="closeX" onclick="closeModal()">X</button>'+templates[name]();
   overlay.classList.remove('hidden');
