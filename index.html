@@ -374,6 +374,9 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 .secret-tape::before{left:-14px;transform:rotate(-24deg);}
 .secret-tape::after{right:-14px;transform:rotate(22deg);}
 .secret-tape small{display:block;font-size:.42rem;color:var(--rose);margin-bottom:6px;letter-spacing:1px;}
+.secret-kidding{display:block;font-style:normal;font-size:.5rem;color:var(--rose);margin-top:0;max-height:0;overflow:hidden;opacity:0;transform:scale(.4);transform-origin:50% 0;}
+.secret-kidding.show{max-height:2em;margin-top:8px;animation:kiddingPop .5s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes kiddingPop{0%{opacity:0;transform:scale(.4) translateY(-6px);}60%{opacity:1;transform:scale(1.15);}100%{opacity:1;transform:scale(1);}}
 .secret-tape.show{animation:tapeIn .7s cubic-bezier(.34,1.56,.64,1) both;}
 @keyframes tapeIn{0%{opacity:0;transform:rotate(-14deg) scale(.2) translateY(30px);}60%{opacity:1;transform:rotate(1deg) scale(1.1);}100%{opacity:1;transform:rotate(-3deg) scale(1);}}
 #reBloomBtn{margin-top:14px;}
@@ -389,7 +392,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 #flowerFrame.opening #flowerPrompt{animation:promptIn .4s ease-out .2s both;}
 #flowerFrame.closing{animation:cfFadeOut .25s ease-in both;}
 #flowerFrame.closing .cake-frame-box{animation:cfBoxOut .25s ease-in both;}
-@media (prefers-reduced-motion:reduce){#flowerFrame.opening,#flowerFrame.opening *,#flowerFrame.closing,#flowerFrame.closing *,#flowerImg.bloom,#reBloomBtn.pop,.secret-tape.show{animation:none !important;}}
+@media (prefers-reduced-motion:reduce){#flowerFrame.opening,#flowerFrame.opening *,#flowerFrame.closing,#flowerFrame.closing *,#flowerImg.bloom,#reBloomBtn.pop,.secret-tape.show,.secret-kidding.show{animation:none !important;opacity:1;transform:none;}}
 
 /* camera flash */
 #cameraFlash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:999;}
@@ -465,7 +468,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
   <p id="flowerPrompt"></p>
   <div id="flowerStage"><img class="pixel" id="flowerImg" src="assets/bouquet_stage1.png" alt="bouquet" draggable="false"></div>
   <p id="flowerBanner"></p>
-  <div class="secret-tape hidden" id="secretTape"><small>HIDDEN TRAIT UNLOCKED</small><span id="secretText"></span></div>
+  <div class="secret-tape hidden" id="secretTape"><small>HIDDEN TRAIT UNLOCKED</small><span id="secretText"></span><em class="secret-kidding" id="secretKidding">...just kidding!</em></div>
   <div><button class="pxbtn hidden" id="reBloomBtn">Re-Bloom Flowers</button></div>
 </div></div>
 <div id="overlay" class="hidden"><div class="modal" id="modalBox"></div></div>
@@ -1273,6 +1276,7 @@ function resetFlower(animate){
   flowerBanner.textContent='';
   flowerBanner.classList.remove('show');
   secretTape.classList.add('hidden'); secretTape.classList.remove('show');
+  document.getElementById('secretKidding').classList.remove('show');
   reBloomBtn.classList.add('hidden'); reBloomBtn.classList.remove('pop');
 }
 function spawnPetals(n){
@@ -1335,8 +1339,12 @@ function pickPetal(){
     },700);
     setTimeout(()=>{
       if(flowerStage!==FLOWER_STAGES.length-1) return;
+      document.getElementById('secretKidding').classList.add('show');
+    },2400);
+    setTimeout(()=>{
+      if(flowerStage!==FLOWER_STAGES.length-1) return;
       reBloomBtn.classList.remove('hidden'); void reBloomBtn.offsetWidth; reBloomBtn.classList.add('pop');
-    },1300);
+    },3100);
   }
 }
 flowerImg.addEventListener('click',pickPetal);
