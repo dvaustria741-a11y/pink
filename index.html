@@ -488,6 +488,7 @@ body.iconsLocked .passChip{pointer-events:none;}
 .pp-frame{position:relative;margin:-20px -20px 0;width:calc(100% + 40px);aspect-ratio:638/1004;background:url('assets/passport_frame.png') center/100% 100% no-repeat;}
 .pp-slot{position:absolute;width:27.03%;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .pp-slot img{width:100%;height:100%;object-fit:contain;}
+.pp-hint{display:block;padding:0 16%;text-align:center;font-family:'VT323',monospace;font-size:clamp(14px,4.6vw,20px);line-height:1;color:var(--deep);opacity:.8;}
 .pp-slot.stamp{animation:stickerStamp .7s cubic-bezier(.34,1.56,.64,1) both;}
 .pp-foot{text-align:center;margin-top:16px;color:var(--deep);font-size:1rem;}
 .pp-foot .pxbtn{animation:finBtnPulse 1.1s ease-in-out infinite;}
@@ -1895,7 +1896,7 @@ const PASSPORT=[
   {id:'photo',label:'Photo',hint:'Open the Gallery',img:'assets/sticker_photo.png'},
   {id:'music',label:'Music',hint:'Play a song',img:'assets/sticker_music.png'},
   {id:'letter',label:'Secret',hint:'Read the puppy\u2019s letter',img:'assets/sticker_secret.png'},
-  {id:'puppy',label:'Puppy',hint:'Pet the puppy',img:'assets/sticker_puppy.png'},
+  {id:'puppy',label:'Puppy',hint:'Pet the puppy 10 times',img:'assets/sticker_puppy.png'},
   {id:'balloon',label:'Balloons',hint:'Pop 6 balloons',img:'assets/sticker_balloons.png'}
 ];
 let passGot=[], passSeen=[], passReady=false, toastTimer=null;
@@ -1952,7 +1953,7 @@ templates.passport=()=>{
   const slots=PASSPORT.map((s,i)=>{
     const got=passGot.includes(s.id);
     const stamp=got && !passSeen.includes(s.id);
-    if(!got) return `<div class="pp-slot" style="left:${pos[i].left}%;top:${pos[i].top}%"></div>`;
+    if(!got) return `<div class="pp-slot" style="left:${pos[i].left}%;top:${pos[i].top}%"><span class="pp-hint">${s.hint}</span></div>`;
     return `<div class="pp-slot${stamp?' stamp':''}" style="left:${pos[i].left}%;top:${pos[i].top}%${stamp?`;animation-delay:${i*90+300}ms`:''}" title="${s.label}">${stickerIco(s)}</div>`;
   }).join('');
   return `<h2 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Celyn's Birthday Passport</h2>
