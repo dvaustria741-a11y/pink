@@ -315,6 +315,26 @@ button{font-family:'VT323',monospace;cursor:pointer;}
   100%{opacity:0;transform:translate(var(--hx),-150px) scale(1.4);}
 }
 #bakeAgainBtn{margin-top:14px;}
+#cakeFrame.opening{animation:cfFadeIn .25s ease-out both;}
+#cakeFrame.opening .cake-frame-box{animation:cfBoxIn .5s cubic-bezier(.34,1.56,.64,1) both;}
+#cakeFrame.opening #cakeEatImg{animation:cakeDropIn .6s cubic-bezier(.34,1.56,.64,1) .3s both;}
+#cakeFrame.opening #elsaCakeBtn{animation:buddyInL .5s cubic-bezier(.34,1.56,.64,1) .45s both;}
+#cakeFrame.opening #annaCakeBtn{animation:buddyInR .5s cubic-bezier(.34,1.56,.64,1) .55s both;}
+#cakeFrame.opening #cakePrompt{animation:promptIn .4s ease-out .2s both;}
+#cakeFrame.closing{animation:cfFadeOut .25s ease-in both;}
+#cakeFrame.closing .cake-frame-box{animation:cfBoxOut .25s ease-in both;}
+#cakeEatImg.bake{animation:cakeDropIn .55s cubic-bezier(.34,1.56,.64,1) both;}
+#bakeAgainBtn.pop{animation:btnPop .45s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes cfFadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes cfFadeOut{from{opacity:1;}to{opacity:0;}}
+@keyframes cfBoxIn{0%{opacity:0;transform:translateY(46px) scale(.55);}60%{opacity:1;transform:translateY(-6px) scale(1.04);}100%{opacity:1;transform:translateY(0) scale(1);}}
+@keyframes cfBoxOut{from{opacity:1;transform:scale(1);}to{opacity:0;transform:translateY(24px) scale(.7);}}
+@keyframes cakeDropIn{0%{opacity:0;transform:translateY(-70px) scale(.7);}55%{opacity:1;transform:translateY(8px) scale(1.05,.95);}80%{transform:translateY(-3px) scale(.99,1.02);}100%{opacity:1;transform:translateY(0) scale(1);}}
+@keyframes buddyInL{from{opacity:0;transform:translateX(-60px) scale(.6);}to{opacity:1;transform:translateX(0) scale(1);}}
+@keyframes buddyInR{from{opacity:0;transform:translateX(60px) scale(.6);}to{opacity:1;transform:translateX(0) scale(1);}}
+@keyframes promptIn{from{opacity:0;transform:translateY(-12px);}to{opacity:1;transform:translateY(0);}}
+@keyframes btnPop{0%{opacity:0;transform:scale(.4) translateY(14px);}60%{opacity:1;transform:scale(1.1);}100%{opacity:1;transform:scale(1);}}
+@media (prefers-reduced-motion:reduce){#cakeFrame.opening,#cakeFrame.opening *,#cakeFrame.closing,#cakeFrame.closing *,#cakeEatImg.bake,#bakeAgainBtn.pop{animation:none !important;}}
 .cake-buddy{flex:0 0 auto;position:relative;background:none;border:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transform-origin:50% 100%;z-index:2;}
 .cake-buddy.hop{animation:duoHop .35s ease;}
 .cake-buddy img{display:block;height:108px;width:auto;animation:buddyBob 2.4s ease-in-out infinite;transform-origin:50% 100%;}
@@ -396,7 +416,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
     <img class="pixel" id="cakeEatImg" src="assets/cake_stage1.png" alt="cake" draggable="false">
     <button class="cake-buddy anna" id="annaCakeBtn" aria-label="Anna"><img class="pixel" src="assets/anna.png" alt="Anna" draggable="false"></button>
   </div>
-  <button class="pxbtn hidden" id="bakeAgainBtn">🔄 Bake Another Cake</button>
+  <button class="pxbtn hidden" id="bakeAgainBtn">Bake Another Cake</button>
 </div></div>
 <div id="overlay" class="hidden"><div class="modal" id="modalBox"></div></div>
 
@@ -1000,13 +1020,13 @@ function initTraits(){
 
 /* ---------- cake eating mini-game ---------- */
 const CAKE_STAGES=[1,2,3,4,5,6].map(n=>'assets/cake_stage'+n+'.png');
-const CAKE_PROMPT='Tap the cake to eat it bite by bite! 🍰';
-const CAKE_DONE='Yum! That was delicious! 🍓✨';
+const CAKE_PROMPT='Tap the cake to eat it bite by bite!';
+const CAKE_DONE='Yum! That was delicious!';
 const CRUMB_COLORS=['#f3c26b','#e8a94a','#ff8fab','#fff4e0','#d9483b'];
-let cakeStage=0, cakeHeartTimer=null, cakeBusy=false, cakeTalkTimers=[];
+let cakeStage=0, cakeHeartTimer=null, cakeBusy=false, cakeTalkTimers=[], cakeOpenTimer=null, cakeCloseTimer=null;
 const cakeChat={
-  elsa:["That cake looks magical, Cel! ❄️","Cake this pretty deserves a wish first.","Careful, that frosting is melting my heart.","Save me a strawberry?","Not a single crumb left behind, okay? 🍰"],
-  anna:["Cake!! Cake!! Cake!! 🍰","Those strawberries are calling my name!","Bite bigger, I believe in you!","Do you think there's a second cake hiding somewhere?","I'd eat the whole thing... no judgment! 😋"]
+  elsa:["That cake looks magical, Cel!","Cake this pretty deserves a wish first.","Careful, that frosting is melting my heart.","Save me a strawberry?","Not a single crumb left behind, okay?"],
+  anna:["Cake!! Cake!! Cake!!","Those strawberries are calling my name!","Bite bigger, I believe in you!","Do you think there's a second cake hiding somewhere?","I'd eat the whole thing... no judgment!"]
 };
 const cakeBag={elsa:[],anna:[]};
 function nextCakeLine(who){
@@ -1014,10 +1034,10 @@ function nextCakeLine(who){
   return cakeBag[who].pop();
 }
 const cakeBiteLines={
-  1:['anna',"Ooh, the first bite! How is it?! 😋"],
-  2:['elsa',"A quarter gone already? That was quick! ❄️"],
-  3:['anna',"Half the cake! Don't stop now! 🍓"],
-  4:['elsa',"Just one bite left... make it count! ✨"]
+  1:['anna',"Ooh, the first bite! How is it?!"],
+  2:['elsa',"A quarter gone already? That was quick!"],
+  3:['anna',"Half the cake! Don't stop now!"],
+  4:['elsa',"Just one bite left... make it count!"]
 };
 function sayCake(who,text,ms){
   ['elsa','anna'].forEach(w=>{ const b=document.getElementById(w+'CakeBubble'); if(b && w!==who) b.classList.remove('show'); });
@@ -1042,16 +1062,30 @@ const cakePrompt=document.getElementById('cakePrompt');
 const bakeAgainBtn=document.getElementById('bakeAgainBtn');
 CAKE_STAGES.forEach(src=>{const i=new Image();i.src=src;});
 function openCakeFrame(){
+  clearTimeout(cakeCloseTimer); clearTimeout(cakeOpenTimer);
   resetCake();
+  cakeFrame.classList.remove('closing','opening');
+  void cakeFrame.offsetWidth;
   cakeFrame.classList.remove('hidden');
-  cakeTalkLater(500,'elsa',"Ooh, look at that cake, Cel! 🍰",2600);
-  cakeTalkLater(3300,'anna',"Hurry, take the first bite!",2600);
+  cakeFrame.classList.add('opening');
+  cakeEatImg.classList.remove('bake');
+  cakeOpenTimer=setTimeout(()=>cakeFrame.classList.remove('opening'),1200);
+  cakeTalkLater(1000,'elsa',"Ooh, look at that cake, Cel!",2600);
+  cakeTalkLater(3800,'anna',"Hurry, take the first bite!",2600);
 }
 function closeCakeFrame(){
   clearCakeTalk();
-  cakeFrame.classList.add('hidden');
   clearInterval(cakeHeartTimer); cakeHeartTimer=null;
-  cakeEatStage.querySelectorAll('.crumb,.pix-heart').forEach(n=>n.remove());
+  clearTimeout(cakeOpenTimer);
+  if(cakeFrame.classList.contains('hidden')) return;
+  cakeFrame.classList.remove('opening');
+  cakeFrame.classList.add('closing');
+  clearTimeout(cakeCloseTimer);
+  cakeCloseTimer=setTimeout(()=>{
+    cakeFrame.classList.add('hidden');
+    cakeFrame.classList.remove('closing');
+    cakeEatStage.querySelectorAll('.crumb,.pix-heart').forEach(n=>n.remove());
+  },260);
 }
 function resetCake(){
   clearCakeTalk();
@@ -1059,7 +1093,10 @@ function resetCake(){
   cakeEatStage.querySelectorAll('.crumb,.pix-heart').forEach(n=>n.remove());
   cakeStage=0;
   cakeEatImg.src=CAKE_STAGES[0];
-  cakeEatImg.classList.remove('done','munch');
+  cakeEatImg.classList.remove('done','munch','bake');
+  void cakeEatImg.offsetWidth;
+  if(cakeFrame.classList.contains('hidden')===false && !cakeFrame.classList.contains('opening')) cakeEatImg.classList.add('bake');
+  bakeAgainBtn.classList.remove('pop');
   cakePrompt.textContent=CAKE_PROMPT;
   bakeAgainBtn.classList.add('hidden');
 }
@@ -1093,28 +1130,29 @@ function eatCake(){
   if(cakeStage>=CAKE_STAGES.length-1) return;
   cakeStage++;
   cakeEatImg.src=CAKE_STAGES[cakeStage];
+  cakeFrame.classList.remove('opening'); cakeEatImg.classList.remove('bake');
   cakeEatImg.classList.remove('munch'); void cakeEatImg.offsetWidth; cakeEatImg.classList.add('munch');
   spawnCrumbs();
   clearCakeTalk();
   if(cakeBiteLines[cakeStage]) sayCake(cakeBiteLines[cakeStage][0],cakeBiteLines[cakeStage][1],2600);
   if(cakeStage===CAKE_STAGES.length-1){
-    cakeTalkLater(150,'elsa',"All gone! That was the sweetest bite! ✨",2600);
-    cakeTalkLater(2900,'anna',"Yum! Can we bake another one?! 🍓",2600);
+    cakeTalkLater(150,'elsa',"All gone! That was the sweetest bite!",2600);
+    cakeTalkLater(2900,'anna',"Yum! Can we bake another one?!",2600);
     cakeEatImg.classList.add('done');
     cakePrompt.textContent=CAKE_DONE;
-    bakeAgainBtn.classList.remove('hidden');
+    bakeAgainBtn.classList.remove('hidden'); void bakeAgainBtn.offsetWidth; bakeAgainBtn.classList.add('pop');
     for(let i=0;i<3;i++) setTimeout(spawnHeart,i*140);
     clearInterval(cakeHeartTimer);
     cakeHeartTimer=setInterval(spawnHeart,420);
   }
 }
 cakeEatImg.addEventListener('click',eatCake);
-bakeAgainBtn.addEventListener('click',()=>{ resetCake(); cakeTalkLater(300,'anna',"Round two! Fresh cake incoming! 🍰",2400); });
+bakeAgainBtn.addEventListener('click',()=>{ resetCake(); cakeTalkLater(300,'anna',"Round two! Fresh cake incoming!",2400); });
 ['elsa','anna'].forEach(w=>{
   document.getElementById(w+'CakeBtn').addEventListener('click',()=>{
     cakeTalkTimers.forEach(clearTimeout); cakeTalkTimers=[];
     const line=(cakeStage===CAKE_STAGES.length-1)
-      ? (w==='elsa'?"That was the perfect birthday cake! ❄️":"I'm still dreaming about that strawberry! 🍓")
+      ? (w==='elsa'?"That was the perfect birthday cake!":"I'm still dreaming about that strawberry!")
       : nextCakeLine(w);
     sayCake(w,line);
   });
