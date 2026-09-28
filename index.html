@@ -287,6 +287,35 @@ button{font-family:'VT323',monospace;cursor:pointer;}
   100%{opacity:1;transform:scale(1) rotate(var(--rot)) translateY(var(--lift));}
 }
 
+
+/* cake eating */
+.cake-eat-link{cursor:pointer;-webkit-tap-highlight-color:transparent;}
+#cakeFrame{position:fixed;inset:0;background:rgba(122,44,70,.55);display:flex;align-items:center;justify-content:center;z-index:30;padding:16px;}
+#cakeFrame.hidden{display:none !important;}
+.cake-frame-box{position:relative;background:var(--cream);border:4px solid var(--deep);box-shadow:6px 6px 0 var(--rose);padding:28px 18px 22px;width:min(92vw,420px);text-align:center;}
+.cake-frame-box .closeX{position:absolute;top:8px;right:10px;background:none;border:none;font-family:'Press Start 2P';font-size:14px;color:var(--deep);}
+#cakePrompt{font-size:1.35rem;color:var(--deep);min-height:2.6em;display:flex;align-items:center;justify-content:center;margin-bottom:6px;}
+#cakeEatStage{position:relative;display:flex;align-items:center;justify-content:center;min-height:240px;overflow:visible;}
+#cakeEatImg{width:min(76vw,320px);height:auto;cursor:pointer;user-select:none;-webkit-user-drag:none;touch-action:manipulation;transform:scale(1);}
+#cakeEatImg.done{cursor:default;}
+#cakeEatImg.munch{animation:munch .22s ease-out;}
+@keyframes munch{0%{transform:scale(1);}40%{transform:scale(.92);}100%{transform:scale(1);}}
+.crumb{position:absolute;width:6px;height:6px;pointer-events:none;z-index:3;animation:crumbFly .9s ease-out forwards;}
+@keyframes crumbFly{
+  0%{opacity:1;transform:translate(0,0);}
+  35%{opacity:1;transform:translate(var(--cx),var(--cy));}
+  100%{opacity:0;transform:translate(calc(var(--cx) * 1.25),calc(var(--cy) + 70px));}
+}
+.pix-heart{position:absolute;width:12px;height:12px;pointer-events:none;z-index:3;background:#ff6f9c;image-rendering:pixelated;
+  clip-path:polygon(0 25%,25% 25%,25% 0,75% 0,75% 25%,100% 25%,100% 62%,75% 62%,75% 75%,62% 75%,62% 87%,37% 87%,37% 75%,25% 75%,25% 62%,0 62%);
+  animation:heartUp 1.8s ease-out forwards;}
+@keyframes heartUp{
+  0%{opacity:0;transform:translate(0,0) scale(.6);}
+  15%{opacity:1;}
+  100%{opacity:0;transform:translate(var(--hx),-150px) scale(1.4);}
+}
+#bakeAgainBtn{margin-top:14px;}
+
 /* camera flash */
 #cameraFlash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:999;}
 
@@ -344,6 +373,12 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 
 </div>
 
+<div id="cakeFrame" class="hidden"><div class="cake-frame-box">
+  <button class="closeX" id="cakeFrameClose" aria-label="close">X</button>
+  <p id="cakePrompt"></p>
+  <div id="cakeEatStage"><img class="pixel" id="cakeEatImg" src="assets/cake_stage1.png" alt="cake" draggable="false"></div>
+  <button class="pxbtn hidden" id="bakeAgainBtn">🔄 Bake Another Cake</button>
+</div></div>
 <div id="overlay" class="hidden"><div class="modal" id="modalBox"></div></div>
 
 <div id="dashboard" class="hidden">
@@ -921,7 +956,7 @@ function cameraFlash(cb){
     });
   });
 }
-function closeModal(){overlay.classList.add('hidden');galleryTimers.forEach(clearTimeout);galleryTimers=[];if(messagePending){messagePending=false;setTimeout(flyMessageIcon,400);}musicVol=1;applyVol();modalBox.innerHTML='';if(typeTimer){clearInterval(typeTimer);typeTimer=null;}}
+function closeModal(){if(typeof closeCakeFrame==='function') closeCakeFrame();overlay.classList.add('hidden');galleryTimers.forEach(clearTimeout);galleryTimers=[];if(messagePending){messagePending=false;setTimeout(flyMessageIcon,400);}musicVol=1;applyVol();modalBox.innerHTML='';if(typeTimer){clearInterval(typeTimer);typeTimer=null;}}
 function openModal(name){
   modalBox.innerHTML='<button class="closeX" onclick="closeModal()">X</button>'+templates[name]();
   overlay.classList.remove('hidden');
@@ -933,6 +968,8 @@ function openModal(name){
   if(name==='traits') initTraits();
 }
 function initTraits(){
+  const tc=document.getElementById('traitsCake');
+  if(tc) tc.addEventListener('click',openCakeFrame);
   document.querySelectorAll('.traits-scene .side').forEach((el,i)=>{
     setTimeout(()=>el.classList.add('crawl'), 200+i*220);
   });
@@ -940,6 +977,83 @@ function initTraits(){
     setTimeout(()=>el.classList.add('show'), 700+i*110);
   });
 }
+
+
+/* ---------- cake eating mini-game ---------- */
+const CAKE_STAGES=[1,2,3,4,5,6].map(n=>'assets/cake_stage'+n+'.png');
+const CAKE_PROMPT='Tap the cake to eat it bite by bite! 🍰';
+const CAKE_DONE='Yum! That was delicious! 🍓✨';
+const CRUMB_COLORS=['#f3c26b','#e8a94a','#ff8fab','#fff4e0','#d9483b'];
+let cakeStage=0, cakeHeartTimer=null, cakeBusy=false;
+const cakeFrame=document.getElementById('cakeFrame');
+const cakeEatImg=document.getElementById('cakeEatImg');
+const cakeEatStage=document.getElementById('cakeEatStage');
+const cakePrompt=document.getElementById('cakePrompt');
+const bakeAgainBtn=document.getElementById('bakeAgainBtn');
+CAKE_STAGES.forEach(src=>{const i=new Image();i.src=src;});
+function openCakeFrame(){
+  resetCake();
+  cakeFrame.classList.remove('hidden');
+}
+function closeCakeFrame(){
+  cakeFrame.classList.add('hidden');
+  clearInterval(cakeHeartTimer); cakeHeartTimer=null;
+  cakeEatStage.querySelectorAll('.crumb,.pix-heart').forEach(n=>n.remove());
+}
+function resetCake(){
+  clearInterval(cakeHeartTimer); cakeHeartTimer=null;
+  cakeEatStage.querySelectorAll('.crumb,.pix-heart').forEach(n=>n.remove());
+  cakeStage=0;
+  cakeEatImg.src=CAKE_STAGES[0];
+  cakeEatImg.classList.remove('done','munch');
+  cakePrompt.textContent=CAKE_PROMPT;
+  bakeAgainBtn.classList.add('hidden');
+}
+function spawnCrumbs(){
+  const n=4+Math.floor(Math.random()*3);
+  const w=cakeEatImg.offsetWidth, h=cakeEatImg.offsetHeight;
+  for(let i=0;i<n;i++){
+    const c=document.createElement('div');
+    c.className='crumb';
+    c.style.background=CRUMB_COLORS[Math.floor(Math.random()*CRUMB_COLORS.length)];
+    c.style.left=(cakeEatImg.offsetLeft+w*(0.4+Math.random()*0.3))+'px';
+    c.style.top=(cakeEatImg.offsetTop+h*(0.35+Math.random()*0.2))+'px';
+    c.style.setProperty('--cx',((Math.random()-.5)*110)+'px');
+    c.style.setProperty('--cy',(-(18+Math.random()*40))+'px');
+    cakeEatStage.appendChild(c);
+    setTimeout(()=>c.remove(),950);
+  }
+}
+function spawnHeart(){
+  const w=cakeEatImg.offsetWidth, h=cakeEatImg.offsetHeight;
+  const el=document.createElement('div');
+  el.className='pix-heart';
+  el.style.left=(cakeEatImg.offsetLeft+w*(0.25+Math.random()*0.5))+'px';
+  el.style.top=(cakeEatImg.offsetTop+h*(0.45+Math.random()*0.15))+'px';
+  el.style.setProperty('--hx',((Math.random()-.5)*60)+'px');
+  el.style.background=Math.random()<.5?'#ff6f9c':'#f6a3bd';
+  cakeEatStage.appendChild(el);
+  setTimeout(()=>el.remove(),1900);
+}
+function eatCake(){
+  if(cakeStage>=CAKE_STAGES.length-1) return;
+  cakeStage++;
+  cakeEatImg.src=CAKE_STAGES[cakeStage];
+  cakeEatImg.classList.remove('munch'); void cakeEatImg.offsetWidth; cakeEatImg.classList.add('munch');
+  spawnCrumbs();
+  if(cakeStage===CAKE_STAGES.length-1){
+    cakeEatImg.classList.add('done');
+    cakePrompt.textContent=CAKE_DONE;
+    bakeAgainBtn.classList.remove('hidden');
+    for(let i=0;i<3;i++) setTimeout(spawnHeart,i*140);
+    clearInterval(cakeHeartTimer);
+    cakeHeartTimer=setInterval(spawnHeart,420);
+  }
+}
+cakeEatImg.addEventListener('click',eatCake);
+bakeAgainBtn.addEventListener('click',resetCake);
+document.getElementById('cakeFrameClose').addEventListener('click',closeCakeFrame);
+cakeFrame.addEventListener('click',e=>{ if(e.target===cakeFrame) closeCakeFrame(); });
 
 /* ---------- Elsa & Anna dialogue ---------- */
 let galleryTimers=[];
@@ -1006,7 +1120,7 @@ const templates={
     </div>`,
   traits:()=>`
     <div class="traits-scene">
-      <img class="pixel side left" src="assets/cake.png" alt="">
+      <img class="pixel side left cake-eat-link" id="traitsCake" src="assets/cake.png" alt="cake">
       <img class="frame-photo pixel" src="assets/celyn_frame.png" alt="Celyn">
       <img class="pixel side right" src="assets/flower_bouquet.png" alt="">
     </div>
