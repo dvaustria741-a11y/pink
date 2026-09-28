@@ -756,13 +756,6 @@ function spawnSmoke(){
   }
 }
 
-function burstCelebration(){
-  spawnConfetti();
-  setTimeout(spawnConfetti,500);
-  setTimeout(spawnConfetti,1000);
-  setTimeout(spawnConfetti,1500);
-}
-
 function triggerBlowOut(source){
   if(blownAlready) return;
   blownAlready=true;
@@ -773,7 +766,6 @@ function triggerBlowOut(source){
 
   document.getElementById('cakeImg').src='assets/cake_off.png';
   spawnSmoke();
-  burstCelebration();
 
   const q=document.getElementById('candleQ');
   const row=document.getElementById('blowBtnRow');
