@@ -254,6 +254,71 @@ input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:d
 .smileText{position:fixed;left:0;right:0;top:42%;text-align:center;z-index:998;pointer-events:none;font-family:'Press Start 2P',monospace;font-size:clamp(26px,9vw,44px);color:#fff;text-shadow:4px 4px 0 var(--deep),-2px -2px 0 var(--deep),2px -2px 0 var(--deep),-2px 2px 0 var(--deep);animation:smilePop .5s cubic-bezier(.34,1.56,.64,1) both,smileWiggle .6s ease-in-out .5s infinite;}
 @keyframes smilePop{from{opacity:0;transform:scale(.3) rotate(-8deg);}to{opacity:1;transform:scale(1) rotate(0);}}
 @keyframes smileWiggle{0%,100%{transform:scale(1) rotate(0);}50%{transform:scale(1.06) rotate(2deg);}}
+
+/* ===== mini-me intro (door -> room -> cake -> surprise) ===== */
+#intro{position:fixed;inset:0;z-index:60;background:#05071a;display:flex;align-items:center;justify-content:center;overflow:hidden;touch-action:manipulation;}
+#intro.gone{display:none;}
+.iStage{position:relative;height:min(100dvh,calc(100vw*1659/948));aspect-ratio:948/1659;overflow:hidden;perspective:1100px;background:#0a0d2a;--lx:50%;--ly:70%;--gr:300px;}
+.iCam{position:absolute;inset:0;transform-origin:50% 74%;will-change:transform;}
+.iRoom{position:absolute;inset:0;width:100%;height:100%;display:block;-webkit-user-drag:none;}
+.iChar{position:absolute;left:50%;bottom:20%;width:13%;aspect-ratio:1/1.66;transform:translateX(-50%);cursor:pointer;}
+.iChar img{position:absolute;left:0;bottom:0;width:100%;height:auto;display:block;transform-origin:50% 100%;-webkit-user-drag:none;}
+#iMeBack{animation:iBreath 3s ease-in-out infinite;}
+@keyframes iBreath{0%,100%{transform:scaleY(1);}50%{transform:scaleY(1.025);}}
+#iMeFront{opacity:0;}
+#iMeFront.live{animation:iBreath 3.2s ease-in-out infinite;}
+.iChar::after{content:"";position:absolute;left:-30%;right:-30%;bottom:-6%;height:14%;border-radius:50%;border:3px solid rgba(255,228,214,.75);opacity:0;pointer-events:none;}
+.iChar.pulse::after{animation:iRing 1.4s ease-out infinite;}
+@keyframes iRing{0%{opacity:.9;transform:scale(.6);}100%{opacity:0;transform:scale(1.25);}}
+#iDim{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 1.2s ease;background:radial-gradient(circle at var(--lx) var(--ly),rgba(2,3,16,0) 0,rgba(2,3,16,.06) calc(var(--gr)*.16),rgba(2,3,16,.82) calc(var(--gr)*.62),rgba(2,3,16,.93) 100%);}
+#iGlow{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 1s ease;mix-blend-mode:screen;background:radial-gradient(circle at var(--lx) var(--ly),rgba(255,186,92,.7) 0,rgba(255,146,62,.34) calc(var(--gr)*.28),rgba(255,120,50,0) calc(var(--gr)*.8));}
+#iGlow.on{opacity:1;animation:iFlicker .18s steps(2) infinite alternate;}
+@keyframes iFlicker{from{filter:brightness(.92);}to{filter:brightness(1.1);}}
+#iDark{position:absolute;inset:0;background:#02030f;opacity:0;pointer-events:none;transition:opacity .9s ease;}
+#iDoor{position:absolute;inset:0;z-index:20;transform-origin:0 50%;cursor:pointer;transition:transform 1.7s cubic-bezier(.55,0,.25,1);box-shadow:inset 0 0 40px rgba(60,20,30,.45);-webkit-tap-highlight-color:transparent;}
+#iDoor img{width:100%;height:100%;display:block;object-fit:cover;-webkit-user-drag:none;}
+#iDoor.open{transform:rotateY(-104deg);pointer-events:none;}
+#iDoor.knock{animation:iKnock .55s ease;}
+@keyframes iKnock{0%,100%{transform:translateX(0);}15%{transform:translateX(-5px);}30%{transform:translateX(4px);}50%{transform:translateX(-4px);}70%{transform:translateX(3px);}}
+.iHint{position:absolute;left:6%;right:6%;z-index:30;text-align:center;color:#ffe9dc;font-size:1.25rem;line-height:1.3;text-shadow:2px 2px 0 rgba(20,8,24,.85),-1px -1px 0 rgba(20,8,24,.6);pointer-events:none;transition:opacity .4s ease;}
+#iTop{top:6%;}
+#iDoorHint{bottom:8%;animation:iPulse 1.6s ease-in-out infinite;background:rgba(255,255,255,.82);color:var(--deep);text-shadow:none;padding:6px 10px;left:14%;right:14%;}
+@keyframes iPulse{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+.iBottom{position:absolute;left:0;right:0;bottom:5%;z-index:30;display:flex;flex-direction:column;align-items:center;gap:10px;padding:0 6%;}
+.iBottom .dialogue-box{max-width:none;width:100%;padding:16px 14px;gap:10px;}
+.iBottom .btnrow{flex-wrap:wrap;justify-content:center;}
+#iSurprise{position:absolute;inset:0;opacity:0;pointer-events:none;}
+#iSurprise.on{opacity:1;pointer-events:auto;}
+#iSurprise .iRoom{z-index:0;}
+.iSp{position:absolute;bottom:0;height:auto;transform:translateX(-50%);z-index:2;-webkit-user-drag:none;}
+.iSp.mir{--flip:-1;}
+.iSpIn{display:block;width:100%;height:auto;transform-origin:50% 100%;opacity:0;-webkit-user-drag:none;}
+.iSp.mir .iSpIn{transform:scaleX(-1);}
+.iSp.go .iSpIn{animation:iPopIn .55s cubic-bezier(.34,1.56,.64,1) var(--d) forwards,iBounce var(--bd) ease-in-out calc(var(--d) + .6s) infinite;}
+.iSp.mir.go .iSpIn{animation:iPopInM .55s cubic-bezier(.34,1.56,.64,1) var(--d) forwards,iBounceM var(--bd) ease-in-out calc(var(--d) + .6s) infinite;}
+@keyframes iPopIn{0%{opacity:0;transform:translateY(60px) scale(.5,.7);}100%{opacity:1;transform:translateY(0) scale(1);}}
+@keyframes iPopInM{0%{opacity:0;transform:translateY(60px) scale(-.5,.7);}100%{opacity:1;transform:translateY(0) scale(-1,1);}}
+@keyframes iBounce{0%,100%{opacity:1;transform:translateY(0) scale(1,1);}45%{opacity:1;transform:translateY(-9px) scale(.97,1.04);}75%{opacity:1;transform:translateY(0) scale(1.03,.97);}}
+@keyframes iBounceM{0%,100%{opacity:1;transform:translateY(0) scale(-1,1);}45%{opacity:1;transform:translateY(-9px) scale(-.97,1.04);}75%{opacity:1;transform:translateY(0) scale(-1.03,.97);}}
+#iBunting{position:absolute;inset:0;z-index:3;pointer-events:none;}
+#iBunting svg{position:absolute;inset:0;width:100%;height:100%;}
+.iFlagPos{position:absolute;transform-origin:50% 0;}
+.iFlag{position:relative;transform-origin:50% 0;opacity:0;}
+.iFlag img{display:block;width:100%;height:auto;}
+.iFlag span{position:absolute;left:0;right:0;top:32%;text-align:center;font-family:'Press Start 2P',monospace;color:#7a2c46;line-height:1;}
+#iBunting.go .iFlag{animation:iFlagDrop .7s cubic-bezier(.34,1.56,.64,1) var(--d) forwards,iSway 2.8s ease-in-out calc(var(--d) + .8s) infinite;}
+@keyframes iFlagDrop{0%{opacity:0;transform:translateY(-220%) rotate(-12deg);}100%{opacity:1;transform:translateY(0) rotate(0);}}
+@keyframes iSway{0%,100%{opacity:1;transform:rotate(-3deg);}50%{opacity:1;transform:rotate(3deg);}}
+#iSurpriseText{position:absolute;left:0;right:0;top:34%;z-index:6;text-align:center;font-family:'Press Start 2P',monospace;font-size:clamp(20px,7vw,34px);color:#fff;text-shadow:4px 4px 0 var(--deep),-2px -2px 0 var(--deep),2px -2px 0 var(--deep),-2px 2px 0 var(--deep);opacity:0;pointer-events:none;}
+#iSurpriseText.on{animation:smilePop .55s cubic-bezier(.34,1.56,.64,1) both,iFadeOut .6s ease 2.6s forwards;}
+@keyframes iFadeOut{to{opacity:0;}}
+#iTapCont{position:absolute;left:0;right:0;bottom:4%;z-index:6;text-align:center;font-size:1.1rem;color:var(--deep);background:rgba(255,255,255,.85);margin:0 24%;padding:5px;opacity:0;pointer-events:none;}
+#iTapCont.on{opacity:1;animation:iPulse 1.6s ease-in-out infinite;}
+#iConfetti{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:70;}
+.iBurst{position:absolute;width:7px;height:7px;pointer-events:none;animation:iBurstFly 1.4s ease-out forwards;}
+@keyframes iBurstFly{0%{opacity:1;transform:translate(0,0) rotate(0);}60%{opacity:1;}100%{opacity:0;transform:translate(var(--bx),var(--by)) rotate(var(--br));}}
+@media (prefers-reduced-motion:reduce){#iMeBack,#iMeFront.live{animation:none;}}
+
 /* modal */
 #overlay{position:fixed;inset:0;background:rgba(122,44,70,.4);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px;}
 .modal{background:var(--cream);border:4px solid var(--deep);box-shadow:6px 6px 0 var(--rose);max-width:420px;width:100%;max-height:85vh;overflow-y:auto;padding:20px;position:relative;transform:scale(.8);animation:modalIn .3s cubic-bezier(.34,1.56,.64,1) forwards;}
@@ -581,6 +646,45 @@ body.iconsLocked .passChip{pointer-events:none;}
 <div id="confettiLayer"></div>
 <div id="balloonLayer"></div>
 <div id="cameraFlash"></div>
+
+<div id="intro">
+  <div class="iStage" id="iStage">
+    <div class="iCam" id="iCam">
+      <img class="iRoom" id="iRoomNight" src="assets/room_night.webp" alt="" draggable="false">
+      <div class="iChar" id="iMe">
+        <img id="iMeBack" src="assets/me_back.png" alt="" draggable="false">
+        <img id="iMeFront" src="assets/me_cake_lit.png" alt="" draggable="false">
+        <div id="iFlameAnchor" style="position:absolute;left:54%;top:53%;width:1px;height:1px;"></div>
+      </div>
+    </div>
+    <div id="iDim"></div>
+    <div id="iGlow"></div>
+    <div id="iDark"></div>
+    <div id="iSurprise">
+      <img class="iRoom" src="assets/room_day.webp" alt="" draggable="false">
+      <div id="iBunting"></div>
+      <div id="iPeople"></div>
+      <div id="iSurpriseText">SURPRISE!</div>
+      <p id="iTapCont">tap to continue</p>
+    </div>
+    <div id="iDoor"><img src="assets/door.webp" alt="" draggable="false"></div>
+    <p class="iHint" id="iDoorHint">knock knock 🚪 tap the door</p>
+    <p class="iHint" id="iTop" style="opacity:0"></p>
+    <div class="iBottom">
+      <button class="pxbtn hidden" id="iGoBtn">👣 Go closer</button>
+      <div class="dialogue-box hidden" id="iWishBox">
+        <p class="dialogue-text">Make a wish for this year... ✨</p>
+        <input type="text" id="iWishInput" class="wish-input" maxlength="80" placeholder="I wish for...">
+        <button class="pxbtn" id="iLockWish">🔒 Lock In Wish</button>
+      </div>
+      <div class="btnrow hidden" id="iBlowRow">
+        <button class="pxbtn" id="iMicBtn">Enable Mic to Blow</button>
+        <button class="pxbtn" id="iTapBtn">Tap to Blow Out</button>
+      </div>
+    </div>
+  </div>
+  <div id="iConfetti"></div>
+</div>
 
 <div id="gatekeeper">
 
@@ -1006,7 +1110,7 @@ function applyVol(){ try{ player.volume=musicVol; if(bgMusic) bgMusic.volume=mus
 function pauseBg(){ if(bgMusic && !bgMusic.paused) bgMusic.pause(); }
 function resumeBg(){ applyVol(); if(bgMusic && bgMusic.paused) bgMusic.play().catch(()=>{}); }
 function revealDashboard(){
-  try{ bgMusic=new Audio('assets/audio/happy_birthday.mp3'); bgMusic.loop=true; bgMusic.play(); }catch(e){}
+  if(!bgMusic){ try{ bgMusic=new Audio('assets/audio/happy_birthday.mp3'); bgMusic.loop=true; bgMusic.play(); }catch(e){} }
   try{ new Audio('assets/audio/confetti_pop.mp3').play(); }catch(e){}
   try{ new Audio('assets/audio/party_horn.mp3').play(); }catch(e){}
   spawnConfetti();
@@ -1022,9 +1126,9 @@ function revealDashboard(){
 }
 
 const confettiColors=['gold','green','purple','pink','red'];
-function spawnConfetti(){
-  const layer=document.getElementById('confettiLayer');
-  for(let i=0;i<26;i++){
+function spawnConfetti(layerId,n){
+  const layer=document.getElementById(layerId||'confettiLayer');
+  for(let i=0;i<(n||26);i++){
     const c=document.createElement('img');
     c.src='assets/confetti_'+confettiColors[i%confettiColors.length]+'.png';
     c.className='pixel confetti';
@@ -2339,6 +2443,284 @@ function initMessage(){
     btn.disabled=false;
   });
 }
+
+/* ---------- mini-me intro: door -> room -> cake -> surprise ---------- */
+(function(){
+const $=id=>document.getElementById(id);
+const stage=$('iStage'), cam=$('iCam'), me=$('iMe'), back=$('iMeBack'), front=$('iMeFront');
+let state='door';
+$('gatekeeper').classList.add('hidden'); /* the old wish + match steps are replaced by this intro */
+
+/* --- tiny synthesized sound effects (no extra files needed) --- */
+let actx=null;
+function ac(){ try{ if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume(); }catch(e){} return actx; }
+function tone(freq,dur,type,vol,to,delay){
+  const a=ac(); if(!a) return;
+  const t=a.currentTime+(delay||0), o=a.createOscillator(), g=a.createGain();
+  o.type=type; o.frequency.setValueAtTime(freq,t); if(to) o.frequency.exponentialRampToValueAtTime(to,t+dur);
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g); g.connect(a.destination); o.start(t); o.stop(t+dur+0.05);
+}
+function thump(delay,vol){
+  const a=ac(); if(!a) return;
+  const t=a.currentTime+delay, len=Math.floor(a.sampleRate*0.12), buf=a.createBuffer(1,len,a.sampleRate), d=buf.getChannelData(0);
+  for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*(1-i/len);
+  const src=a.createBufferSource(), f=a.createBiquadFilter(), g=a.createGain();
+  src.buffer=buf; f.type='lowpass'; f.frequency.value=380; g.gain.value=vol;
+  src.connect(f); f.connect(g); g.connect(a.destination); src.start(t);
+}
+const sfxKnock=()=>[0,.22,.44].forEach(d=>tone(130,.13,'sine',.6,55,d));
+const sfxCreak=()=>{ tone(210,.9,'sawtooth',.05,90,0); tone(190,.9,'square',.03,80,.05); };
+const sfxSteps=n=>{ for(let i=0;i<n;i++) thump(i*.4,.5); };
+
+function showTop(text){
+  const t=$('iTop'); t.style.opacity=0;
+  if(!text) return;
+  setTimeout(()=>{ t.textContent=text; t.style.opacity=1; },250);
+}
+
+/* 1) the door */
+$('iDoor').addEventListener('click',()=>{
+  if(state!=='door') return;
+  state='opening'; ac();
+  $('iDoorHint').style.opacity=0;
+  $('iDoor').classList.add('knock'); sfxKnock();
+  setTimeout(()=>{ $('iDoor').classList.remove('knock'); $('iDoor').classList.add('open'); sfxCreak(); },650);
+  setTimeout(()=>{ showTop("Shh... he doesn't know you're here 🤫"); $('iGoBtn').classList.remove('hidden'); state='room'; },2200);
+});
+
+/* 2) go closer: the camera walks toward him */
+const CAM_END='translateY(-15%) scale(2.55)';
+function dolly(instant){
+  if(instant){ cam.style.transform=CAM_END; return Promise.resolve(); }
+  const N=32, frames=[];
+  for(let i=0;i<=N;i++){
+    const t=i/N, e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+    const bob=Math.sin(t*Math.PI*10)*0.4*Math.sin(t*Math.PI); /* little walking bounce */
+    frames.push({transform:`translateY(${-15*e+bob}%) scale(${1+1.55*e})`});
+  }
+  return new Promise(res=>{
+    const a=cam.animate(frames,{duration:2700,easing:'linear',fill:'forwards'});
+    a.onfinish=()=>{ cam.style.transform=CAM_END; a.cancel(); res(); };
+  });
+}
+function readyToTap(){ state='ready'; me.classList.add('pulse'); showTop('Tap him! 👆'); }
+$('iGoBtn').addEventListener('click',()=>{
+  if(state!=='room') return;
+  state='walking'; ac();
+  $('iGoBtn').classList.add('hidden'); showTop('');
+  sfxSteps(7);
+  dolly().then(readyToTap);
+});
+
+/* 3) tap him: he turns around holding the lit cake, the room goes dark except the candle */
+function placeLight(){
+  const fr=$('iFlameAnchor').getBoundingClientRect(), sr=stage.getBoundingClientRect();
+  stage.style.setProperty('--lx',((fr.left+fr.width/2-sr.left)/sr.width*100)+'%');
+  stage.style.setProperty('--ly',((fr.top+fr.height/2-sr.top)/sr.height*100)+'%');
+  stage.style.setProperty('--gr',(sr.width*0.8)+'px');
+}
+function lightUp(){
+  placeLight();
+  $('iDim').style.opacity=1;
+  $('iGlow').classList.add('on');
+  showTop('Make a wish! 🎂✨');
+  setTimeout(()=>{ $('iWishBox').classList.remove('hidden'); state='wish'; },1100);
+}
+function turnAround(){
+  back.animate([{transform:'scaleX(1)'},{transform:'scaleX(0)'}],{duration:220,easing:'ease-in',fill:'forwards'}).onfinish=()=>{
+    back.style.opacity=0; front.style.opacity=1;
+    front.animate([{transform:'scaleX(0) translateY(0)'},{transform:'scaleX(1) translateY(-7%)'},{transform:'scaleX(1) translateY(0)'}],{duration:480,easing:'cubic-bezier(.34,1.56,.64,1)'}).onfinish=()=>{
+      front.classList.add('live'); lightUp();
+    };
+  };
+}
+me.addEventListener('click',()=>{
+  if(state==='ready'){ state='turning'; me.classList.remove('pulse'); showTop(''); ac(); turnAround(); }
+  else if(state==='blow'){ introBlow('tap'); }
+});
+
+/* 4) the wish */
+function wishSparkles(){
+  const sr=stage.getBoundingClientRect(), fr=$('iFlameAnchor').getBoundingClientRect();
+  for(let i=0;i<20;i++){
+    const p=document.createElement('div');
+    p.className='wish-particle';
+    p.style.cssText='position:fixed;bottom:auto;left:'+(fr.left+(Math.random()*80-40))+'px;top:'+(fr.top)+'px;animation-delay:'+(Math.random()*.4)+'s;animation-duration:'+(1+Math.random()*.6)+'s;z-index:75;';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),2200);
+  }
+}
+$('iLockWish').addEventListener('click',()=>{
+  const wishText=($('iWishInput').value||'').trim();
+  window.CELYN_WISH=wishText;
+  try{ localStorage.setItem('celynWish',wishText); }catch(e){}
+  if(wishText) sendWish(wishText);
+  award('wish');
+  $('iWishBox').classList.add('fadeOut');
+  wishSparkles();
+  state='locking';
+  setTimeout(()=>{
+    $('iWishBox').classList.add('hidden');
+    showTop('Now blow out the candle! 🎂');
+    $('iBlowRow').classList.remove('hidden');
+    state='blow';
+  },1000);
+});
+
+/* 5) blow it out: mic or tap */
+const I_BLOW=42, I_WIND=18;
+$('iMicBtn').addEventListener('click',async()=>{
+  const btn=$('iMicBtn');
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    const AC=window.AudioContext||window.webkitAudioContext, ctx=new AC();
+    const src=ctx.createMediaStreamSource(stream), an=ctx.createAnalyser();
+    an.fftSize=512; src.connect(an);
+    const data=new Uint8Array(an.frequencyBinCount);
+    btn.textContent='🎤 Listening… blow now!'; btn.disabled=true;
+    const stop=()=>{ stream.getTracks().forEach(t=>t.stop()); ctx.close(); };
+    (function check(){
+      if(state!=='blow'){ stop(); return; }
+      an.getByteFrequencyData(data);
+      let sum=0; for(let i=0;i<data.length;i++) sum+=data[i];
+      const avg=sum/data.length;
+      if(avg>I_BLOW){ stop(); introBlow('mic'); }
+      else{ $('iGlow').style.filter='brightness('+(avg>I_WIND?0.75:1)+')'; requestAnimationFrame(check); }
+    })();
+  }catch(e){ btn.classList.add('hidden'); }
+});
+$('iTapBtn').addEventListener('click',()=>introBlow('tap'));
+function introBlow(src){
+  if(state!=='blow') return;
+  state='blowing';
+  $('iBlowRow').classList.add('fadeOut'); showTop('');
+  if(src==='tap'){ try{ new Audio('assets/audio/blow_candle.mp3').play(); }catch(e){} }
+  setTimeout(()=>{
+    front.src='assets/me_cake_out.png';
+    $('iGlow').classList.remove('on'); $('iGlow').style.opacity=0; $('iGlow').style.filter='';
+    $('iDark').style.opacity=.94;
+    setTimeout(blackoutThenSurprise,1100);
+  }, src==='tap'?400:0);
+}
+
+/* 6) black screen with the wish line, then the surprise */
+function blackoutThenSurprise(){
+  const blackout=document.createElement('div');
+  blackout.id='blackout'; blackout.style.transition='opacity .12s ease-out';
+  document.body.appendChild(blackout);
+  requestAnimationFrame(()=>{ blackout.style.opacity='1'; });
+  const bt=document.createElement('div'); bt.id='blackoutText'; blackout.appendChild(bt);
+  let bi=0, tm=null;
+  setTimeout(()=>{ tm=setInterval(()=>{ bi++; bt.textContent=BLACKOUT_TEXT.slice(0,bi); if(bi>=BLACKOUT_TEXT.length){ clearInterval(tm); tm=null; } },70); },500);
+  setTimeout(()=>{ bt.style.opacity='0'; },4000);
+  setTimeout(()=>{
+    if(tm){ clearInterval(tm); tm=null; }
+    startSurprise(true);
+    blackout.style.transition='none'; blackout.style.opacity='0';
+    setTimeout(()=>blackout.remove(),50);
+  },4700);
+}
+
+/* --- the surprise: lights on, friends on both sides, banner on the ceiling --- */
+const PEOPLE=[
+  /* file, x%, feet-bottom%, width%, mirrored */
+  ['a2',15,26,19,0],['a4',32,25,19,0],['a1',11,13,22,0],['a3',26,12,22,0],['a5',40,11,21,0],
+  ['b2',85,26,19,1],['b4',68,25,19,1],['b1',89,13,22,1],['b3',74,12,22,1],['b5',60,11,21,1]
+];
+function buildPeople(){
+  const box=$('iPeople'); box.innerHTML='';
+  const items=PEOPLE.map((p,i)=>({file:'friend_'+p[0],x:p[1],b:p[2],w:p[3],m:p[4],i}));
+  items.push({file:'me_party',x:50,b:9,w:30,m:0,i:10,hero:1});
+  items.forEach((p,k)=>{
+    const d=document.createElement('div');
+    d.className='iSp'+(p.m?' mir':'');
+    d.style.cssText='left:'+p.x+'%;bottom:'+p.b+'%;width:'+p.w+'%;z-index:'+Math.round(60-p.b)+(p.hero?';z-index:80':'')+';--d:'+(p.hero?0.9:(0.05+(k%5)*0.13))+'s;--bd:'+(0.85+Math.random()*0.5)+'s;';
+    d.innerHTML='<img class="iSpIn" src="assets/'+p.file+'.png" alt="" draggable="false">';
+    box.appendChild(d);
+  });
+}
+function buildBunting(){
+  const box=$('iBunting'); box.innerHTML='';
+  const W=stage.getBoundingClientRect().width||360;
+  const rows=[
+    {txt:'HAPPY',p:[[4,3.6],[50,9.6],[96,3.6]],w:14,t0:.13,t1:.87,base:0},
+    {txt:'BIRTHDAY',p:[[5,15.6],[50,20.4],[95,15.6]],w:11,t0:.07,t1:.93,base:5}
+  ];
+  let svg='<svg viewBox="0 0 100 100" preserveAspectRatio="none">';
+  rows.forEach(r=>{ const [a,b,c]=r.p; svg+='<path d="M'+a[0]+' '+a[1]+' Q'+b[0]+' '+b[1]+' '+c[0]+' '+c[1]+'" fill="none" stroke="#6b3b2a" stroke-width="2" vector-effect="non-scaling-stroke"/>'; });
+  box.insertAdjacentHTML('beforeend',svg+'</svg>');
+  const ratio=1659/948;
+  rows.forEach(r=>{
+    const [p0,p1,p2]=r.p, n=r.txt.length;
+    for(let i=0;i<n;i++){
+      const t=n===1?.5:r.t0+(r.t1-r.t0)*i/(n-1), u=1-t;
+      const x=u*u*p0[0]+2*u*t*p1[0]+t*t*p2[0], y=u*u*p0[1]+2*u*t*p1[1]+t*t*p2[1];
+      const dx=2*u*(p1[0]-p0[0])+2*t*(p2[0]-p1[0]), dy=2*u*(p1[1]-p0[1])+2*t*(p2[1]-p1[1]);
+      const ang=Math.atan2(dy*ratio,dx)*180/Math.PI;
+      const pos=document.createElement('div');
+      pos.className='iFlagPos';
+      pos.style.cssText='left:'+x+'%;top:'+y+'%;width:'+r.w+'%;transform:translateX(-50%) rotate('+ang+'deg);';
+      const fs=Math.max(9,W*r.w/100*0.34);
+      pos.innerHTML='<div class="iFlag" style="--d:'+((r.base+i)*0.07)+'s"><img src="assets/flag'+((i+r.base)%4+1)+'.png" alt="" draggable="false"><span style="font-size:'+fs+'px">'+r.txt[i]+'</span></div>';
+      box.appendChild(pos);
+    }
+  });
+}
+function fireBursts(){
+  const sr=stage.getBoundingClientRect(), layer=$('iConfetti');
+  const cols=['#ff6f9c','#ffd84d','#8fd3a4','#b9a3ee','#ff8a5c','#ffffff'];
+  [[6,66,1],[94,66,-1],[6,58,1],[94,58,-1]].forEach(([x,y,dir])=>{
+    for(let i=0;i<14;i++){
+      const c=document.createElement('div'); c.className='iBurst';
+      c.style.left=(sr.left+sr.width*x/100)+'px'; c.style.top=(sr.top+sr.height*y/100)+'px';
+      c.style.background=cols[i%cols.length];
+      c.style.setProperty('--bx',(dir*(40+Math.random()*130))+'px');
+      c.style.setProperty('--by',(-(90+Math.random()*190))+'px');
+      c.style.setProperty('--br',(Math.random()*720-360)+'deg');
+      layer.appendChild(c); setTimeout(()=>c.remove(),1500);
+    }
+  });
+}
+function startSurprise(withFlash){
+  document.querySelector('.iBottom').style.display='none';
+  $('iDoorHint').style.display='none'; $('iTop').style.display='none';
+  buildPeople(); buildBunting();
+  $('iSurprise').classList.add('on');
+  if(withFlash){ const f=$('cameraFlash'); f.style.transition='none'; f.style.opacity='1'; requestAnimationFrame(()=>requestAnimationFrame(()=>{ f.style.transition='opacity .8s ease'; f.style.opacity='0'; })); }
+  try{ new Audio('assets/audio/confetti_pop.mp3').play(); }catch(e){}
+  try{ new Audio('assets/audio/party_horn.mp3').play(); }catch(e){}
+  if(!bgMusic){ try{ bgMusic=new Audio('assets/audio/happy_birthday.mp3'); bgMusic.loop=true; bgMusic.play(); }catch(e){} }
+  setTimeout(()=>$('iSurprise').querySelectorAll('.iSp').forEach(el=>el.classList.add('go')),150);
+  setTimeout(()=>$('iBunting').classList.add('go'),450);
+  setTimeout(()=>$('iSurpriseText').classList.add('on'),700);
+  [300,1100,2000].forEach(t=>setTimeout(()=>{ fireBursts(); spawnConfetti('iConfetti',12); },t));
+  setTimeout(()=>{
+    $('iTapCont').classList.add('on');
+    $('iSurprise').addEventListener('click',finishIntro,{once:true});
+  },4600);
+}
+function finishIntro(){
+  $('iTapCont').classList.remove('on');
+  const f=$('cameraFlash'); f.style.transition='none'; f.style.opacity='1';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ f.style.transition='opacity .6s ease'; f.style.opacity='0'; }));
+  $('intro').classList.add('gone');
+  $('iConfetti').innerHTML='';
+  $('dashboard').classList.remove('hidden');
+  revealDashboard();
+}
+
+/* preview helper: index.html?scene=cake or ?scene=surprise jumps ahead */
+const scene=new URLSearchParams(location.search).get('scene');
+if(scene==='cake'||scene==='surprise'){
+  $('iDoor').style.display='none'; $('iDoorHint').style.display='none';
+  cam.style.transform=CAM_END; back.style.opacity=0; front.style.opacity=1; front.classList.add('live');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    if(scene==='cake'){ state='wish'; lightUp(); }
+    else startSurprise(false);
+  }));
+}
+})();
 </script>
 </body>
 </html>
