@@ -1896,8 +1896,8 @@ const PASSPORT=[
   {id:'photo',label:'Photo',hint:'Open the Gallery',img:'assets/sticker_photo.png'},
   {id:'music',label:'Music',hint:'Play a song',img:'assets/sticker_music.png'},
   {id:'letter',label:'Secret',hint:'Read the puppy\u2019s letter',img:'assets/sticker_secret.png'},
-  {id:'puppy',label:'Puppy',hint:'Pet the puppy 10 times',img:'assets/sticker_puppy.png'},
-  {id:'balloon',label:'Balloons',hint:'Pop 6 balloons',img:'assets/sticker_balloons.png'}
+  {id:'puppy',label:'Puppy',hint:'Hold & swipe on the puppy',img:'assets/sticker_puppy.png'},
+  {id:'balloon',label:'Balloons',hint:'Pop 3 balloons',img:'assets/sticker_balloons.png'}
 ];
 let passGot=[], passSeen=[], passReady=false, toastTimer=null;
 try{
@@ -2024,7 +2024,7 @@ function popBalloon(b){
   document.body.appendChild(line);
   setTimeout(()=>line.remove(),2300);
   popCount++;
-  if(popCount>=6) award('balloon');
+  if(popCount>=3) award('balloon');
 }
 
 /* ================= puppy: petting and napping ================= */
