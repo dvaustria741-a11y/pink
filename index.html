@@ -192,6 +192,8 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 .grid.ready .appicon.gift{pointer-events:auto;}
 .grid.ready .appicon.gift span{opacity:1;}
 
+.giftArea.vanish{animation:giftVanish .35s ease-in forwards;}
+@keyframes giftVanish{0%{transform:scale(1);filter:brightness(1);opacity:1;}30%{transform:scale(1.12);filter:brightness(3);opacity:1;}100%{transform:scale(0);filter:brightness(3);opacity:0;}}
 /* message icon sits bottom-right, outside the 2x2 grid flow */
 #messageIcon{position:absolute;right:4%;bottom:3%;max-width:34%;text-align:center;}
 
@@ -867,6 +869,19 @@ function flyMessageIcon(){
     if(e.target!==icon || e.animationName!=='flyOut') return;
     icon.classList.add('landed');
     icon.classList.remove('fly');
+    vanishGift();
+  });
+}
+function vanishGift(){
+  /* box shrinks away with a quick flash once the message icon is out */
+  const flash=document.getElementById('cameraFlash');
+  flash.style.transition='none';
+  flash.style.opacity='.85';
+  giftArea.classList.add('vanish');
+  setTimeout(()=>{ flash.style.transition='opacity .3s ease'; flash.style.opacity='0'; }, 90);
+  giftArea.addEventListener('animationend',e=>{
+    if(e.target!==giftArea) return;
+    document.getElementById('giftWrap').style.display='none';
   });
 }
 function cameraFlash(cb){
