@@ -484,8 +484,9 @@ body.iconsLocked .passChip{pointer-events:none;}
 .pass-foot{text-align:center;margin-top:18px;color:var(--deep);font-size:1rem;}
 .pass-foot .pxbtn{animation:finBtnPulse 1.1s ease-in-out infinite;}
 .modal.passport-modal{background:transparent;border:none;box-shadow:none;}
+.modal .closeX{z-index:5;}
 .pp-frame{position:relative;margin:-20px -20px 0;width:calc(100% + 40px);aspect-ratio:638/1004;background:url('assets/passport_frame.png') center/100% 100% no-repeat;}
-.pp-slot{position:absolute;width:24.57%;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.pp-slot{position:absolute;width:27.03%;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .pp-slot img{width:100%;height:100%;object-fit:contain;}
 .pp-slot.stamp{animation:stickerStamp .7s cubic-bezier(.34,1.56,.64,1) both;}
 .pp-foot{text-align:center;margin-top:16px;color:var(--deep);font-size:1rem;}
@@ -1897,9 +1898,8 @@ const PASSPORT=[
 ];
 let passGot=[], passSeen=[], passReady=false, toastTimer=null;
 try{
-  if(/[?&]reset=1/.test(location.search)){ ['celynPass','celynPassSeen','celynWish'].forEach(k=>localStorage.removeItem(k)); }
-  passGot=JSON.parse(localStorage.getItem('celynPass')||'[]');
-  passSeen=JSON.parse(localStorage.getItem('celynPassSeen')||'[]');
+  ['celynPass','celynPassSeen','celynWish'].forEach(k=>localStorage.removeItem(k));
+  passGot=[]; passSeen=[];
 }catch(e){ passGot=[]; passSeen=[]; }
 function passSave(){
   try{ localStorage.setItem('celynPass',JSON.stringify(passGot)); localStorage.setItem('celynPassSeen',JSON.stringify(passSeen)); }catch(e){}
@@ -1942,10 +1942,10 @@ function onDashboardReady(){
 templates.passport=()=>{
   const n=passGot.length, total=PASSPORT.length;
   const pos=[
-    {left:20.17,top:20.19},{left:54.80,top:20.19},
-    {left:20.17,top:37.67},{left:54.80,top:37.67},
-    {left:20.17,top:55.27},{left:54.80,top:55.27},
-    {left:20.17,top:72.85},{left:54.80,top:72.85}
+    {left:18.94,top:19.40},{left:53.57,top:19.40},
+    {left:18.94,top:36.88},{left:53.57,top:36.88},
+    {left:18.94,top:54.48},{left:53.57,top:54.48},
+    {left:18.94,top:72.06},{left:53.57,top:72.06}
   ];
   const slots=PASSPORT.map((s,i)=>{
     const got=passGot.includes(s.id);
