@@ -804,11 +804,11 @@ function tapBlow(){
   if(blownAlready||blowStarted) return;
   blowStarted=true;
   const flame=document.getElementById('flame');
-  /* sound and snuff start together on the tap */
+  /* sound starts on the tap, the snuff follows 0.2s later */
   try{ new Audio('assets/audio/blow_candle.mp3').play(); }catch(e){}
   const btnRow=document.getElementById('blowBtnRow');
   if(btnRow) btnRow.classList.add('fadeOut');
-  triggerBlowOut('tap'); /* flame goes out the instant the sound plays */
+  setTimeout(()=>triggerBlowOut('tap'),200); /* flame goes out 0.2s after the sound starts */
 }
 document.getElementById('tapBtn').addEventListener('click',tapBlow);
 document.getElementById('cakeStage').addEventListener('click',tapBlow);
