@@ -1041,7 +1041,41 @@ function closePuppyLetter(){
   if(o) o.remove();
   plStage=0;
 }
+let plReturning=false;
+function returnEnvelope(){
+  /* closing: the envelope flies back into the puppy's mouth */
+  const o=document.getElementById('pupOverlay');
+  if(!o || plReturning) return;
+  plReturning=true;
+  clearInterval(plHeartTimer); plHeartTimer=null;
+  o.querySelectorAll('.pl-heart').forEach(h=>h.remove());
+  const env=document.getElementById('plEnv');
+  const letter=document.getElementById('plLetter');
+  const close=document.getElementById('plClose');
+  const prompt=document.getElementById('plPrompt');
+  if(close) close.classList.add('hidden');
+  if(prompt) prompt.style.opacity='0';
+  if(letter && !letter.classList.contains('hidden')) letter.animate([{opacity:1},{opacity:0}],{duration:250,fill:'forwards'});
+  env.getAnimations().forEach(a=>a.cancel());
+  env.src='assets/envelope_closed.png';
+  const pup=document.getElementById('pupImg').getBoundingClientRect();
+  const fin=env.getBoundingClientRect();
+  const dx=(pup.left+pup.width*0.42)-(fin.left+fin.width/2), dy=(pup.top+pup.height*0.68)-(fin.top+fin.height/2);
+  const sc=Math.max(.15,(pup.width*0.42)/fin.width);
+  env.animate([
+    {transform:'translate(0,0) scale(1) rotate(0)',opacity:1},
+    {transform:`translate(${dx}px,${dy}px) scale(${sc}) rotate(-14deg)`,opacity:1}
+  ],{duration:650,delay:150,easing:'cubic-bezier(.5,0,.75,.2)',fill:'both'});
+  o.animate([{opacity:1},{opacity:0}],{duration:300,delay:500,fill:'forwards'});
+  setTimeout(()=>{
+    o.remove();
+    plStage=0; plReturning=false;
+    document.getElementById('pupImg').src='assets/puppy.png'; /* envelope is back in its mouth */
+    document.getElementById('pupPrompt').classList.remove('gone');
+  },850);
+}
 function openPuppyLetter(){
+  if(plReturning) return;
   closePuppyLetter();
   plStage=1;
   document.getElementById('pupPrompt').classList.add('gone');
@@ -1072,8 +1106,8 @@ function openPuppyLetter(){
   ],{duration:850,easing:'cubic-bezier(.34,1.25,.64,1)'});
   setTimeout(()=>{ const p=document.getElementById('plPrompt'); if(p) p.style.opacity='1'; },700);
   env.addEventListener('click',plEnvTap);
-  o.addEventListener('click',e=>{ if(e.target===o && plStage<4) closePuppyLetter(); });
-  document.getElementById('plClose').addEventListener('click',closePuppyLetter);
+  o.addEventListener('click',e=>{ if(e.target===o && plStage<4) returnEnvelope(); });
+  document.getElementById('plClose').addEventListener('click',returnEnvelope);
 }
 function plEnvTap(){
   const env=document.getElementById('plEnv');
