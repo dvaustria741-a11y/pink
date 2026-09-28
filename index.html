@@ -92,8 +92,6 @@ button{font-family:'VT323',monospace;cursor:pointer;}
   40%{opacity:.55;transform:translate(-70%,-22px) scale(1);}
   100%{opacity:0;transform:translate(-30%,-52px) scale(1.6);}
 }
-.success-banner{text-align:center;font-size:1.1rem;color:var(--rose);margin-top:10px;opacity:0;transition:opacity .5s ease;}
-.success-banner.show{opacity:1;}
 .q{font-size:1.2rem;}
 .btnrow{display:flex;gap:16px;}
 .popup{background:#fff;border:3px solid var(--deep);box-shadow:5px 5px 0 var(--rose);padding:20px;display:flex;flex-direction:column;gap:14px;align-items:center;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;max-width:280px;}
@@ -465,7 +463,6 @@ button{font-family:'VT323',monospace;cursor:pointer;}
       <button class="pxbtn" id="micBtn"> Enable Mic to Blow</button>
       <button class="pxbtn" id="tapBtn"> Tap to Blow Out</button>
     </div>
-    <p id="successBanner" class="success-banner hidden">May all your wishes come true, Celyn! 🎉✨</p>
   </div>
 
 </div>
@@ -734,14 +731,10 @@ function triggerBlowOut(source){
 
   const q=document.getElementById('candleQ');
   const row=document.getElementById('blowBtnRow');
-  const banner=document.getElementById('successBanner');
   if(q) q.classList.add('fadeOut');
   if(row) row.classList.add('fadeOut');
-  banner.classList.remove('hidden');
-  requestAnimationFrame(()=>banner.classList.add('show'));
 
   setTimeout(()=>{
-    banner.classList.add('fadeOut');
     const blackout=document.createElement('div');
     blackout.id='blackout';
     blackout.style.transition='opacity .12s ease-out';
