@@ -79,7 +79,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
   90%{transform:translate(-68%,-97%) skewX(-44deg) scale(.55,.35);}
   100%{transform:translate(-80%,-95%) skewX(-62deg) scale(.5,.3);filter:brightness(1.5);}
 }
-.flame.out{animation:flameSnuff .4s ease-out forwards;}
+.flame.out{animation:flameSnuff .6s ease-out forwards;}
 @keyframes flameSnuff{
   0%{opacity:1;transform:translate(-80%,-95%) skewX(-62deg) scale(.5,.3);}
   100%{opacity:0;transform:translate(-110%,-92%) skewX(-70deg) scale(0,0);}
@@ -805,6 +805,8 @@ function tapBlow(){
   const flame=document.getElementById('flame');
   /* sound starts with the tap, and the flame fights the wind for a moment before it dies */
   try{ new Audio('assets/audio/blow_candle.mp3').play(); }catch(e){}
+  const btnRow=document.getElementById('blowBtnRow');
+  if(btnRow) btnRow.classList.add('fadeOut');
   flame.classList.remove('blowing');
   flame.classList.add('blowLong');
   setTimeout(()=>triggerBlowOut('tap'),1500);
