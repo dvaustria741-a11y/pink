@@ -514,7 +514,8 @@ body.iconsLocked .passChip{pointer-events:none;}
 /* finale cutscene */
 #finale{position:fixed;inset:0;z-index:60;overflow:hidden;background:radial-gradient(ellipse at 50% 30%,#4a1f3f 0%,#2a1230 55%,#150818 100%);opacity:0;transition:opacity .8s ease;}
 #finale.show{opacity:1;}
-#finStage{position:absolute;inset:0;background-image:url('assets/party_room_bg.jpg');background-size:cover;background-position:center;}
+#finStage{position:absolute;inset:0;}
+#finRoomArt{position:absolute;inset:0;background-image:url('assets/party_room_bg.png');background-size:cover;background-position:center;z-index:3;pointer-events:none;}
 .room-char{position:absolute;bottom:4%;opacity:0;transform:translateY(70px) scale(.5);margin:0;}
 .room-char.in{animation:finHop .85s cubic-bezier(.34,1.56,.64,1) forwards;}
 .room-char.beat{opacity:1;transform:none;animation:finBeat .62s ease-in-out infinite;animation-delay:var(--b,0s);}
@@ -531,7 +532,6 @@ body.iconsLocked .passChip{pointer-events:none;}
 #finFx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;}
 #finConfetti{position:absolute;inset:0;pointer-events:none;z-index:4;overflow:hidden;}
 #finFlash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:9;}
-.fin-ground{position:absolute;left:0;right:0;bottom:0;height:11%;background:linear-gradient(#3a1a3d,#1b0b20);border-top:4px solid #7a2c46;z-index:3;}
 .fin-count{position:absolute;left:0;right:0;top:40%;text-align:center;z-index:5;transform:translateY(-50%);transition:top .9s cubic-bezier(.34,1.2,.64,1),transform .9s cubic-bezier(.34,1.2,.64,1);}
 .fin-count.docked{top:9%;transform:translateY(-50%) scale(.7);}
 .fin-label{font-family:'Press Start 2P',cursive;font-size:clamp(10px,3.4vw,14px);color:#f6c9d6;letter-spacing:5px;margin-bottom:14px;opacity:0;transition:opacity .5s ease;}
@@ -656,8 +656,8 @@ body.iconsLocked .passChip{pointer-events:none;}
 <div id="stickerToast"><div class="tIco" id="toastIco"></div><div><b id="toastTitle">STICKER COLLECTED!</b><span id="toastSub"></span></div></div>
 <div id="finale" class="hidden"><div id="finStage">
   <canvas id="finFx"></canvas>
+  <div id="finRoomArt"></div>
   <div id="finConfetti"></div>
-  <div class="fin-ground"></div>
   <div class="fin-count" id="finCount"><div class="fin-label" id="finLabel">LEVEL</div><div class="fin-num" id="finNum">1</div><div class="fin-levelup" id="finLevelUp">LEVEL UP!</div></div>
   <div class="fin-title"><span class="fin-line" id="finL1"></span><span class="fin-line" id="finL2"></span><div class="fin-sub" id="finSub">~ SWEET SIXTEEN ~</div></div>
   <div class="fin-cast" id="finCast">
@@ -2162,8 +2162,8 @@ function finStartFx(){
   }
   finFx={
     launch(){
-      const h=cv.height, ty=h*(.1+Math.random()*.32);
-      rockets.push({x:cv.width*(.14+Math.random()*.72),y:h,vx:(Math.random()-.5)*.8,vy:-Math.sqrt(2*.12*(h-ty)),c:'#fdf3ec'});
+      const h=cv.height, ty=h*(.22+Math.random()*.16);
+      rockets.push({x:cv.width*(.38+Math.random()*.22),y:h,vx:(Math.random()-.5)*.5,vy:-Math.sqrt(2*.12*(h-ty)),c:'#fdf3ec'});
     },
     volley(n){ for(let i=0;i<n;i++) setTimeout(()=>finFx&&finFx.launch(),i*170); }
   };
@@ -2209,10 +2209,10 @@ function finReset(){
   finEl('finCast').querySelectorAll('img').forEach(i=>{ i.classList.remove('in','beat'); i.style.animationDelay=''; i.style.removeProperty('--b'); });
   const st=document.querySelectorAll('.fin-star'); st.forEach(x=>x.remove());
   const stage=finEl('finStage');
-  for(let i=0;i<55;i++){
+  for(let i=0;i<40;i++){
     const d=document.createElement('div');
     d.className='fin-star';
-    d.style.left=Math.random()*100+'%'; d.style.top=(Math.random()*78)+'%';
+    d.style.left=(34+Math.random()*29.5)+'%'; d.style.top=(19.6+Math.random()*22.3)+'%';
     d.style.animationDelay=(Math.random()*2)+'s';
     d.style.animationDuration=(1.4+Math.random()*2)+'s';
     stage.insertBefore(d,stage.firstChild);
