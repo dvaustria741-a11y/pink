@@ -99,10 +99,10 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 @keyframes wishRise{0%{opacity:0;transform:translateY(0) scale(.4);}20%{opacity:1;}100%{opacity:0;transform:translateY(-150px) scale(1.2);}}
 
 /* step 2: strike the match */
-.match-scene{position:relative;width:240px;height:150px;touch-action:none;}
-.matchbox{position:absolute;left:0;bottom:0;width:130px;height:auto;pointer-events:none;}
-.matchstick{position:absolute;left:158px;bottom:8px;width:auto;height:105px;transform-origin:50% 100%;transform:rotate(-6deg);touch-action:none;user-select:none;-webkit-user-drag:none;}
-.matchstick.lit{height:131px;left:155px;cursor:grab;animation:matchFlicker .3s ease-in-out infinite;}
+.match-scene{position:relative;width:170px;height:100px;touch-action:none;}
+.matchbox{position:absolute;left:0;bottom:0;width:85px;height:auto;pointer-events:none;}
+.matchstick{position:absolute;left:108px;bottom:5px;width:auto;height:68px;transform-origin:50% 100%;transform:rotate(-6deg);touch-action:none;user-select:none;-webkit-user-drag:none;}
+.matchstick.lit{height:85px;left:106px;cursor:grab;animation:matchFlicker .3s ease-in-out infinite;}
 .matchstick.struck{animation:strikeMatch .5s ease forwards;}
 @keyframes strikeMatch{
   0%{transform:rotate(-6deg);}
@@ -365,8 +365,8 @@ function spawnSparks(){
     const dist=14+Math.random()*22;
     s.style.setProperty('--dx',(Math.cos(ang)*dist)+'px');
     s.style.setProperty('--dy',(Math.sin(ang)*dist-10)+'px');
-    s.style.left='164px';
-    s.style.top='44px';
+    s.style.left='113px';
+    s.style.top='26px';
     wrap.appendChild(s);
     setTimeout(()=>s.remove(),550);
   }
