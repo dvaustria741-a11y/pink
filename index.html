@@ -611,8 +611,7 @@ let bgMusic=null;
 function pauseBg(){ if(bgMusic && !bgMusic.paused) bgMusic.pause(); }
 function resumeBg(){ if(bgMusic && bgMusic.paused) bgMusic.play().catch(()=>{}); }
 function revealDashboard(){
-  try{ bgMusic=new Audio('assets/audio/happy_birthday.mp3'); bgMusic.loop=true; }catch(e){}
-  playTrack(1); /* Birthday by Katy Perry plays first */
+  try{ bgMusic=new Audio('assets/audio/happy_birthday.mp3'); bgMusic.loop=true; bgMusic.play(); }catch(e){}
   try{ new Audio('assets/audio/confetti_pop.mp3').play(); }catch(e){}
   try{ new Audio('assets/audio/party_horn.mp3').play(); }catch(e){}
   spawnConfetti();
@@ -675,6 +674,7 @@ function spawnBalloons(){
   }
 }
 function revealIcons(){
+  playTrack(1); /* Birthday by Katy Perry starts when the 4-icon dashboard appears */
   document.querySelectorAll('.appicon').forEach((el,i)=>{
     if(el.id==='messageIcon') return;
     setTimeout(()=>el.classList.add('crawl'), i*150);
