@@ -160,7 +160,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
   80%{opacity:1;transform:scale(1.05) translateY(0);}
   100%{opacity:1;transform:scale(1) translateY(0);}
 }
-.appicon img.spin{animation:discSpin 3s linear infinite;}
+.appicon img.spin{animation:discSpin 6s linear infinite;}
 @keyframes discSpin{to{transform:rotate(360deg);}}
 .appicon img{width:15vw;max-width:56px;min-width:38px;}
 .appicon .emojiIcon{font-size:clamp(30px,10vw,46px);line-height:1;}
@@ -827,6 +827,7 @@ function setDisc(on){
   document.querySelectorAll('.appicon[data-modal="music"] img').forEach(i=>i.classList.toggle('spin',on));
 }
 function refreshIcons(){
+  setDisc(currentIdx!==null); /* disc spins only while a playlist track is playing */
   tracks.forEach((t,i)=>{
     const btn=document.getElementById('tbtn'+i), icon=document.getElementById('ticon'+i);
     const on=(currentIdx===i);
