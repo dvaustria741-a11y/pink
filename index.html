@@ -81,7 +81,8 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 }
 .flame.out{animation:flameSnuff .6s ease-out forwards;}
 @keyframes flameSnuff{
-  0%{opacity:1;transform:translate(-80%,-95%) skewX(-62deg) scale(.5,.3);}
+  0%{opacity:1;transform:translate(-50%,-100%) skewX(0deg) scale(1);filter:brightness(1.2);}
+  30%{opacity:1;transform:translate(-72%,-95%) skewX(-48deg) scale(.65,.5);filter:brightness(1.5);}
   100%{opacity:0;transform:translate(-110%,-92%) skewX(-70deg) scale(0,0);}
 }
 #smokeWrap{position:absolute;top:10%;left:50%;width:1px;height:1px;pointer-events:none;}
@@ -803,13 +804,11 @@ function tapBlow(){
   if(blownAlready||blowStarted) return;
   blowStarted=true;
   const flame=document.getElementById('flame');
-  /* sound starts with the tap, and the flame fights the wind for a moment before it dies */
+  /* sound and snuff start together on the tap */
   try{ new Audio('assets/audio/blow_candle.mp3').play(); }catch(e){}
   const btnRow=document.getElementById('blowBtnRow');
   if(btnRow) btnRow.classList.add('fadeOut');
-  flame.classList.remove('blowing');
-  flame.classList.add('blowLong');
-  setTimeout(()=>triggerBlowOut('tap'),1500);
+  triggerBlowOut('tap'); /* flame goes out the instant the sound plays */
 }
 document.getElementById('tapBtn').addEventListener('click',tapBlow);
 document.getElementById('cakeStage').addEventListener('click',tapBlow);
