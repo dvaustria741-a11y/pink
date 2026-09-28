@@ -219,6 +219,34 @@ body.iconsLocked .appicon,body.iconsLocked .appicon.crawl{pointer-events:none !i
 /* message icon sits bottom-right, outside the 2x2 grid flow */
 #messageIcon{position:absolute;right:4%;bottom:3%;max-width:34%;text-align:center;}
 
+/* puppy & secret letter */
+.pupWrap{position:absolute;left:3%;bottom:3%;z-index:3;display:flex;flex-direction:column;align-items:flex-start;gap:6px;opacity:0;transform:scale(.4);transform-origin:0 100%;pointer-events:none;}
+.pupWrap.show{animation:pupPop .6s cubic-bezier(.34,1.56,.64,1) forwards;pointer-events:auto;}
+@keyframes pupPop{to{opacity:1;transform:scale(1);}}
+.pupPrompt{width:max-content;max-width:118px;font-size:.7rem;line-height:1.35;color:var(--deep);background:rgba(255,255,255,.8);padding:4px 7px;margin:0;animation:pupFloat 2.2s ease-in-out infinite;transition:opacity .3s ease;}
+.pupPrompt.gone{opacity:0;animation:none;}
+@keyframes pupFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+.pupBtn{background:none;border:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transform-origin:50% 100%;}
+.pupBtn.hop{animation:duoHop .35s ease;}
+.pupImg{display:block;width:84px;height:auto;animation:pupBounce 1.8s ease-in-out infinite;}
+@keyframes pupBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+#pupOverlay{position:fixed;inset:0;background:rgba(122,44,70,.55);display:flex;align-items:center;justify-content:center;z-index:30;padding:16px;animation:plFade .3s ease both;overflow:hidden;}
+@keyframes plFade{from{opacity:0;}to{opacity:1;}}
+.pl-wrap{position:relative;width:min(92vw,340px);display:flex;flex-direction:column;align-items:center;}
+.pl-area{position:relative;width:100%;height:min(390px,66dvh);}
+.pl-env{position:absolute;left:50%;top:50%;width:230px;max-width:80%;height:auto;margin:-84px 0 0 -115px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.pl-prompt{position:absolute;left:0;right:0;top:calc(50% + 100px);text-align:center;color:#fff;font-size:.95rem;line-height:1.4;margin:0;text-shadow:2px 2px 0 rgba(60,43,48,.6);transition:opacity .25s ease;}
+.pl-letter{--lw:min(330px,92vw);position:absolute;left:50%;top:50%;width:var(--lw);transform:translate(-50%,-50%);}
+.pl-letter img{display:block;width:100%;height:auto;}
+.pl-text{position:absolute;left:14%;right:14%;top:23%;bottom:20%;color:var(--deep);font-size:calc(var(--lw)/31);line-height:1.38;text-align:left;opacity:0;transition:opacity .6s ease;overflow:hidden;}
+.pl-text.in{opacity:1;}
+.pl-text p{margin:0 0 .7em;}
+.pl-text p:first-child{font-weight:bold;}
+.pl-close{margin-top:12px;}
+.pl-heart{position:absolute;pointer-events:none;animation:plHeart 2.4s ease-out forwards;}
+@keyframes plHeart{0%{opacity:0;transform:translateY(0) scale(.6);}15%{opacity:1;}100%{opacity:0;transform:translateY(-190px) scale(1.2);}}
+@media (prefers-reduced-motion:reduce){.pupImg,.pupPrompt{animation:none;}}
+
 /* modal */
 #overlay{position:fixed;inset:0;background:rgba(122,44,70,.4);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px;}
 .modal{background:var(--cream);border:4px solid var(--deep);box-shadow:6px 6px 0 var(--rose);max-width:420px;width:100%;max-height:85vh;overflow-y:auto;padding:20px;position:relative;transform:scale(.8);animation:modalIn .3s cubic-bezier(.34,1.56,.64,1) forwards;}
@@ -513,6 +541,10 @@ body.iconsLocked .appicon,body.iconsLocked .appicon.crawl{pointer-events:none !i
       <div class="giftArea" id="giftArea">
         <button class="giftBtn" id="giftBtn" aria-label="open the gift"><img class="pixel giftImg" id="giftImg" src="assets/gift_box_closed.png" alt="gift box" draggable="false"></button>
       </div>
+    </div>
+    <div class="pupWrap" id="pupWrap">
+      <p class="pupPrompt" id="pupPrompt">A puppy brought you something! Tap the puppy 🐶💌</p>
+      <button class="pupBtn" id="pupBtn" aria-label="puppy"><img class="pixel pupImg" id="pupImg" src="assets/puppy.png" alt="puppy" draggable="false"></button>
     </div>
     <div class="grid">
       <button class="appicon gift" data-modal="music"><img class="pixel" src="assets/record.png" alt=""><span>Music</span></button>
@@ -968,8 +1000,107 @@ function unpackIcons(){
     });
   });
 }
+
+/* ---------- puppy & secret letter ---------- */
+let plStage=0, plHeartTimer=null;
+const PL_TEXT=`<p>You found the secret message! 🐶</p>
+<p>Quick reminder from your puppy friend: No overthinking or stress allowed today! It's your day to relax and be celebrated.</p>
+<p>Thank you for being such a kind, hardworking, and wonderful person. You make every day feel a little brighter, and you deserve the happiest birthday today!</p>`;
+function spawnPuppy(){
+  ['puppy','envelope_closed','envelope_open','letter_parchment'].forEach(n=>{ new Image().src='assets/'+n+'.png'; });
+  document.getElementById('pupWrap').classList.add('show');
+}
+function plHeartSVG(){
+  return '<svg viewBox="0 0 7 6" width="18" height="15" shape-rendering="crispEdges" fill="#ff6f9c"><path d="M1 0h2v1h1V0h2v1h1v2H6v1H5v1H4v1H3V5H2V4H1V3H0V1h1z"/></svg>';
+}
+function plHeart(){
+  const o=document.getElementById('pupOverlay');
+  if(!o) return;
+  const area=o.querySelector('.pl-area').getBoundingClientRect();
+  const h=document.createElement('div');
+  h.className='pl-heart';
+  const side=Math.random()<.5?Math.random()*0.16:0.84+Math.random()*0.16; /* hearts rise around the letter, not over the text */
+  h.style.left=(area.left+area.width*side)+'px';
+  h.style.top=(area.top+area.height*(0.45+Math.random()*0.5))+'px';
+  h.innerHTML=plHeartSVG();
+  o.appendChild(h);
+  setTimeout(()=>h.remove(),2500);
+}
+function closePuppyLetter(){
+  clearInterval(plHeartTimer); plHeartTimer=null;
+  const o=document.getElementById('pupOverlay');
+  if(o) o.remove();
+  plStage=0;
+}
+function openPuppyLetter(){
+  closePuppyLetter();
+  plStage=1;
+  document.getElementById('pupPrompt').classList.add('gone');
+  const pup=document.getElementById('pupImg').getBoundingClientRect();
+  const btn=document.getElementById('pupBtn');
+  btn.classList.remove('hop'); void btn.offsetWidth; btn.classList.add('hop');
+  const o=document.createElement('div');
+  o.id='pupOverlay';
+  o.innerHTML=`<div class="pl-wrap">
+    <div class="pl-area" id="plArea">
+      <img class="pixel pl-env" id="plEnv" src="assets/envelope_closed.png" alt="envelope" draggable="false">
+      <div class="pl-letter hidden" id="plLetter"><img class="pixel" src="assets/letter_parchment.png" alt="" draggable="false"><div class="pl-text" id="plText">${PL_TEXT}</div></div>
+      <p class="pl-prompt" id="plPrompt" style="opacity:0">Tap the envelope to open it! 💌</p>
+    </div>
+    <button class="pxbtn pl-close hidden" id="plClose">Close [X]</button>
+  </div>`;
+  document.body.appendChild(o);
+  const env=document.getElementById('plEnv');
+  /* stage 2: the envelope flies from the puppy's mouth to the middle of the screen */
+  const fin=env.getBoundingClientRect();
+  const sx=pup.left+pup.width*0.42, sy=pup.top+pup.height*0.68;
+  const dx=sx-(fin.left+fin.width/2), dy=sy-(fin.top+fin.height/2);
+  const sc=Math.max(.15,(pup.width*0.42)/fin.width);
+  env.animate([
+    {transform:`translate(${dx}px,${dy}px) scale(${sc}) rotate(-14deg)`,opacity:.9},
+    {transform:'translate(0,0) scale(1) rotate(0)',opacity:1}
+  ],{duration:850,easing:'cubic-bezier(.34,1.25,.64,1)'});
+  setTimeout(()=>{ const p=document.getElementById('plPrompt'); if(p) p.style.opacity='1'; },700);
+  env.addEventListener('click',plEnvTap);
+  o.addEventListener('click',e=>{ if(e.target===o && plStage<4) closePuppyLetter(); });
+  document.getElementById('plClose').addEventListener('click',closePuppyLetter);
+}
+function plEnvTap(){
+  const env=document.getElementById('plEnv');
+  if(!env) return;
+  if(plStage===1){
+    /* stage 3: bounce, then show the open envelope */
+    plStage=2;
+    env.animate([{transform:'scale(1)'},{transform:'scale(1.1)'},{transform:'scale(1)'}],{duration:280,easing:'ease-out'});
+    setTimeout(()=>{ env.src='assets/envelope_open.png'; },140);
+    document.getElementById('plPrompt').textContent='Tap to pull out the letter! ✨';
+  }else if(plStage===2){
+    /* stage 4: the letter slides up out of the envelope and grows to full size */
+    plStage=3;
+    const letter=document.getElementById('plLetter');
+    document.getElementById('plPrompt').style.opacity='0';
+    letter.classList.remove('hidden');
+    const e=env.getBoundingClientRect(), l=letter.getBoundingClientRect();
+    const dy=(e.top+e.height*0.35)-(l.top+l.height/2);
+    letter.animate([
+      {transform:`translate(-50%,-50%) translateY(${dy}px) scale(.5)`,opacity:0},
+      {transform:`translate(-50%,-50%) translateY(${dy*0.25}px) scale(.85)`,opacity:1,offset:.5},
+      {transform:'translate(-50%,-50%) scale(1)',opacity:1}
+    ],{duration:900,easing:'cubic-bezier(.22,1,.36,1)'});
+    env.animate([{transform:'translateY(0)',opacity:1},{transform:'translateY(60px)',opacity:0}],{duration:600,easing:'ease-in',fill:'forwards'});
+    setTimeout(()=>{
+      plStage=4;
+      const t=document.getElementById('plText'); if(t) t.classList.add('in');
+      const c=document.getElementById('plClose'); if(c) c.classList.remove('hidden');
+      for(let i=0;i<4;i++) setTimeout(plHeart,i*200);
+      plHeartTimer=setInterval(plHeart,380);
+    },800);
+  }
+}
+document.getElementById('pupBtn').addEventListener('click',openPuppyLetter);
 function openGift(){
   giftBtn.disabled=true;
+  setTimeout(spawnPuppy,900);
   flashbang(()=>{
     giftImg.classList.remove('shake1','shake2');
     giftImg.src='assets/gift_box_open.png';
@@ -1435,7 +1566,7 @@ function initGallery(){
   galleryTimers.push(setTimeout(()=>say('elsa','Happy birthday, Cel! ❄️',2600),2300));
   galleryTimers.push(setTimeout(()=>say('anna','Happy birthday, Cel! 🎉',2600),5100));
 }
-const PLAYLIST_NOTE='Pasensya random lang itong mga music baka kasi kapag nag tanong ako malata mo na may ginagawa ako HAHAHA';
+const PLAYLIST_NOTE='Pasensya random lang itong mga music';
 function noteWordsHTML(text){
   return text.split(' ').map((w,i)=>'<span class="nw'+(w==='HAHAHA'?' laugh':'')+'" style="--i:'+i+'">'+w+'</span>').join(' ');
 }
