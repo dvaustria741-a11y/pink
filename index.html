@@ -474,7 +474,7 @@ body.iconsLocked .passChip{pointer-events:none;}
 .pass-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 6px;}
 .pass-slot{display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;}
 .pass-sticker{width:min(19vw,72px);aspect-ratio:1;border-radius:50%;background:var(--cream);border:3px solid var(--deep);box-shadow:2px 2px 0 var(--rose);display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.pass-sticker img,.pass-sticker svg{width:68%;height:auto;max-height:68%;object-fit:contain;}
+.pass-sticker img,.pass-sticker svg{width:92%;height:auto;max-height:92%;object-fit:contain;}
 .pass-sticker.locked{border-style:dashed;background:#f1e4dd;box-shadow:none;}
 .pass-sticker.locked img,.pass-sticker.locked svg{filter:brightness(0);opacity:.13;}
 .pass-slot span{font-size:.72rem;line-height:1.1;color:var(--deep);}
@@ -1878,14 +1878,14 @@ function sendWish(text){
 
 /* ================= Birthday Passport ================= */
 const PASSPORT=[
-  {id:'wish',label:'Wish',hint:'Lock in a wish',img:'assets/match_lit.png'},
-  {id:'cake',label:'Cake',hint:'Eat the whole cake',img:'assets/cake.png'},
-  {id:'lily',label:'Lilies',hint:'Pick every lily',img:'assets/flower_bouquet.png'},
-  {id:'photo',label:'Photo',hint:'Open the Gallery',img:'assets/camera.png'},
-  {id:'music',label:'Music',hint:'Play a song',img:'assets/record.png'},
-  {id:'letter',label:'Secret',hint:'Read the puppy\u2019s letter',img:'assets/envelope_closed.png'},
-  {id:'puppy',label:'Puppy',hint:'Pet the puppy',img:'assets/puppy_no_envelope.png'},
-  {id:'balloon',label:'Balloons',hint:'Pop 6 balloons',svg:true}
+  {id:'wish',label:'Wish',hint:'Lock in a wish',img:'assets/sticker_wish.png'},
+  {id:'cake',label:'Cake',hint:'Eat the whole cake',img:'assets/sticker_cake.png'},
+  {id:'lily',label:'Lilies',hint:'Pick every lily',img:'assets/sticker_lily.png'},
+  {id:'photo',label:'Photo',hint:'Open the Gallery',img:'assets/sticker_photo.png'},
+  {id:'music',label:'Music',hint:'Play a song',img:'assets/sticker_music.png'},
+  {id:'letter',label:'Secret',hint:'Read the puppy\u2019s letter',img:'assets/sticker_secret.png'},
+  {id:'puppy',label:'Puppy',hint:'Pet the puppy',img:'assets/sticker_puppy.png'},
+  {id:'balloon',label:'Balloons',hint:'Pop 6 balloons',img:'assets/sticker_balloons.png'}
 ];
 let passGot=[], passSeen=[], passReady=false, toastTimer=null;
 try{
