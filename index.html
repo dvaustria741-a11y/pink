@@ -123,7 +123,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 
 /* dashboard */
 #dashboard{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:22px;position:relative;z-index:3;}
-.scenic-card{position:relative;display:grid;grid-template-areas:"stack";width:92%;max-width:400px;height:70dvh;max-height:680px;border:4px solid var(--deep);box-shadow:6px 6px 0 var(--rose);overflow:hidden;background:#eee;opacity:0;transform:translateY(-16px);animation:slideIn .6s ease forwards;}
+.scenic-card{position:relative;display:grid;grid-template-areas:"stack";grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1fr);width:92%;max-width:400px;height:70dvh;max-height:680px;border:4px solid var(--deep);box-shadow:6px 6px 0 var(--rose);overflow:hidden;background:#eee;opacity:0;transform:translateY(-16px);animation:slideIn .6s ease forwards;}
 @keyframes slideIn{to{opacity:1;transform:translateY(0);}}
 .scenic-card > *{grid-area:stack;}
 .scenic-card > img.banner{width:100%;height:100%;object-fit:cover;z-index:1;}
@@ -150,7 +150,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
   70%{transform:translateY(-65vh) translateX(-8px);}
   100%{transform:translateY(-90vh) translateX(4px);opacity:0;}
 }
-.grid{z-index:4;width:100%;height:100%;display:grid;grid-template-columns:1fr 1fr;place-items:center;gap:6% 4%;padding:10%;pointer-events:none;}
+.grid{z-index:4;width:100%;height:100%;display:grid;grid-template-columns:1fr 1fr;place-items:center;gap:6% 4%;padding:10% 10% 20%;pointer-events:none;}
 .appicon{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0;pointer-events:none;}
 .appicon.crawl{animation:crawlIn .7s steps(4) forwards;pointer-events:auto;}
 @keyframes crawlIn{
@@ -193,7 +193,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 .grid.ready .appicon.gift span{opacity:1;}
 
 /* message icon sits bottom-right, outside the 2x2 grid flow */
-#messageIcon{position:absolute;right:6%;bottom:4%;max-width:34%;text-align:center;}
+#messageIcon{position:absolute;right:4%;bottom:3%;max-width:34%;text-align:center;}
 
 /* modal */
 #overlay{position:fixed;inset:0;background:rgba(122,44,70,.4);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px;}
@@ -343,7 +343,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
       <button class="appicon gift" data-modal="gallery"><img class="pixel" src="assets/camera.png" alt=""><span>Gallery</span></button>
       <button class="appicon gift" data-modal="letter"><img class="pixel" src="assets/envelope.png" alt=""><span>Letter</span></button>
       <button class="appicon gift" data-modal="traits"><img class="pixel" src="assets/question_block.png" alt=""><span>Traits</span></button>
-      <button class="appicon hidden" id="messageIcon" data-modal="message"><img class="pixel" src="assets/message_icon.png" alt=""><span>Message (optional)</span></button>
+      <button class="appicon gift late hidden" id="messageIcon" data-modal="message"><img class="pixel" src="assets/message_icon.png" alt=""><span>Message (optional)</span></button>
     </div>
   </div>
 </div>
@@ -752,7 +752,7 @@ function flashbang(cb){
   }, 250);
 }
 function unpackIcons(){
-  const icons=[...document.querySelectorAll('.appicon.gift')];
+  const icons=[...document.querySelectorAll('.appicon.gift:not(.late)')];
   const grid=document.querySelector('.grid');
   const b=giftImg.getBoundingClientRect();
   const bx=b.left+b.width/2, by=b.top+b.height*0.45;
@@ -847,11 +847,27 @@ document.querySelectorAll('.appicon').forEach(btn=>{
     if(visitedModals.size===trackableModals.length) unlockMessageIcon();
   });
 });
+let messagePending=false;
 function unlockMessageIcon(){
   const icon=document.getElementById('messageIcon');
   if(!icon || !icon.classList.contains('hidden')) return;
+  messagePending=true; /* wait until she closes the 4th thing she opened */
+}
+function flyMessageIcon(){
+  const icon=document.getElementById('messageIcon');
+  if(!icon || !icon.classList.contains('hidden')) return;
   icon.classList.remove('hidden');
-  requestAnimationFrame(()=>icon.classList.add('crawl'));
+  const b=giftImg.getBoundingClientRect();
+  const r=icon.getBoundingClientRect();
+  icon.style.setProperty('--fx',((b.left+b.width/2)-(r.left+r.width/2))+'px');
+  icon.style.setProperty('--fy',((b.top+b.height*0.45)-(r.top+r.height/2))+'px');
+  giftDust(8,true);
+  icon.classList.add('fly');
+  icon.addEventListener('animationend',e=>{
+    if(e.target!==icon || e.animationName!=='flyOut') return;
+    icon.classList.add('landed');
+    icon.classList.remove('fly');
+  });
 }
 function cameraFlash(cb){
   const flash=document.getElementById('cameraFlash');
@@ -866,7 +882,7 @@ function cameraFlash(cb){
     });
   });
 }
-function closeModal(){overlay.classList.add('hidden');musicVol=1;applyVol();modalBox.innerHTML='';if(typeTimer){clearInterval(typeTimer);typeTimer=null;}}
+function closeModal(){overlay.classList.add('hidden');if(messagePending){messagePending=false;setTimeout(flyMessageIcon,400);}musicVol=1;applyVol();modalBox.innerHTML='';if(typeTimer){clearInterval(typeTimer);typeTimer=null;}}
 function openModal(name){
   modalBox.innerHTML='<button class="closeX" onclick="closeModal()">X</button>'+templates[name]();
   overlay.classList.remove('hidden');
