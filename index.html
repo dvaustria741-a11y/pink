@@ -608,8 +608,10 @@ document.getElementById('cakeStage').addEventListener('click',tapBlow);
 
 /* ---------- title drop, then tap-to-continue ---------- */
 let bgMusic=null;
+let musicVol=1;
+function applyVol(){ try{ player.volume=musicVol; if(bgMusic) bgMusic.volume=musicVol; }catch(e){} }
 function pauseBg(){ if(bgMusic && !bgMusic.paused) bgMusic.pause(); }
-function resumeBg(){ if(bgMusic && bgMusic.paused) bgMusic.play().catch(()=>{}); }
+function resumeBg(){ applyVol(); if(bgMusic && bgMusic.paused) bgMusic.play().catch(()=>{}); }
 function revealDashboard(){
   try{ bgMusic=new Audio('assets/audio/happy_birthday.mp3'); bgMusic.loop=true; bgMusic.play(); }catch(e){}
   try{ new Audio('assets/audio/confetti_pop.mp3').play(); }catch(e){}
@@ -749,10 +751,11 @@ function cameraFlash(cb){
     });
   });
 }
-function closeModal(){overlay.classList.add('hidden');modalBox.innerHTML='';if(typeTimer){clearInterval(typeTimer);typeTimer=null;}}
+function closeModal(){overlay.classList.add('hidden');musicVol=1;applyVol();modalBox.innerHTML='';if(typeTimer){clearInterval(typeTimer);typeTimer=null;}}
 function openModal(name){
   modalBox.innerHTML='<button class="closeX" onclick="closeModal()">X</button>'+templates[name]();
   overlay.classList.remove('hidden');
+  if(name==='letter'){ musicVol=0.25; applyVol(); } /* duck the music while reading the letter */
   if(name==='music') initMusic();
   if(name==='letter') initLetter();
   if(name==='message') initMessage();
