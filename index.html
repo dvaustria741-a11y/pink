@@ -219,6 +219,10 @@ body.iconsLocked .appicon,body.iconsLocked .appicon.crawl{pointer-events:none !i
 /* message icon sits bottom-right, outside the 2x2 grid flow */
 #messageIcon{position:absolute;right:4%;bottom:3%;max-width:34%;text-align:center;}
 
+/* no long-press image menu / drag / text selection (inputs still work) */
+img{-webkit-touch-callout:none;-webkit-user-drag:none;user-select:none;-webkit-user-select:none;}
+body{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
+input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default;}
 /* puppy & secret letter */
 .pupWrap{position:absolute;left:3%;bottom:3%;z-index:3;display:flex;flex-direction:column;align-items:flex-start;gap:6px;opacity:0;transform:scale(.4);transform-origin:0 100%;pointer-events:none;}
 .pupWrap.show{animation:pupPop .6s cubic-bezier(.34,1.56,.64,1) forwards;pointer-events:auto;}
@@ -1231,6 +1235,8 @@ function vanishGift(){
     unlockIcons();
   });
 }
+document.addEventListener('contextmenu',e=>{ if(e.target.tagName==='IMG') e.preventDefault(); });
+document.addEventListener('dragstart',e=>{ if(e.target.tagName==='IMG') e.preventDefault(); });
 let smiling=false;
 function smileThenFlash(){
   if(smiling) return;
