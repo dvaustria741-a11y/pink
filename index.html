@@ -514,7 +514,25 @@ body.iconsLocked .passChip{pointer-events:none;}
 /* finale cutscene */
 #finale{position:fixed;inset:0;z-index:60;overflow:hidden;background:radial-gradient(ellipse at 50% 30%,#4a1f3f 0%,#2a1230 55%,#150818 100%);opacity:0;transition:opacity .8s ease;}
 #finale.show{opacity:1;}
-#finStage{position:absolute;inset:0;}
+#finStage{position:absolute;inset:0;background-image:url('assets/party_room_bg.jpg');background-size:cover;background-position:center;}
+.room-char{position:absolute;bottom:4%;opacity:0;transform:translateY(70px) scale(.5);margin:0;}
+.room-char.in{animation:finHop .85s cubic-bezier(.34,1.56,.64,1) forwards;}
+.room-char.beat{opacity:1;transform:none;animation:finBeat .62s ease-in-out infinite;animation-delay:var(--b,0s);}
+.room-elsa{left:4%;}
+.room-puppy{left:16%;bottom:2.5%;}
+.room-anna{right:4%;}
+.room-bq{right:16%;bottom:3%;}
+.room-cake{left:50%;bottom:39%;transform:translateX(-50%) scale(.5);}
+.room-cake.in{animation:none;left:50%;bottom:39%;opacity:1;transform:translateX(-50%) scale(1);transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+.fin-gag{position:absolute;left:50%;top:32%;transform:translate(-50%,-50%) scale(.6);background:#fdf3ec;color:#5a2540;border:3px solid #7a2c46;padding:8px 14px;font-family:'Press Start 2P',cursive;font-size:clamp(9px,3.2vw,13px);text-align:center;opacity:0;z-index:9;box-shadow:3px 3px 0 rgba(0,0,0,.3);transition:opacity .25s ease,transform .25s cubic-bezier(.34,1.56,.64,1);pointer-events:none;white-space:nowrap;}
+.fin-gag.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
+.room-minime{position:absolute;bottom:3%;left:-18%;width:min(20vw,92px);z-index:6;transition:left 1.05s linear;}
+.room-minime.walk-in{left:38%;}
+.room-minime.trip{animation:minimeTrip .55s ease forwards;}
+@keyframes minimeTrip{0%{transform:rotate(0) translateY(0);}40%{transform:rotate(-16deg) translateY(2px);}70%{transform:rotate(13deg) translateY(9px);}100%{transform:rotate(5deg) translateY(5px);}}
+.room-cakefly{position:absolute;left:37%;bottom:9%;width:min(23vw,104px);z-index:7;transform:translateX(-50%) rotate(-16deg) scale(.85);transition:left .5s cubic-bezier(.3,.5,.3,1.5),bottom .5s cubic-bezier(.3,.5,.3,1.5),transform .5s cubic-bezier(.3,.5,.3,1.5);opacity:0;}
+.room-cakefly.show{opacity:1;}
+.room-cakefly.land{left:50%;bottom:39%;transform:translateX(-50%) rotate(0deg) scale(1.06);}
 #finStage.shake{animation:finShake .55s ease;}
 @keyframes finShake{0%,100%{transform:translate(0,0);}15%{transform:translate(-9px,5px);}30%{transform:translate(8px,-6px);}45%{transform:translate(-6px,-4px);}60%{transform:translate(5px,5px);}80%{transform:translate(-2px,2px);}}
 .fin-star{position:absolute;width:3px;height:3px;background:#fdf3ec;animation:finTwinkle 2s ease-in-out infinite;}
@@ -652,12 +670,16 @@ body.iconsLocked .passChip{pointer-events:none;}
   <div class="fin-count" id="finCount"><div class="fin-label" id="finLabel">LEVEL</div><div class="fin-num" id="finNum">1</div><div class="fin-levelup" id="finLevelUp">LEVEL UP!</div></div>
   <div class="fin-title"><span class="fin-line" id="finL1"></span><span class="fin-line" id="finL2"></span><div class="fin-sub" id="finSub">~ SWEET SIXTEEN ~</div></div>
   <div class="fin-cast" id="finCast">
-    <img class="pixel c-elsa" src="assets/elsa.png" alt="" draggable="false">
-    <img class="pixel c-puppy" src="assets/puppy_no_envelope.png" alt="" draggable="false">
-    <img class="pixel c-cake" src="assets/cake.png" alt="" draggable="false">
-    <img class="pixel c-bq" src="assets/flower_bouquet.png" alt="" draggable="false">
-    <img class="pixel c-anna" src="assets/anna.png" alt="" draggable="false">
+    <img class="pixel c-elsa room-char room-elsa" src="assets/elsa.png" alt="" draggable="false">
+    <img class="pixel c-puppy room-char room-puppy" src="assets/puppy_no_envelope.png" alt="" draggable="false">
+    <img class="pixel c-cake room-char room-cake" id="finCakeStill" src="assets/cake.png" alt="" draggable="false">
+    <img class="pixel c-bq room-char room-bq" src="assets/flower_bouquet.png" alt="" draggable="false">
+    <img class="pixel c-anna room-char room-anna" src="assets/anna.png" alt="" draggable="false">
   </div>
+  <div class="fin-gag" id="finGagWait">Wait&hellip; where's the cake?</div>
+  <div class="fin-gag" id="finGagLaugh">Ahahaha!</div>
+  <img class="pixel room-minime" id="finMinime" src="assets/minime_walk1.png" alt="" draggable="false">
+  <img class="pixel room-cakefly" id="finCakeFly" src="assets/cake.png" alt="" draggable="false">
   <div class="fin-lantern" id="finLantern"><div class="fin-lantern-body"><small>YOUR WISH</small><span id="finWishText"></span></div></div>
   <div id="finFlash"></div>
   <button class="pxbtn" id="finClose">Back to the party</button>
@@ -2087,6 +2109,9 @@ pupBtnEl.addEventListener('click',e=>{
 
 /* ================= FINALE cutscene ================= */
 let finRunning=false, finaleSeen=false, finTimers=[], finRaf=null, finAC=null, finResizeFn=null;
+let MINIME_READY=false, finWalkInterval=null;
+(function(){ const im=new Image(); im.onload=()=>MINIME_READY=true; im.onerror=()=>MINIME_READY=false; im.src='assets/minime_walk1.png'; })();
+function finSrc(id,src){ const el=finEl(id); if(el) el.src=src; }
 const FIN_COLORS=[['#f6c9d6','#fdf3ec'],['#f3d27a','#fdf3ec'],['#c14b70','#f6c9d6'],['#8fae87','#f3d27a'],['#ffffff','#f6c9d6']];
 const finEl=id=>document.getElementById(id);
 function finAt(ms,fn){ finTimers.push(setTimeout(fn,ms)); }
@@ -2187,6 +2212,7 @@ function finLetters(el,text,perDelay,startMs){
 }
 function finReset(){
   finTimers.forEach(clearTimeout); finTimers=[];
+  if(finWalkInterval){ clearInterval(finWalkInterval); finWalkInterval=null; }
   finEl('finNum').className='fin-num'; finEl('finNum').textContent='1';
   finEl('finLabel').className='fin-label';
   finEl('finLevelUp').className='fin-levelup';
@@ -2198,6 +2224,12 @@ function finReset(){
   finEl('finConfetti').innerHTML='';
   finEl('finStage').classList.remove('shake');
   finEl('finCast').querySelectorAll('img').forEach(i=>{ i.classList.remove('in','beat'); i.style.animationDelay=''; i.style.removeProperty('--b'); });
+  finEl('finGagWait').classList.remove('show');
+  finEl('finGagLaugh').classList.remove('show');
+  const mm=finEl('finMinime'); mm.classList.remove('walk-in','trip'); mm.style.transition='none'; mm.style.left=''; void mm.offsetWidth; mm.style.transition='';
+  finSrc('finMinime','assets/minime_walk1.png');
+  const cf=finEl('finCakeFly'); cf.classList.remove('show','land');
+  finEl('finCakeStill').style.opacity='';
   const st=document.querySelectorAll('.fin-star'); st.forEach(x=>x.remove());
   const stage=finEl('finStage');
   for(let i=0;i<55;i++){
@@ -2269,23 +2301,61 @@ function playFinale(){
     finBeep(1047,.25,'triangle',.06);
   });
 
-  /* 4) the whole gang hops in */
-  finAt(L+5900,()=>{
-    const imgs=[...finEl('finCast').querySelectorAll('img')];
-    imgs.forEach((im,i)=>{
-      finAt(L+5900+i*290,()=>{
-        im.style.animationDelay='0s';
-        im.classList.add('in');
-        finBeep(440+i*110,.12,'triangle',.06);
-        if(finFx) finFx.launch();
+  /* 4) the gang arrives */
+  if(!MINIME_READY){
+    /* fallback: original all-together hop-in, used until the mini-me sprites exist */
+    finAt(L+5900,()=>{
+      const imgs=[...finEl('finCast').querySelectorAll('img')];
+      imgs.forEach((im,i)=>{
+        finAt(L+5900+i*290,()=>{
+          im.style.animationDelay='0s';
+          im.classList.add('in');
+          finBeep(440+i*110,.12,'triangle',.06);
+          if(finFx) finFx.launch();
+        });
       });
+      finConfetti(34);
+      if(finFx) finFx.volley(7);
     });
-    finConfetti(34);
-    if(finFx) finFx.volley(7);
-  });
-  finAt(L+5900+5*290+900,()=>{
-    finEl('finCast').querySelectorAll('img').forEach((im,i)=>{ im.classList.remove('in'); im.style.setProperty('--b',(i*0.09)+'s'); im.classList.add('beat'); });
-  });
+    finAt(L+5900+5*290+900,()=>{
+      finEl('finCast').querySelectorAll('img').forEach((im,i)=>{ im.classList.remove('in'); im.style.setProperty('--b',(i*0.09)+'s'); im.classList.add('beat'); });
+    });
+  } else {
+    /* mini-me walks the cake in, trips, and it lands perfectly on the table */
+    const cakeStill=finEl('finCakeStill'), minime=finEl('finMinime'), cakeFly=finEl('finCakeFly');
+    cakeStill.style.opacity='0';
+    const sideCast=[finEl('finCast').querySelector('.room-elsa'),finEl('finCast').querySelector('.room-puppy'),finEl('finCast').querySelector('.room-anna')];
+    finAt(L+5900,()=>{
+      sideCast.forEach((im,i)=>{
+        finAt(L+5900+i*250,()=>{ im.style.animationDelay='0s'; im.classList.add('in'); finBeep(440+i*110,.12,'triangle',.06); });
+      });
+      finConfetti(20);
+    });
+    finAt(L+6250,()=>{ finEl('finGagWait').classList.add('show'); finBeep(392,.12,'square',.04); });
+    finAt(L+6500,()=>{
+      minime.classList.add('walk-in');
+      cakeFly.classList.add('show');
+      let f=1;
+      finWalkInterval=setInterval(()=>{ f=f===1?2:1; finSrc('finMinime',`assets/minime_walk${f}.png`); },180);
+    });
+    finAt(L+7450,()=>{
+      if(finWalkInterval){ clearInterval(finWalkInterval); finWalkInterval=null; }
+      finEl('finGagWait').classList.remove('show');
+      minime.classList.remove('walk-in'); minime.classList.add('trip');
+      finSrc('finMinime','assets/minime_trip.png');
+      finBoom(.08);
+    });
+    finAt(L+7540,()=>{ cakeFly.classList.add('land'); finFx&&finFx.launch(); });
+    finAt(L+8020,()=>{
+      finSrc('finMinime','assets/minime_laugh.png');
+      finEl('finGagLaugh').classList.add('show');
+      cakeStill.style.opacity='1';
+      [523,659,784].forEach((f,i)=>setTimeout(()=>finBeep(f,.12,'triangle',.05),i*90));
+      sideCast.forEach((im,i)=>{ im.classList.remove('in'); im.style.setProperty('--b',(i*0.09)+'s'); im.classList.add('beat'); });
+      finConfetti(24);
+    });
+    finAt(L+9400,()=>{ finEl('finGagLaugh').classList.remove('show'); });
+  }
 
   /* 5) her own wish floats up on a lantern */
   let wish=(window.CELYN_WISH||'');
@@ -2303,6 +2373,7 @@ function finEnd(){
   const fin=finEl('finale');
   fin.classList.remove('show');
   finTimers.forEach(clearTimeout); finTimers=[];
+  if(finWalkInterval){ clearInterval(finWalkInterval); finWalkInterval=null; }
   finAt(850,()=>{
     fin.classList.add('hidden');
     if(finRaf) cancelAnimationFrame(finRaf); finRaf=null; finFx=null;
