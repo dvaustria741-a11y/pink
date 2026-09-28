@@ -229,7 +229,13 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 @keyframes cheerIn{0%{opacity:0;transform:translateY(8px) scale(.6);}100%{opacity:1;transform:translateY(0) scale(1);}}
 @keyframes cheerWave{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
 /* Elsa and Anna at the bottom of the gallery */
-.frozen-duo{display:flex;justify-content:center;align-items:flex-end;gap:14px;margin-top:22px;padding-bottom:4px;}
+.frozen-duo{display:flex;justify-content:center;align-items:flex-end;gap:14px;margin-top:10px;padding-top:64px;padding-bottom:4px;}
+.duo-item{position:relative;background:none;border:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transform-origin:50% 100%;}
+.duo-item.hop{animation:duoHop .35s ease;}
+@keyframes duoHop{0%,100%{transform:translateY(0) scale(1);}40%{transform:translateY(-12px) scale(1.06,.96);}70%{transform:translateY(0) scale(.97,1.03);}}
+.bubble{position:absolute;bottom:100%;left:50%;width:max-content;max-width:150px;margin-bottom:10px;background:#fff;color:var(--deep);border:3px solid var(--deep);box-shadow:3px 3px 0 rgba(60,43,48,.25);padding:6px 8px;font-size:.72rem;line-height:1.35;text-align:center;opacity:0;pointer-events:none;transform:translateX(-50%) scale(.6);transform-origin:50% 100%;transition:opacity .15s ease,transform .25s cubic-bezier(.34,1.56,.64,1);z-index:3;}
+.bubble.show{opacity:1;transform:translateX(-50%) scale(1);}
+.bubble::after{content:"";position:absolute;top:100%;left:50%;margin-left:-6px;border:6px solid transparent;border-top-color:var(--deep);}
 .frozen-duo img{height:130px;width:auto;opacity:0;transform:translateY(14px) scale(.7);animation:duoIn .6s cubic-bezier(.34,1.56,.64,1) forwards,duoBob 2.4s ease-in-out infinite;transform-origin:50% 100%;}
 .frozen-duo .elsa{animation-delay:1.5s,2.2s;}
 .frozen-duo .anna{animation-delay:1.8s,2.6s;}
@@ -911,11 +917,12 @@ function cameraFlash(cb){
     });
   });
 }
-function closeModal(){overlay.classList.add('hidden');if(messagePending){messagePending=false;setTimeout(flyMessageIcon,400);}musicVol=1;applyVol();modalBox.innerHTML='';if(typeTimer){clearInterval(typeTimer);typeTimer=null;}}
+function closeModal(){overlay.classList.add('hidden');galleryTimers.forEach(clearTimeout);galleryTimers=[];if(messagePending){messagePending=false;setTimeout(flyMessageIcon,400);}musicVol=1;applyVol();modalBox.innerHTML='';if(typeTimer){clearInterval(typeTimer);typeTimer=null;}}
 function openModal(name){
   modalBox.innerHTML='<button class="closeX" onclick="closeModal()">X</button>'+templates[name]();
   overlay.classList.remove('hidden');
   if(name==='letter'){ musicVol=0.25; applyVol(); } /* duck the music while reading the letter */
+  if(name==='gallery') initGallery();
   if(name==='music') initMusic();
   if(name==='letter') initLetter();
   if(name==='message') initMessage();
@@ -930,6 +937,39 @@ function initTraits(){
   });
 }
 
+/* ---------- Elsa & Anna dialogue ---------- */
+let galleryTimers=[];
+const duoLines={
+  elsa:["Make a wish, Cel. I'll add the sparkle! ❄️","You're stronger and kinder than you know.","Your smile could melt any winter.","Ice cream for breakfast? On your birthday, yes.","Whatever this year brings, you've got this."],
+  anna:["Cake first, everything else later! 🍰","Today is all about you, Cel!","Best friends make the best adventures!","Wish big! I'm cheering for you!","Did someone say party? 🎉"]
+};
+const duoBag={elsa:[],anna:[]};
+function nextLine(who){
+  if(!duoBag[who].length) duoBag[who]=[...duoLines[who]].sort(()=>Math.random()-.5);
+  return duoBag[who].pop();
+}
+function say(who,text,ms){
+  ['elsa','anna'].forEach(w=>{ const b=document.getElementById(w+'Bubble'); if(b && w!==who) b.classList.remove('show'); });
+  const b=document.getElementById(who+'Bubble');
+  if(!b) return;
+  b.textContent=text;
+  b.classList.add('show');
+  clearTimeout(b._t);
+  b._t=setTimeout(()=>b.classList.remove('show'),ms||3200);
+  const item=document.getElementById(who+'Btn');
+  item.classList.remove('hop'); void item.offsetWidth; item.classList.add('hop');
+}
+function initGallery(){
+  ['elsa','anna'].forEach(w=>{
+    document.getElementById(w+'Btn').addEventListener('click',()=>{
+      galleryTimers.forEach(clearTimeout); galleryTimers=[]; /* stop the greeting if she taps */
+      say(w,nextLine(w));
+    });
+  });
+  /* they greet her when the gallery opens, one after the other */
+  galleryTimers.push(setTimeout(()=>say('elsa','Happy birthday, Cel! ❄️',2600),2300));
+  galleryTimers.push(setTimeout(()=>say('anna','Happy birthday, Cel! 🎉',2600),5100));
+}
 function cheersHTML(text){
   let i=0;
   return text.split(' ').map(w=>'<span class="cw">'+[...w].map(ch=>'<span class="cl" style="--i:'+(i++)+'">'+ch+'</span>').join('')+'</span>').join(' ');
@@ -951,8 +991,8 @@ const templates={
       <div class="gframe"><img src="assets/gallery_4.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
     </div>
     <div class="frozen-duo">
-      <img class="pixel elsa" src="assets/elsa.png" alt="Elsa">
-      <img class="pixel anna" src="assets/anna.png" alt="Anna">
+      <button class="duo-item" id="elsaBtn" aria-label="Elsa"><div class="bubble" id="elsaBubble"></div><img class="pixel elsa" src="assets/elsa.png" alt="Elsa" draggable="false"></button>
+      <button class="duo-item" id="annaBtn" aria-label="Anna"><div class="bubble" id="annaBubble"></div><img class="pixel anna" src="assets/anna.png" alt="Anna" draggable="false"></button>
     </div>`,
   letter:()=>`
     <div class="letter-bg">
