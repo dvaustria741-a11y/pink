@@ -743,10 +743,10 @@ function flashbang(cb){
   flash.style.transition='none';
   flash.style.opacity='1';
   cb();
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    flash.style.transition='opacity .3s ease';
+  setTimeout(()=>{ /* hold the white briefly, then fade out slowly */
+    flash.style.transition='opacity 1s ease';
     flash.style.opacity='0';
-  }));
+  }, 250);
 }
 function unpackIcons(){
   const icons=[...document.querySelectorAll('.appicon.gift')];
@@ -761,7 +761,7 @@ function unpackIcons(){
     el.style.setProperty('--fy',(by-(r.top+r.height/2))+'px');
   });
   icons.forEach((el,i)=>{
-    setTimeout(()=>{ el.classList.add('fly'); giftDust(6,true); }, 250+i*150);
+    setTimeout(()=>{ el.classList.add('fly'); giftDust(6,true); }, 600+i*1000);
     el.addEventListener('animationend',e=>{
       if(e.target!==el || e.animationName!=='flyOut') return;
       el.classList.add('landed');
