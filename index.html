@@ -391,6 +391,7 @@ function lightCandle(){
 function doStrike(){
   if(matchStruck) return;
   matchStruck=true;
+  try{ new Audio('assets/audio/match_strike.mp3').play(); }catch(e){}
   document.getElementById('matchstick').classList.add('struck');
   spawnSparks();
   setTimeout(()=>{
@@ -434,12 +435,30 @@ function startMatchDrag(e){
   stick.addEventListener('pointermove', moveMatchDrag);
   stick.addEventListener('pointerup', endMatchDrag, {once:true});
   stick.addEventListener('pointercancel', endMatchDrag, {once:true});
+  checkHold();
+}
+let holdTimer=null;
+function checkHold(){
+  if(!dragging){ clearTimeout(holdTimer); holdTimer=null; return; }
+  if(nearCandle()){
+    if(!holdTimer) holdTimer=setTimeout(()=>{
+      holdTimer=null;
+      if(dragging && nearCandle()){ dragging=false; finishLight(); }
+    }, 1000);
+  }else if(holdTimer){ clearTimeout(holdTimer); holdTimer=null; }
+}
+function finishLight(){
+  const stick=document.getElementById('matchstick');
+  stick.classList.remove('dragging');
+  stick.removeEventListener('pointermove', moveMatchDrag);
+  lightCandle();
 }
 function moveMatchDrag(e){
   if(!dragging) return;
   const stick=document.getElementById('matchstick');
   stick.style.left=(e.clientX-dragOffX)+'px';
   stick.style.top=(e.clientY-dragOffY)+'px';
+  checkHold();
 }
 function nearCandle(){
   const stick=document.getElementById('matchstick');
@@ -449,13 +468,14 @@ function nearCandle(){
   return !(sr.right<tr.left||sr.left>tr.right||sr.bottom<tr.top||sr.top>tr.bottom);
 }
 function endMatchDrag(e){
+  const wasDragging=dragging;
   dragging=false;
+  clearTimeout(holdTimer); holdTimer=null;
+  if(!wasDragging) return;
   const stick=document.getElementById('matchstick');
   stick.classList.remove('dragging');
   stick.removeEventListener('pointermove', moveMatchDrag);
-  if(nearCandle()){
-    lightCandle();
-  }else{
+  {
     stick.style.transition='left .3s ease, top .3s ease';
     stick.style.position='';
     stick.style.left='';
