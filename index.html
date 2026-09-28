@@ -475,7 +475,9 @@ function endMatchDrag(e){
   const stick=document.getElementById('matchstick');
   stick.classList.remove('dragging');
   stick.removeEventListener('pointermove', moveMatchDrag);
-  {
+  if(nearCandle()){
+    lightCandle();
+  }else{
     stick.style.transition='left .3s ease, top .3s ease';
     stick.style.position='';
     stick.style.left='';
