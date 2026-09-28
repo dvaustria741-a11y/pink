@@ -417,6 +417,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 
 /* blow-candle transition */
 .fadeOut{opacity:0 !important;transition:opacity .5s ease;pointer-events:none;}
+#blackoutText{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 10%;text-align:center;color:#ffe4d6;font-family:'VT323',monospace;font-size:1.9rem;line-height:1.3;letter-spacing:1px;text-shadow:0 0 10px rgba(246,201,214,.55);opacity:1;transition:opacity .6s ease;}
 #blackout{position:fixed;inset:0;background:#000;opacity:0;z-index:998;pointer-events:none;transition:opacity .4s ease;}
 </style>
 </head>
@@ -534,6 +535,7 @@ for(let i=0;i<16;i++){
 }
 
 /* ---------- gatekeeper: blow out the candle ---------- */
+const BLACKOUT_TEXT='May all your wishes come true...';
 let blownAlready=false;
 
 /* step 1: write your wish */
@@ -745,14 +747,28 @@ function triggerBlowOut(source){
     blackout.style.transition='opacity .12s ease-out';
     document.body.appendChild(blackout);
     requestAnimationFrame(()=>{ blackout.style.opacity='1'; });
+    /* wish line typed out on the black screen */
+    const bt=document.createElement('div');
+    bt.id='blackoutText';
+    blackout.appendChild(bt);
+    let bi=0, btTimer=null;
     setTimeout(()=>{
+      btTimer=setInterval(()=>{
+        bi++;
+        bt.textContent=BLACKOUT_TEXT.slice(0,bi);
+        if(bi>=BLACKOUT_TEXT.length){ clearInterval(btTimer); btTimer=null; }
+      },70);
+    },500);
+    setTimeout(()=>{ bt.style.opacity='0'; },4000);
+    setTimeout(()=>{
+      if(btTimer){ clearInterval(btTimer); btTimer=null; }
       document.getElementById('gatekeeper').classList.add('hidden');
       document.getElementById('dashboard').classList.remove('hidden');
       revealDashboard();
       blackout.style.transition='none';
       blackout.style.opacity='0';
       setTimeout(()=>blackout.remove(), 50);
-    },2400);
+    },4700);
   },1100);
 }
 
