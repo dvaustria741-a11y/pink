@@ -104,7 +104,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 .titlestack .cursorHint.show{opacity:1;animation:cursorTap 1.2s ease-in-out infinite;}
 @keyframes cursorTap{0%,100%{transform:translateY(0) scale(1);}45%{transform:translateY(10px) scale(.88);}60%{transform:translateY(10px) scale(.88);}}
 #balloonLayer{position:fixed;inset:0;pointer-events:none;z-index:6;overflow:hidden;}
-.balloon{position:absolute;bottom:-90px;animation:balloonRise 3s ease-out forwards;}
+.balloon{position:absolute;bottom:-90px;animation:balloonRise 6.5s ease-out forwards;}
 .balloon svg{display:block;filter:drop-shadow(2px 2px 0 rgba(0,0,0,.12));}
 @keyframes balloonRise{
   0%{transform:translateY(0) translateX(0);}
@@ -198,6 +198,45 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 /* blow-candle transition */
 .fadeOut{opacity:0 !important;transition:opacity .5s ease;pointer-events:none;}
 #blackout{position:fixed;inset:0;background:#000;opacity:0;z-index:998;pointer-events:none;transition:opacity .4s ease;}
+
+/* ---------- quest: fx, stamps, gift, flips ---------- */
+#fxLayer{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden;}
+#fxLayer img{position:absolute;image-rendering:pixelated;pointer-events:none;}
+.wish{position:absolute;max-width:170px;text-align:center;font-size:1rem;line-height:1.2;color:var(--deep);background:var(--cream);border:3px solid var(--deep);box-shadow:3px 3px 0 var(--rose);padding:6px 10px;pointer-events:none;}
+.balloon{pointer-events:auto;cursor:pointer;}
+#stampBar{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:5;display:flex;gap:4px;align-items:center;pointer-events:none;opacity:0;transition:opacity .5s ease;background:rgba(253,243,236,.78);border:2px solid var(--deep);padding:3px 6px;}
+#stampBar.show{opacity:1;}
+#stampBar img{width:30px;height:30px;image-rendering:pixelated;}
+#stampBar img.stamped{animation:stampIn .5s cubic-bezier(.34,1.56,.64,1);}
+@keyframes stampIn{0%{transform:scale(2.6) rotate(-30deg);opacity:0;}60%{transform:scale(.85) rotate(6deg);opacity:1;}100%{transform:scale(1) rotate(0);}}
+.appicon img.bounce{animation:iconBounce .45s steps(6);}
+.appicon img.spin{animation:iconSpin .6s steps(8);}
+@keyframes iconBounce{0%{transform:scale(1);}30%{transform:scale(.8,1.15) translateY(-8px);}60%{transform:scale(1.15,.85);}100%{transform:scale(1);}}
+@keyframes iconSpin{to{transform:rotate(360deg);}}
+#giftWrap{position:absolute;left:50%;top:50%;width:120px;transform:translate(-50%,-50%);z-index:5;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;}
+#giftImg{width:100%;image-rendering:pixelated;cursor:pointer;pointer-events:auto;animation:giftIn .7s cubic-bezier(.34,1.56,.64,1) both,giftWiggle 1.6s ease-in-out .8s infinite;}
+#giftWrap.opened #giftImg{animation:none;pointer-events:none;width:100%;}
+#giftHint{font-size:.85rem;color:var(--deep);background:rgba(255,255,255,.7);padding:0 6px;}
+#giftWrap.opened #giftHint{display:none;}
+@keyframes giftIn{0%{transform:scale(0) translateY(60px);opacity:0;}100%{transform:scale(1) translateY(0);opacity:1;}}
+@keyframes giftWiggle{0%,100%{transform:rotate(0);}20%{transform:rotate(-6deg);}40%{transform:rotate(5deg);}60%{transform:rotate(-3deg);}80%{transform:rotate(2deg);}}
+#ribbonBox{position:absolute;bottom:100%;left:50%;width:250px;margin-left:-125px;margin-bottom:-6px;opacity:0;transform:scale(.5);transition:opacity .4s ease,transform .5s cubic-bezier(.34,1.56,.64,1);}
+#ribbonBox.show{opacity:1;transform:scale(1);}
+#ribbonBox img{width:100%;display:block;image-rendering:pixelated;}
+#ribbonBox span{position:absolute;left:0;right:0;top:20%;text-align:center;font-family:'Press Start 2P',cursive;font-size:.5rem;color:var(--deep);line-height:1.5;}
+#giftNote{font-size:1rem;color:var(--deep);background:rgba(253,243,236,.85);padding:2px 8px;text-align:center;opacity:0;transition:opacity .6s ease .5s;width:230px;}
+#giftWrap.opened #giftNote{opacity:1;}
+.badge{cursor:pointer;}
+.badge .bt{display:inline-block;transition:transform .15s steps(3);}
+.badge .bt.flip{transform:scaleX(0);}
+.badge.reason{background:var(--cream);max-width:100%;text-align:center;}
+.hintline{text-align:center;font-size:.9rem;color:var(--rose);margin:0 0 8px;}
+.gframe{cursor:pointer;}
+.gin{width:100%;height:100%;position:relative;transition:transform .16s steps(3);}
+.gin.flip{transform:scaleX(0);}
+.gback{display:none;position:absolute;inset:0;background:#fdf3ec url(assets/ui/polaroid_back.png) center/100% 100% no-repeat;image-rendering:pixelated;align-items:center;justify-content:center;padding:20% 16% 16%;text-align:center;font-size:.85rem;line-height:1.2;color:var(--deep);}
+.gin.back .gback{display:flex;}
+.gin.back .gfront{display:none;}
 </style>
 </head>
 <body>
@@ -205,6 +244,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 <div id="particles"></div>
 <div id="confettiLayer"></div>
 <div id="balloonLayer"></div>
+<div id="fxLayer"></div>
 <div id="cameraFlash"></div>
 
 <div id="gatekeeper">
@@ -234,6 +274,19 @@ button{font-family:'VT323',monospace;cursor:pointer;}
       </div>
       <p class="tapHint hidden" id="tapHint">tap</p>
       <img src="assets/cursor_hand.png" class="pixel cursorHint" id="cursorHint" alt="">
+    </div>
+    <div id="stampBar">
+      <img data-k="music" src="assets/ui/stamp_empty.png" alt="">
+      <img data-k="gallery" src="assets/ui/stamp_empty.png" alt="">
+      <img data-k="letter" src="assets/ui/stamp_empty.png" alt="">
+      <img data-k="traits" src="assets/ui/stamp_empty.png" alt="">
+      <img data-k="message" class="hidden" src="assets/ui/stamp_empty.png" alt="">
+    </div>
+    <div id="giftWrap" class="hidden">
+      <div id="ribbonBox"><img src="assets/ui/ribbon.png" alt=""><span>HAPPY<br>BIRTHDAY!</span></div>
+      <img id="giftImg" src="assets/ui/gift_closed.png" alt="gift">
+      <span id="giftHint">tap me!</span>
+      <p id="giftNote">thank you for just being you 💗</p>
     </div>
     <div class="grid">
       <button class="appicon" data-modal="music"><img class="pixel" src="assets/record.png" alt=""><span>Music</span></button>
@@ -425,7 +478,7 @@ function onTitleTap(){
 
 const balloonColors=['#f6c9d6','#c9dbb0','#cdbfe8','#faf3e0'];
 function balloonSVG(color){
-  return `<svg viewBox="0 0 40 70" width="${34+Math.random()*16}" xmlns="http://www.w3.org/2000/svg">
+  return `<svg viewBox="0 0 40 70" width="${46+Math.random()*18}" xmlns="http://www.w3.org/2000/svg">
     <polyline points="20,50 17,55 23,60 17,65 20,70" fill="none" stroke="#3c2b30" stroke-width="2"/>
     <polygon points="16,44 24,44 20,50" fill="${color}" stroke="#3c2b30" stroke-width="1"/>
     <ellipse cx="20" cy="24" rx="18" ry="22" fill="${color}" stroke="#3c2b30" stroke-width="2"/>
@@ -434,18 +487,20 @@ function balloonSVG(color){
 }
 function spawnBalloons(){
   const layer=document.getElementById('balloonLayer');
-  const count=6+Math.floor(Math.random()*4);
+  const count=9+Math.floor(Math.random()*3);
   for(let i=0;i<count;i++){
     const b=document.createElement('div');
     b.className='balloon';
     b.style.left=(8+Math.random()*80)+'%';
-    b.style.animationDelay=(i*0.18)+'s';
+    b.style.animationDelay=(i*0.3)+'s';
     b.innerHTML=balloonSVG(balloonColors[i%balloonColors.length]);
+    b.addEventListener('pointerdown',ev=>{ev.stopPropagation();popBalloon(b);});
     layer.appendChild(b);
-    setTimeout(()=>b.remove(), 4200+i*180);
+    setTimeout(()=>b.remove(), 8000+i*300);
   }
 }
 function revealIcons(){
+  document.getElementById('stampBar').classList.add('show');
   document.querySelectorAll('.appicon').forEach((el,i)=>{
     if(el.id==='messageIcon') return;
     setTimeout(()=>el.classList.add('crawl'), i*150);
@@ -492,7 +547,8 @@ const visitedModals=new Set();
 document.querySelectorAll('.appicon').forEach(btn=>{
   btn.addEventListener('click',()=>{
     const name=btn.dataset.modal;
-    if(trackableModals.includes(name)) visitedModals.add(name);
+    if(trackableModals.includes(name)){ visitedModals.add(name); queueStamp(name); }
+    bounceIcon(btn);
     if(name==='gallery'){
       cameraFlash(()=>openModal('gallery'));
     }else{
@@ -505,6 +561,7 @@ function unlockMessageIcon(){
   const icon=document.getElementById('messageIcon');
   if(!icon || !icon.classList.contains('hidden')) return;
   icon.classList.remove('hidden');
+  document.querySelector('#stampBar img[data-k="message"]').classList.remove('hidden');
   requestAnimationFrame(()=>icon.classList.add('crawl'));
 }
 function cameraFlash(cb){
@@ -520,7 +577,7 @@ function cameraFlash(cb){
     });
   });
 }
-function closeModal(){overlay.classList.add('hidden');modalBox.innerHTML='';if(audioEl){audioEl.pause();}if(currentIdx!==null){currentIdx=null;resumeBg();}if(typeTimer){clearInterval(typeTimer);typeTimer=null;}}
+function closeModal(){overlay.classList.add('hidden');modalBox.innerHTML='';if(audioEl){audioEl.pause();}if(currentIdx!==null){currentIdx=null;resumeBg();}if(typeTimer){clearInterval(typeTimer);typeTimer=null;}onModalClosed();}
 function openModal(name){
   modalBox.innerHTML='<button class="closeX" onclick="closeModal()">X</button>'+templates[name]();
   overlay.classList.remove('hidden');
@@ -528,6 +585,7 @@ function openModal(name){
   if(name==='letter') initLetter();
   if(name==='message') initMessage();
   if(name==='traits') initTraits();
+  if(name==='gallery') initGallery();
 }
 function initTraits(){
   document.querySelectorAll('.traits-scene .side').forEach((el,i)=>{
@@ -535,6 +593,7 @@ function initTraits(){
   });
   document.querySelectorAll('.badges .badge').forEach((el,i)=>{
     setTimeout(()=>el.classList.add('show'), 700+i*110);
+    el.addEventListener('click',()=>flipBadge(el));
   });
 }
 
@@ -548,11 +607,9 @@ const templates={
   gallery:()=>`
     <h2>your Seasons</h2>
     <p style="text-align:center;font-style:italic;margin-bottom:14px;">cheers to every version of you</p>
+    <p class="hintline">tap a photo to flip it 💗</p>
     <div class="gallery-grid">
-      <div class="gframe"><img src="assets/gallery_1.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
-      <div class="gframe"><img src="assets/gallery_2.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
-      <div class="gframe"><img src="assets/gallery_3.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
-      <div class="gframe"><img src="assets/gallery_4.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
+      ${[1,2,3,4].map(n=>`<div class="gframe"><div class="gin"><img class="gfront" src="assets/gallery_${n}.jpg" alt="" style="width:100%;height:100%;object-fit:cover"><div class="gback"><span>${GALLERY_CAPTIONS[n-1]}</span></div></div></div>`).join('')}
     </div>`,
   letter:()=>`
     <div class="letter-bg">
@@ -569,9 +626,10 @@ const templates={
       ${['kind','supportive','creative','caring','patient','hardworking','adorable'].map((t,i)=>{
         const rots=[-7,5,-4,6,-5,4,-6];
         const lifts=[2,-4,3,-2,4,-3,2];
-        return `<span class="badge" style="--rot:${rots[i%rots.length]}deg;--lift:${lifts[i%lifts.length]}px">${t}</span>`;
+        return `<span class="badge" data-t="${t}" style="--rot:${rots[i%rots.length]}deg;--lift:${lifts[i%lifts.length]}px"><span class="bt">${t}</span></span>`;
       }).join('')}
-    </div>`,
+    </div>
+    <p class="hintline" style="margin-top:10px">tap a badge to see why 💗</p>`,
   message:()=>`
     <h2>Leave me a message 💌</h2>
     <p style="text-align:center;font-size:.95rem;margin-bottom:12px;">Totally optional — no pressure at all. But if you want to say anything, it comes straight to me.</p>
@@ -642,6 +700,7 @@ function initMessage(){
       });
       if(res.ok){
         status.textContent='Sent! 🌸 thank you.';
+        queueStamp('message');
         textEl.value='';
       }else{
         status.textContent="Hmm, that didn't send. Try again?";
@@ -651,6 +710,179 @@ function initMessage(){
     }
     btn.disabled=false;
   });
+}
+
+/* ---------- quest: fx, stamps, flips, gift ---------- */
+const WISHES=["may your year be full of peace 🌸","more smiles, less stress","may school go easy on you","rest more, worry less","good food & good people","may every day feel a little brighter","you deserve all the good things","your creative ideas come true"];
+const TRAIT_REASONS={
+  kind:"you have such a kind and pleasant nature",
+  supportive:"people are lucky to have you on their side",
+  creative:"you always bring your own creative spark",
+  caring:"you notice how the people around you are doing",
+  patient:"you take things one step at a time",
+  hardworking:"even when school gets heavy, you keep going",
+  adorable:"seriously, your smile turns my whole day around"
+};
+const GALLERY_CAPTIONS=["a version of you I'm glad I know","still smiling","cheers to you 🥂","keep shining ✨"];
+const STAMP_IMG={music:'music',gallery:'flower',letter:'heart',traits:'star',message:'cake'};
+const fxSrc={heart:['heart_s','heart_m','heart_l'],spark:['spark_s','spark_m','spark_l'],petal:['petal_m','petal_l']};
+
+function fxBurst(x,y,n,kinds,minS,maxS,spread){
+  const layer=document.getElementById('fxLayer');
+  for(let i=0;i<n;i++){
+    const k=kinds[Math.floor(Math.random()*kinds.length)];
+    const arr=fxSrc[k];
+    const el=document.createElement('img');
+    el.src='assets/ui/'+arr[Math.floor(Math.random()*arr.length)]+'.png';
+    const size=minS+Math.random()*(maxS-minS);
+    el.style.width=size+'px';
+    el.style.left=x+'px';
+    el.style.top=y+'px';
+    layer.appendChild(el);
+    const ang=Math.random()*Math.PI*2, dist=spread*(.4+Math.random()*.6);
+    const dx=Math.cos(ang)*dist, dy=Math.sin(ang)*dist-spread*.4;
+    const rot=(Math.random()-.5)*90;
+    const a=el.animate([
+      {transform:'translate(-50%,-50%) translate(0,0) scale(.3)',opacity:1},
+      {transform:`translate(-50%,-50%) translate(${dx}px,${dy}px) scale(1) rotate(${rot}deg)`,opacity:1,offset:.6},
+      {transform:`translate(-50%,-50%) translate(${dx}px,${dy+30}px) scale(.8) rotate(${rot}deg)`,opacity:0}
+    ],{duration:700+Math.random()*500,easing:'cubic-bezier(.2,.8,.3,1)'});
+    a.onfinish=()=>el.remove();
+  }
+}
+function playSfx(src,vol){ try{const a=new Audio(src);a.volume=vol;a.play();}catch(e){} }
+
+/* tap sparkles anywhere once the dashboard is up */
+document.addEventListener('pointerdown',e=>{
+  if(document.getElementById('dashboard').classList.contains('hidden')) return;
+  if(e.target.closest&&e.target.closest('textarea,input')) return;
+  fxBurst(e.clientX,e.clientY,4,['heart','spark'],10,20,34);
+});
+
+/* balloons */
+function popBalloon(b){
+  const r=b.getBoundingClientRect();
+  const cx=r.left+r.width/2, cy=r.top+r.height*.4;
+  b.remove();
+  playSfx('assets/audio/confetti_pop.mp3',.5);
+  const layer=document.getElementById('fxLayer');
+  const seq=[['pop_2',70],['pop_3',150],['pop_4',450]];
+  const img=document.createElement('img');
+  img.style.left=cx+'px'; img.style.top=cy+'px';
+  img.style.transform='translate(-50%,-50%)';
+  layer.appendChild(img);
+  let t=0;
+  seq.forEach(([n,d],i)=>{
+    setTimeout(()=>{
+      img.src='assets/ui/'+n+'.png';
+      img.style.width=(n==='pop_3'?92:n==='pop_2'?76:56)+'px';
+      if(i===2) img.animate([{opacity:1,transform:'translate(-50%,-50%)'},{opacity:0,transform:'translate(-50%,-10%)'}],{duration:d,fill:'forwards'});
+    },t);
+    t+=d;
+  });
+  setTimeout(()=>img.remove(),t+50);
+  fxBurst(cx,cy,5,['spark','heart'],10,18,46);
+  const w=document.createElement('div');
+  w.className='wish';
+  w.textContent=WISHES[Math.floor(Math.random()*WISHES.length)];
+  const x=Math.min(Math.max(cx,95),window.innerWidth-95);
+  w.style.left=(x-85)+'px'; w.style.top=(cy-20)+'px';
+  layer.appendChild(w);
+  const a=w.animate([{opacity:0,transform:'translateY(10px) scale(.8)'},{opacity:1,transform:'translateY(-14px) scale(1)',offset:.2},{opacity:1,transform:'translateY(-40px)',offset:.8},{opacity:0,transform:'translateY(-60px)'}],{duration:2600,easing:'ease-out'});
+  a.onfinish=()=>w.remove();
+}
+
+/* icons */
+function bounceIcon(btn){
+  const img=btn.querySelector('img'); if(!img) return;
+  const c=btn.dataset.modal==='music'?'spin':'bounce';
+  img.classList.remove('bounce','spin'); void img.offsetWidth;
+  img.classList.add(c);
+  img.addEventListener('animationend',()=>img.classList.remove('bounce','spin'),{once:true});
+}
+
+/* stamps */
+const earnedStamps=new Set();
+let pendingStamps=[];
+let giftShown=false;
+function queueStamp(k){ if(!earnedStamps.has(k)&&!pendingStamps.includes(k)) pendingStamps.push(k); }
+function onModalClosed(){
+  const list=pendingStamps; pendingStamps=[];
+  list.forEach((k,i)=>setTimeout(()=>earnStamp(k),350+i*500));
+}
+function earnStamp(k){
+  if(earnedStamps.has(k)) return;
+  earnedStamps.add(k);
+  const slot=document.querySelector('#stampBar img[data-k="'+k+'"]');
+  if(!slot) return;
+  slot.src='assets/ui/stamp_'+STAMP_IMG[k]+'.png';
+  slot.classList.add('stamped');
+  playSfx('assets/audio/confetti_pop.mp3',.6);
+  const r=slot.getBoundingClientRect();
+  fxBurst(r.left+r.width/2,r.top+r.height/2,8,['spark','heart'],10,18,52);
+  const core=['music','gallery','letter','traits'];
+  if(!giftShown && core.every(c=>earnedStamps.has(c))){
+    giftShown=true;
+    setTimeout(showGift,1300);
+  }
+}
+
+/* trait badge + gallery flips */
+function flipBadge(bd){
+  if(bd.dataset.busy) return;
+  bd.dataset.busy='1';
+  const bt=bd.querySelector('.bt');
+  bt.classList.add('flip');
+  setTimeout(()=>{
+    const showReason=!bd.classList.contains('reason');
+    bd.classList.toggle('reason',showReason);
+    bt.textContent=showReason?TRAIT_REASONS[bd.dataset.t]:bd.dataset.t;
+    bt.classList.remove('flip');
+    delete bd.dataset.busy;
+    if(showReason){
+      const r=bd.getBoundingClientRect();
+      fxBurst(r.left+r.width/2,r.top+r.height/2,5,['heart'],12,20,40);
+    }
+  },160);
+}
+function initGallery(){
+  document.querySelectorAll('.gframe').forEach(f=>{
+    f.addEventListener('click',()=>{
+      const g=f.querySelector('.gin');
+      if(g.dataset.busy) return;
+      g.dataset.busy='1';
+      g.classList.add('flip');
+      setTimeout(()=>{
+        g.classList.toggle('back');
+        g.classList.remove('flip');
+        delete g.dataset.busy;
+      },170);
+    });
+  });
+}
+
+/* gift finale */
+function showGift(){
+  const w=document.getElementById('giftWrap');
+  w.classList.remove('hidden');
+  document.getElementById('giftImg').addEventListener('click',openGift,{once:true});
+}
+function openGift(){
+  const w=document.getElementById('giftWrap');
+  const img=document.getElementById('giftImg');
+  w.classList.add('opened');
+  img.src='assets/ui/gift_open.png';
+  document.getElementById('ribbonBox').classList.add('show');
+  playSfx('assets/audio/party_horn.mp3',1);
+  playSfx('assets/audio/confetti_pop.mp3',.8);
+  const r=img.getBoundingClientRect();
+  const cx=r.left+r.width/2, cy=r.top+r.height*.4;
+  fxBurst(cx,cy,26,['heart','spark','petal'],14,30,150);
+  setTimeout(()=>fxBurst(cx,cy,20,['heart','spark','petal'],14,30,190),350);
+  document.getElementById('confettiLayer').style.zIndex=59;
+  spawnConfetti();
+  setTimeout(spawnConfetti,600);
+  setTimeout(spawnConfetti,1200);
 }
 </script>
 </body>
