@@ -565,7 +565,7 @@ body.iconsLocked .passChip{pointer-events:none;}
 .fin-sub{margin-top:18px;font-family:'Press Start 2P',cursive;font-size:clamp(9px,3.2vw,13px);letter-spacing:3px;color:#f3d27a;opacity:0;transform:scale(.5);}
 .fin-sub.show{animation:finSubIn .7s cubic-bezier(.34,1.56,.64,1) forwards,finBlink 1.6s steps(2) .8s infinite;}
 @keyframes finSubIn{to{opacity:1;transform:scale(1);}}
-.fin-cast{position:absolute;left:0;right:0;bottom:9%;display:flex;align-items:flex-end;justify-content:center;z-index:5;padding:0 2vw;}
+.fin-cast{position:absolute;inset:0;z-index:5;pointer-events:none;}
 .fin-cast img{opacity:0;margin:0 -1vw;transform:translateY(70px) scale(.5);}
 .fin-cast img.in{animation:finHop .85s cubic-bezier(.34,1.56,.64,1) forwards;}
 .fin-cast img.beat{opacity:1;transform:none;animation:finBeat .62s ease-in-out infinite;animation-delay:var(--b,0s);}
