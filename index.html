@@ -106,13 +106,18 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 
 /* step 1: write your wish */
 #stageWish{position:relative;}
-.dialogue-box{background:#fff;border:3px solid var(--deep);box-shadow:5px 5px 0 var(--rose);padding:24px 20px;max-width:320px;width:90%;display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;}
-.dialogue-text{font-size:1.05rem;line-height:1.4;}
-.wish-input{width:100%;font-family:'VT323',monospace;font-size:1.1rem;padding:10px;border:3px solid var(--deep);background:var(--cream);color:var(--ink);}
-.wish-input:focus{outline:2px solid var(--rose);}
-#wishParticles{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
-.wish-particle{position:absolute;bottom:42%;width:6px;height:6px;background:#fff8dc;box-shadow:0 0 6px 2px #ffe066,0 0 2px #fff;border-radius:1px;animation:wishRise 1.3s ease-out forwards;}
-@keyframes wishRise{0%{opacity:0;transform:translateY(0) scale(.4);}20%{opacity:1;}100%{opacity:0;transform:translateY(-150px) scale(1.2);}}
+.paper-wish{position:relative;width:230px;max-width:70vw;}
+.paper-wish.folding .paper-layer.show{transform:scale(.9) rotate(-4deg);}
+.paper-layer{position:absolute;inset:0;width:100%;height:auto;object-fit:contain;opacity:0;transform:scale(1) rotate(0);transition:opacity .3s ease,transform .45s cubic-bezier(.34,1.56,.64,1);filter:drop-shadow(4px 6px 0 rgba(122,44,70,.22));}
+.paper-layer.show{opacity:1;}
+.paper-wish.plane-fly .paper-layer.plane{transition:transform .9s cubic-bezier(.55,0,.85,.35),opacity .6s ease .25s;transform:translate(150px,-240px) rotate(38deg) scale(.3);opacity:0;}
+.paper-content{position:absolute;left:16%;right:16%;top:22%;bottom:20%;display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;text-align:center;}
+.paper-content .dialogue-text{font-size:.92rem;line-height:1.35;color:var(--deep);}
+.paper-content .wish-input{width:100%;background:transparent;border:none;border-bottom:2px dashed var(--rose);font-family:'VT323',monospace;font-size:1.05rem;color:var(--ink);text-align:center;padding:4px 2px;}
+.paper-content .wish-input:focus{outline:none;border-bottom-color:var(--deep);}
+.dust{position:absolute;width:4px;height:4px;background:#fff8dc;box-shadow:0 0 4px 2px #ffe066;border-radius:1px;animation:sparkFly .5s ease-out forwards;}
+#blackout{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .4s ease;z-index:40;}
+#blackout.show{opacity:1;}
 
 /* step 2: strike the match */
 .match-scene{position:relative;width:170px;height:100px;touch-action:none;}
@@ -597,16 +602,21 @@ body.iconsLocked .passChip{pointer-events:none;}
 <div id="confettiLayer"></div>
 <div id="balloonLayer"></div>
 <div id="cameraFlash"></div>
+<div id="blackout"></div>
 
 <div id="gatekeeper">
 
   <div class="stage" id="stageWish">
-    <div class="dialogue-box">
-      <p class="dialogue-text">Before we bring out the cake, write down your wish for this year...</p>
-      <input type="text" id="wishInput" class="wish-input" maxlength="80" placeholder="I wish for...">
-      <button class="pxbtn" id="lockWishBtn">Lock In Wish</button>
+    <div class="paper-wish" id="paperWish">
+      <img src="assets/wish_paper_flat.png" class="pixel paper-layer flat show" id="paperFlat" alt="">
+      <img src="assets/wish_paper_fold.png" class="pixel paper-layer fold" id="paperFold" alt="">
+      <img src="assets/wish_paper_plane.png" class="pixel paper-layer plane" id="paperPlane" alt="">
+      <div class="paper-content" id="paperContent">
+        <p class="dialogue-text">Before we bring out the cake, write down your wish for this year...</p>
+        <input type="text" id="wishInput" class="wish-input" maxlength="80" placeholder="I wish for...">
+        <button class="pxbtn" id="lockWishBtn">Lock In Wish</button>
+      </div>
     </div>
-    <div id="wishParticles"></div>
   </div>
 
   <div class="stage hidden" id="stageMatch">
@@ -730,17 +740,20 @@ for(let i=0;i<16;i++){
 const BLACKOUT_TEXT='May all your wishes come true...';
 let blownAlready=false;
 
-/* step 1: write your wish */
-function spawnWishParticles(){
-  const wrap=document.getElementById('wishParticles');
-  for(let i=0;i<20;i++){
-    const p=document.createElement('div');
-    p.className='wish-particle';
-    p.style.left=(20+Math.random()*60)+'%';
-    p.style.animationDelay=(Math.random()*.4)+'s';
-    p.style.animationDuration=(1+Math.random()*.6)+'s';
-    wrap.appendChild(p);
-    setTimeout(()=>p.remove(),2200);
+/* step 1: write your wish -> fold into a paper plane and fly off */
+function spawnDust(wrap){
+  const rect=wrap.getBoundingClientRect();
+  for(let i=0;i<10;i++){
+    const d=document.createElement('div');
+    d.className='dust';
+    const ang=Math.random()*Math.PI*2, dist=14+Math.random()*20;
+    d.style.setProperty('--dx',(Math.cos(ang)*dist)+'px');
+    d.style.setProperty('--dy',(Math.sin(ang)*dist-10)+'px');
+    d.style.left=(rect.right-18)+'px';
+    d.style.top=(rect.top+14)+'px';
+    d.style.position='fixed';
+    document.body.appendChild(d);
+    setTimeout(()=>d.remove(),550);
   }
 }
 function lockInWish(){
@@ -749,14 +762,20 @@ function lockInWish(){
   try{ localStorage.setItem('celynWish',wishText); }catch(e){}
   if(wishText) sendWish(wishText);
   award('wish');
-  const box=document.querySelector('#stageWish .dialogue-box');
-  box.classList.add('fadeOut');
-  spawnWishParticles();
+  const wrap=document.getElementById('paperWish');
+  const flat=document.getElementById('paperFlat'), fold=document.getElementById('paperFold'), plane=document.getElementById('paperPlane');
+  document.getElementById('paperContent').classList.add('fadeOut');
+  wrap.classList.add('folding');
+  setTimeout(()=>{ flat.classList.remove('show'); fold.classList.add('show'); }, 350);
+  setTimeout(()=>{ fold.classList.remove('show'); plane.classList.add('show'); }, 750);
+  setTimeout(()=>{ wrap.classList.add('plane-fly'); spawnDust(wrap); }, 1150);
+  setTimeout(()=>{ document.getElementById('blackout').classList.add('show'); }, 1800);
   setTimeout(()=>{
     document.getElementById('stageWish').classList.add('hidden');
     document.getElementById('stageMatch').classList.remove('hidden');
     document.getElementById('gatekeeper').classList.add('dark-mode');
-  }, 1300);
+  }, 2150);
+  setTimeout(()=>{ document.getElementById('blackout').classList.remove('show'); }, 2500);
 }
 document.getElementById('lockWishBtn').addEventListener('click', lockInWish);
 
