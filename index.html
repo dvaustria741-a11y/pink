@@ -531,8 +531,8 @@ body.iconsLocked .passChip{pointer-events:none;}
 .room-puppy{left:16%;bottom:2.5%;}
 .room-anna{right:4%;}
 .room-bq{right:16%;bottom:3%;}
-.room-cake{left:50%;bottom:39%;transform:translateX(-50%) scale(.5);}
-.room-cake.in{animation:none;left:50%;bottom:39%;opacity:1;transform:translateX(-50%) scale(1);transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+.room-cake{left:50%;bottom:34%;transform:translateX(-50%) scale(.5);}
+.room-cake.in{animation:none;left:50%;bottom:34%;opacity:1;transform:translateX(-50%) scale(1);transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
 #finStage.shake{animation:finShake .55s ease;}
 @keyframes finShake{0%,100%{transform:translate(0,0);}15%{transform:translate(-9px,5px);}30%{transform:translate(8px,-6px);}45%{transform:translate(-6px,-4px);}60%{transform:translate(5px,5px);}80%{transform:translate(-2px,2px);}}
 .fin-star{position:absolute;width:3px;height:3px;background:#fdf3ec;animation:finTwinkle 2s ease-in-out infinite;}
@@ -571,11 +571,11 @@ body.iconsLocked .passChip{pointer-events:none;}
 .fin-cast img.beat{opacity:1;transform:none;animation:finBeat .62s ease-in-out infinite;animation-delay:var(--b,0s);}
 @keyframes finHop{0%{opacity:0;transform:translateY(70px) scale(.5);}55%{opacity:1;transform:translateY(-28px) scale(1.08);}100%{opacity:1;transform:translateY(0) scale(1);}}
 @keyframes finBeat{0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
-.c-elsa{width:min(19vw,84px);}
+.c-elsa{width:min(23vw,101px);}
 .c-puppy{width:min(15vw,66px);}
-.c-cake{width:min(28vw,124px);}
+.c-cake{width:min(24vw,106px);}
 .c-bq{width:min(16vw,70px);}
-.c-anna{width:min(16vw,70px);}
+.c-anna{width:min(20vw,88px);}
 .fin-lantern{position:absolute;left:50%;bottom:14%;width:min(64vw,260px);margin-left:calc(min(64vw,260px) / -2);z-index:6;opacity:0;text-align:center;pointer-events:none;}
 .fin-lantern.rise{animation:finLantern 7s ease-in forwards;}
 @keyframes finLantern{0%{opacity:0;transform:translateY(0) scale(.7);}10%{opacity:1;}70%{opacity:1;}100%{opacity:0;transform:translateY(-52vh) scale(1);}}
@@ -1306,7 +1306,7 @@ let giftCooling=false;
 giftBtn.addEventListener('click',()=>{
   if(giftTaps>=3 || giftCooling) return; /* no spamming: each tap has to finish first */
   giftCooling=true;
-  setTimeout(()=>{ giftCooling=false; },950);
+  setTimeout(()=>{ giftCooling=false; },900);
   giftTaps++;
   if(giftTaps===1){
     giftShake('shake1'); giftDust(10,false);
