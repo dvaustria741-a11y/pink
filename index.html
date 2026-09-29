@@ -535,6 +535,7 @@ body.iconsLocked .passChip{pointer-events:none;}
 .room-char{position:absolute;bottom:4%;opacity:0;transform:translateY(70px) scale(.5);margin:0;}
 .room-char.in{animation:finHop .85s cubic-bezier(.34,1.56,.64,1) forwards;}
 .room-char.beat{opacity:1;transform:none;animation:finBeat .62s ease-in-out infinite;animation-delay:var(--b,0s);}
+.room-cake.beat{animation-name:finBeatCake;}
 .room-elsa{left:4%;}
 .room-puppy{left:16%;bottom:2.5%;}
 .room-anna{right:4%;}
@@ -578,6 +579,7 @@ body.iconsLocked .passChip{pointer-events:none;}
 .fin-cast img.beat{opacity:1;transform:none;animation:finBeat .62s ease-in-out infinite;animation-delay:var(--b,0s);}
 @keyframes finHop{0%{opacity:0;transform:translateY(70px) scale(.5);}55%{opacity:1;transform:translateY(-28px) scale(1.08);}100%{opacity:1;transform:translateY(0) scale(1);}}
 @keyframes finBeat{0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
+@keyframes finBeatCake{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-9px);}}
 .c-elsa{width:min(23vw,101px);}
 .c-puppy{width:min(15vw,66px);}
 .c-cake{width:min(24vw,106px);}
