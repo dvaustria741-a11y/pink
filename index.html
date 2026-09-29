@@ -522,7 +522,7 @@ body.iconsLocked .passChip{pointer-events:none;}
 /* finale cutscene */
 #finale{position:fixed;inset:0;z-index:60;overflow:hidden;background:radial-gradient(ellipse at 50% 30%,#4a1f3f 0%,#2a1230 55%,#150818 100%);opacity:0;transition:opacity .8s ease;}
 #finale.show{opacity:1;}
-#finStage{position:absolute;inset:0;}
+#finStage{position:absolute;inset:0;margin:auto;aspect-ratio:942/1672;max-width:100%;max-height:100%;}
 #finRoomArt{position:absolute;inset:0;background-image:url('assets/party_room_bg.png');background-size:cover;background-position:center;z-index:3;pointer-events:none;}
 .room-char{position:absolute;bottom:4%;opacity:0;transform:translateY(70px) scale(.5);margin:0;}
 .room-char.in{animation:finHop .85s cubic-bezier(.34,1.56,.64,1) forwards;}
@@ -683,7 +683,7 @@ body.iconsLocked .passChip{pointer-events:none;}
 
 <div id="dashboard" class="hidden">
   <div class="scenic-card">
-    <img src="assets/banner_landscape.png" class="pixel banner" alt="">
+    <img src="assets/banner_landscape.jpg" class="pixel banner" alt="">
     <div class="titlestack" id="titlestack">
       <div class="card-stack">
         <img src="assets/happy_card.png" class="pixel" alt="happy" id="w1">
@@ -2163,7 +2163,7 @@ let finFx=null;
 function finStartFx(){
   const cv=finEl('finFx'), ctx=cv.getContext('2d');
   if(!ctx) return;
-  const size=()=>{ cv.width=window.innerWidth; cv.height=window.innerHeight; };
+  const size=()=>{ const r=finEl('finStage').getBoundingClientRect(); cv.width=r.width; cv.height=r.height; };
   size(); finResizeFn=size; window.addEventListener('resize',size);
   const rockets=[], parts=[];
   function explode(x,y){
