@@ -2299,7 +2299,8 @@ const DM_GATES=[
   {q:"Okay. There's no turning back after this.",yes:"I'm ready",no:"Wait, no"}
 ];
 const DM_CHUNKS=[
-  {text:"This sounds a bit overprotective, but I hate seeing guys objectify girls, or seeing someone like you, someone I admire with such care and respect, be disrespected, because I know you don't deserve to be treated like that."},
+  {text:"This sounds a bit overprotective and dramatic."},
+  {text:"But I hate seeing guys objectify girls, or seeing someone like you, someone I admire with such care and respect, be disrespected, because I know you don't deserve to be treated like that."},
   {text:"And I hate that I can't do anything about it dahil wala naman akong karapatan\u2026"},
   {text:"(Joke lang HAHAHAHA\ud83d\ude2d)",duck:true},
   {text:"Pero totoo\u2026 wala naman talaga.",restore:true},
@@ -2372,8 +2373,8 @@ function dmPlayChunk(i){
   dmSetInner('<div class="dm-card"><p class="dm-text" id="dmText">'+spans+'</p><div class="dm-row hidden" id="dmActions"><button class="dm-btn" id="dmContinue">Continue</button><button class="dm-btn" id="dmLeave">Leave</button></div></div>');
   if(c.duck) dmFadeVol(.04,1200);
   const letterEls=document.querySelectorAll('#dmText .dm-letter');
-  letterEls.forEach((el,idx)=>{ setTimeout(()=>el.classList.add('on'),idx*18); });
-  const wait=letterEls.length*18+700;
+  letterEls.forEach((el,idx)=>{ setTimeout(()=>el.classList.add('on'),idx*32); });
+  const wait=letterEls.length*32+700;
   setTimeout(()=>{
     if(c.restore) dmFadeVol(.7,1500);
     document.getElementById('dmActions').classList.remove('hidden');
