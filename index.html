@@ -340,7 +340,7 @@ input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:d
   70%{opacity:1;transform:translate(4px,1px) scale(1.05);}
   100%{opacity:1;transform:translate(0,0) scale(1);}
 }
-.badges{display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:center;padding:6px 0;}
+.badges{position:relative;z-index:6;display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:center;padding:6px 0;}
 .badge.has-msg{cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent;}
 .badge.has-msg::after{content:'💬';position:absolute;right:-6px;top:-8px;font-size:.6rem;opacity:.85;}
 .badge.wiggle{animation-name:badgeWiggle !important;}
