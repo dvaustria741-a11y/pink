@@ -399,7 +399,11 @@ input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:d
   75%{transform:rotate(1.4deg) scale(1.015);filter:blur(.5px);}
   100%{transform:rotate(0deg) scale(1);filter:blur(0px);}
 }
-.cake-frame-box.wobble{animation:screenWobble 1.85s ease-in-out 1 both;}
+.cake-frame-box.wobble{animation:screenWobble .75s ease-in-out 1 both;}
+#cakePrompt{transition:opacity .25s ease;}
+#cakePrompt.matcha-dim{opacity:0;}
+#matchaPov{background:rgba(122,44,70,0);transition:background .3s ease;}
+#matchaPov:not(.hidden){background:rgba(122,44,70,.4);}
 @media (prefers-reduced-motion:reduce){.matcha-drink.pop,.matcha-drink.fadeout,.matcha-pov-img.show,.matcha-pov-img.fadeout,.cake-frame-box.wobble{animation:none !important;}}
 #cakeFrame{position:fixed;inset:0;background:rgba(122,44,70,.55);display:flex;align-items:center;justify-content:center;z-index:30;padding:16px;}
 #cakeFrame.hidden{display:none !important;}
@@ -1725,7 +1729,7 @@ function eatCake(){
   }
 }
 
-/* ---------- matcha drink mini-sequence ---------- */
+/* ---------- matcha drink mini-sequence: drink -> pov -> drink -> pov -> drink -> pov ---------- */
 const MATCHA_SIDE=['0% 0%','50% 0%','100% 0%'];
 const MATCHA_POV=['0% 100%','50% 100%','100% 100%'];
 const matchaOffer=document.getElementById('matchaOffer');
@@ -1740,6 +1744,9 @@ function resetMatcha(){
   matchaDrink.style.backgroundPosition=MATCHA_SIDE[0];
   matchaOffer.classList.remove('show'); matchaOffer.classList.add('hidden');
   matchaPov.classList.add('hidden');
+  matchaPovImg.classList.remove('show','fadeout');
+  document.querySelector('#cakeFrame .cake-frame-box').classList.remove('wobble');
+  cakePrompt.classList.remove('matcha-dim');
 }
 function offerMatcha(){
   if(matchaOfferShown) return;
@@ -1759,39 +1766,43 @@ document.getElementById('matchaYesBtn').addEventListener('click', ()=>{
   matchaDrink.classList.remove('hidden','fadeout');
   matchaDrink.classList.remove('pop'); void matchaDrink.offsetWidth; matchaDrink.classList.add('pop');
 });
+/* one tap = one full "drink -> pov" beat: the side glass empties a step further,
+   then a quick first-person gulp cuts in (with the drunken wobble), then we're
+   back at the table ready for the next tap. Three taps drains the cup. */
 function sipMatcha(){
-  if(matchaBusy) return;
-  if(matchaStage<2){
-    matchaStage++;
-    matchaDrink.style.backgroundPosition=MATCHA_SIDE[matchaStage];
-    matchaDrink.classList.remove('pop'); void matchaDrink.offsetWidth; matchaDrink.classList.add('pop');
-    return;
-  }
-  startMatchaPov();
+  if(matchaBusy || matchaStage>=3) return;
+  matchaBusy=true;
+  const isLast=matchaStage===2;
+  const povFrame=MATCHA_POV[matchaStage];
+  matchaStage++;
+  matchaDrink.style.backgroundPosition=MATCHA_SIDE[Math.min(matchaStage,MATCHA_SIDE.length-1)];
+  matchaDrink.classList.remove('pop'); void matchaDrink.offsetWidth; matchaDrink.classList.add('pop');
+  matchaTimers.push(setTimeout(()=>flashMatchaPov(povFrame,isLast),260));
 }
 matchaDrink.addEventListener('click', sipMatcha);
-function startMatchaPov(){
-  matchaBusy=true;
-  matchaDrink.classList.add('fadeout');
+function flashMatchaPov(povFrame,isLast){
   const box=document.querySelector('#cakeFrame .cake-frame-box');
+  cakePrompt.classList.add('matcha-dim');
   box.classList.remove('wobble'); void box.offsetWidth; box.classList.add('wobble');
   matchaPov.classList.remove('hidden');
   matchaPovImg.classList.remove('show','fadeout');
-  matchaPovImg.style.backgroundPosition=MATCHA_POV[0];
+  matchaPovImg.style.backgroundPosition=povFrame;
   void matchaPovImg.offsetWidth;
   matchaPovImg.classList.add('show');
-  matchaTimers.push(setTimeout(()=>{ matchaPovImg.style.backgroundPosition=MATCHA_POV[1]; },600));
-  matchaTimers.push(setTimeout(()=>{ matchaPovImg.style.backgroundPosition=MATCHA_POV[2]; },1200));
+  if(isLast) matchaDrink.classList.add('fadeout');
   matchaTimers.push(setTimeout(()=>{
     matchaPovImg.classList.add('fadeout');
     box.classList.remove('wobble');
-  },1850));
+    cakePrompt.classList.remove('matcha-dim');
+  },700));
   matchaTimers.push(setTimeout(()=>{
     matchaPov.classList.add('hidden');
-    matchaDrink.classList.add('hidden');
-    matchaDrink.classList.remove('fadeout','pop');
+    if(isLast){
+      matchaDrink.classList.add('hidden');
+      matchaDrink.classList.remove('fadeout','pop');
+    }
     matchaBusy=false;
-  },2350));
+  },1050));
 }
 
 cakeEatImg.addEventListener('click',eatCake);
