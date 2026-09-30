@@ -747,7 +747,7 @@ body.iconsLocked .passChip{pointer-events:none;}
   <div class="fin-title"><span class="fin-line" id="finL1"></span><span class="fin-line" id="finL2"></span><div class="fin-sub" id="finSub">~ SWEET SIXTEEN ~</div></div>
   <div class="fin-cast" id="finCast">
     <img class="pixel c-elsa room-char room-elsa" src="assets/elsa.png" alt="" draggable="false">
-    <img class="pixel c-puppy room-char room-puppy" src="assets/puppy_no_envelope.png" alt="" draggable="false">
+    <img class="pixel c-puppy room-char room-puppy" src="assets/puppy_no_envelope_v2.png" alt="" draggable="false">
     <img class="pixel c-cake room-char room-cake" src="assets/cake.png" alt="" draggable="false">
     <img class="pixel c-anna room-char room-anna" src="assets/anna.png" alt="" draggable="false">
   </div>
@@ -1248,7 +1248,7 @@ const PL_TEXT=`<p>You found the secret message! 🐶</p>
 <p>Quick reminder from your puppy friend: No overthinking or stress allowed today! It's your day to relax and be celebrated.</p>
 <p>Thank you for being such a kind, hardworking, and wonderful person. You make every day feel a little brighter, and you deserve the happiest birthday today!</p>`;
 let pupNoEnv=false;
-(function(){ const t=new Image(); t.onload=()=>{pupNoEnv=true;}; t.src='assets/puppy_no_envelope.png'; })();
+(function(){ const t=new Image(); t.onload=()=>{pupNoEnv=true;}; t.src='assets/puppy_no_envelope_v2.png'; })();
 function spawnPuppy(){
   ['puppy','envelope_closed','envelope_open','letter_parchment'].forEach(n=>{ new Image().src='assets/'+n+'.png'; });
   document.getElementById('pupWrap').classList.add('show');
@@ -1315,7 +1315,7 @@ function openPuppyLetter(){
   plStage=1;
   document.getElementById('pupPrompt').classList.add('gone');
   const pup=document.getElementById('pupImg').getBoundingClientRect();
-  if(pupNoEnv) setTimeout(()=>{ document.getElementById('pupImg').src='assets/puppy_no_envelope.png'; },120); /* the envelope has left its mouth */
+  if(pupNoEnv) setTimeout(()=>{ document.getElementById('pupImg').src='assets/puppy_no_envelope_v2.png'; },120); /* the envelope has left its mouth */
   const btn=document.getElementById('pupBtn');
   btn.classList.remove('hop'); void btn.offsetWidth; btn.classList.add('hop');
   const o=document.createElement('div');
@@ -1324,7 +1324,7 @@ function openPuppyLetter(){
     <div class="pl-area" id="plArea">
       <img class="pixel pl-env" id="plEnv" src="assets/envelope_closed.png" alt="envelope" draggable="false">
       <div class="pl-letter hidden" id="plLetter"><img class="pixel" src="assets/letter_parchment.png" alt="" draggable="false"><div class="pl-text" id="plText">${PL_TEXT}</div></div>
-      <p class="pl-prompt" id="plPrompt" style="opacity:0">Tap the envelope to open it! 💌</p>
+      <p class="pl-prompt" id="plPrompt" style="opacity:0">Tap the envelope to open it!</p>
     </div>
     <button class="pxbtn pl-close hidden" id="plClose">Close [X]</button>
   </div>`;
@@ -1554,7 +1554,7 @@ function openModal(name){
 }
 const TRAIT_LINES={
   kind:'Pero mas mabait padin talaga ako, biru lang HAHAHAHAHA',
-  creative:"Grabi ang creative mo tapus yung flower na ni-drawing mo sa kamay ko, ang ganda niya. Diko lang talaga masabi sa personal, nahihiya kasi ako, ewan ko kung bakit HAHAHAHA",
+  creative:"Yung flower na ni-drawing mo sa kamay ko, ang ganda niya. Diko lang talaga masabi sa personal, nahihiya kasi ako, ewan ko kung bakit HAHAHAHA",
   hardworking:'Grabi ka din mag-cramming, pahinga din paminsan baka di ka na tumagal niyan, joke lang✌️',
   patient:'Maybe? Maybe? HAHAHA'
 };
