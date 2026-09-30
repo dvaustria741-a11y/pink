@@ -369,6 +369,38 @@ input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:d
 
 /* cake eating */
 .cake-eat-link{cursor:pointer;-webkit-tap-highlight-color:transparent;}
+
+/* matcha drink mini-sequence */
+#matchaOffer{position:fixed;inset:0;z-index:35;display:flex;align-items:center;justify-content:center;background:rgba(122,44,70,.45);padding:16px;opacity:0;pointer-events:none;transition:opacity .25s ease;}
+#matchaOffer.hidden{display:none !important;}
+#matchaOffer.show{opacity:1;pointer-events:auto;}
+.matcha-offer-box{max-width:290px;width:88%;background:var(--cream);border:4px solid var(--deep);box-shadow:6px 6px 0 var(--rose);padding:22px 18px;text-align:center;}
+.matcha-offer-box p{font-size:1.05rem;line-height:1.4;color:var(--deep);margin:0;}
+.matcha-offer-btns{display:flex;flex-direction:column;gap:10px;width:100%;margin-top:6px;}
+.pxbtn.ghost{background:var(--cream);color:var(--deep);}
+#matchaOffer.show .matcha-offer-box{animation:cfBoxIn .45s cubic-bezier(.34,1.56,.64,1) both;}
+.matcha-drink{flex:0 0 auto;width:72px;aspect-ratio:512/515;align-self:flex-end;margin-bottom:8px;background-image:url('assets/matcha_spritesheet.png');background-size:300% 200%;background-position:0% 0%;background-repeat:no-repeat;image-rendering:pixelated;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.matcha-drink.hidden{display:none !important;}
+.matcha-drink.pop{animation:matchaPop .4s cubic-bezier(.34,1.56,.64,1) both;}
+.matcha-drink.fadeout{animation:matchaFadeOut .45s ease forwards;}
+@keyframes matchaPop{0%{opacity:0;transform:translateY(10px) scale(.6);}100%{opacity:1;transform:translateY(0) scale(1);}}
+@keyframes matchaFadeOut{to{opacity:0;transform:scale(.75);}}
+#matchaPov{position:fixed;inset:0;z-index:36;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+#matchaPov.hidden{display:none !important;}
+.matcha-pov-img{width:min(60vw,250px);aspect-ratio:512/515;background-image:url('assets/matcha_spritesheet.png');background-size:300% 200%;background-position:0% 100%;background-repeat:no-repeat;image-rendering:pixelated;opacity:0;}
+.matcha-pov-img.show{animation:matchaPovIn .35s ease-out forwards;}
+.matcha-pov-img.fadeout{animation:matchaFadeOut .55s ease forwards;}
+@keyframes matchaPovIn{from{opacity:0;transform:scale(.65);}to{opacity:1;transform:scale(1);}}
+@keyframes screenWobble{
+  0%{transform:rotate(0deg) scale(1);filter:blur(0px);}
+  15%{transform:rotate(-2deg) scale(1.02);filter:blur(1px);}
+  35%{transform:rotate(2.2deg) scale(1.045);filter:blur(1.6px);}
+  55%{transform:rotate(-1.6deg) scale(1.03);filter:blur(1.1px);}
+  75%{transform:rotate(1.4deg) scale(1.015);filter:blur(.5px);}
+  100%{transform:rotate(0deg) scale(1);filter:blur(0px);}
+}
+.cake-frame-box.wobble{animation:screenWobble 1.85s ease-in-out 1 both;}
+@media (prefers-reduced-motion:reduce){.matcha-drink.pop,.matcha-drink.fadeout,.matcha-pov-img.show,.matcha-pov-img.fadeout,.cake-frame-box.wobble{animation:none !important;}}
 #cakeFrame{position:fixed;inset:0;background:rgba(122,44,70,.55);display:flex;align-items:center;justify-content:center;z-index:30;padding:16px;}
 #cakeFrame.hidden{display:none !important;}
 .cake-frame-box{position:relative;background:var(--cream);border:4px solid var(--deep);box-shadow:6px 6px 0 var(--rose);padding:28px 18px 22px;width:min(92vw,420px);text-align:center;}
@@ -678,10 +710,21 @@ body.iconsLocked .passChip{pointer-events:none;}
     <div class="cake-bubble" id="annaCakeBubble"></div>
     <button class="cake-buddy elsa" id="elsaCakeBtn" aria-label="Elsa"><img class="pixel" src="assets/elsa.png" alt="Elsa" draggable="false"></button>
     <img class="pixel" id="cakeEatImg" src="assets/cake_stage1.png" alt="cake" draggable="false">
+    <div class="matcha-drink hidden" id="matchaDrink" aria-label="matcha latte"></div>
     <button class="cake-buddy anna" id="annaCakeBtn" aria-label="Anna"><img class="pixel" src="assets/anna.png" alt="Anna" draggable="false"></button>
   </div>
   <button class="pxbtn hidden" id="bakeAgainBtn">Bake Another Cake</button>
 </div></div>
+<div id="matchaOffer" class="hidden">
+  <div class="matcha-offer-box">
+    <p>Do you want something to drink with your cake?</p>
+    <div class="matcha-offer-btns">
+      <button class="pxbtn" id="matchaYesBtn">Matcha Latte, please!</button>
+      <button class="pxbtn ghost" id="matchaNoBtn">No, thank you.</button>
+    </div>
+  </div>
+</div>
+<div id="matchaPov" class="hidden"><div class="matcha-pov-img" id="matchaPovImg"></div></div>
 <div id="flowerFrame" class="hidden"><div class="cake-frame-box">
   <button class="closeX" id="flowerFrameClose" aria-label="close">X</button>
   <p id="flowerPrompt"></p>
@@ -1599,11 +1642,19 @@ function openCakeFrame(){
   cakeOpenTimer=setTimeout(()=>cakeFrame.classList.remove('opening'),1200);
   cakeTalkLater(1000,'elsa',"Ooh, look at that cake, Cel!",2600);
   cakeTalkLater(3800,'anna',"Hurry, take the first bite!",2600);
+  resetMatcha();
+  clearTimeout(matchaOfferTimer);
+  matchaOfferTimer=setTimeout(offerMatcha,650);
 }
 function closeCakeFrame(){
   clearCakeTalk();
   clearInterval(cakeHeartTimer); cakeHeartTimer=null;
   clearTimeout(cakeOpenTimer);
+  clearTimeout(matchaOfferTimer);
+  matchaTimers.forEach(clearTimeout); matchaTimers=[];
+  matchaOffer.classList.remove('show'); matchaOffer.classList.add('hidden');
+  matchaPov.classList.add('hidden');
+  document.querySelector('#cakeFrame .cake-frame-box').classList.remove('wobble');
   if(cakeFrame.classList.contains('hidden')) return;
   cakeFrame.classList.remove('opening');
   cakeFrame.classList.add('closing');
@@ -1673,6 +1724,76 @@ function eatCake(){
     cakeHeartTimer=setInterval(spawnHeart,420);
   }
 }
+
+/* ---------- matcha drink mini-sequence ---------- */
+const MATCHA_SIDE=['0% 0%','50% 0%','100% 0%'];
+const MATCHA_POV=['0% 100%','50% 100%','100% 100%'];
+const matchaOffer=document.getElementById('matchaOffer');
+const matchaDrink=document.getElementById('matchaDrink');
+const matchaPov=document.getElementById('matchaPov');
+const matchaPovImg=document.getElementById('matchaPovImg');
+let matchaStage=0, matchaOfferShown=false, matchaBusy=false, matchaOfferTimer=null, matchaTimers=[];
+function resetMatcha(){
+  matchaOfferShown=false; matchaStage=0; matchaBusy=false;
+  matchaTimers.forEach(clearTimeout); matchaTimers=[];
+  matchaDrink.classList.add('hidden'); matchaDrink.classList.remove('pop','fadeout');
+  matchaDrink.style.backgroundPosition=MATCHA_SIDE[0];
+  matchaOffer.classList.remove('show'); matchaOffer.classList.add('hidden');
+  matchaPov.classList.add('hidden');
+}
+function offerMatcha(){
+  if(matchaOfferShown) return;
+  matchaOfferShown=true;
+  matchaOffer.classList.remove('hidden');
+  requestAnimationFrame(()=>matchaOffer.classList.add('show'));
+}
+function closeMatchaOffer(){
+  matchaOffer.classList.remove('show');
+  setTimeout(()=>{ if(!matchaOffer.classList.contains('show')) matchaOffer.classList.add('hidden'); },260);
+}
+document.getElementById('matchaNoBtn').addEventListener('click', closeMatchaOffer);
+document.getElementById('matchaYesBtn').addEventListener('click', ()=>{
+  closeMatchaOffer();
+  matchaStage=0;
+  matchaDrink.style.backgroundPosition=MATCHA_SIDE[0];
+  matchaDrink.classList.remove('hidden','fadeout');
+  matchaDrink.classList.remove('pop'); void matchaDrink.offsetWidth; matchaDrink.classList.add('pop');
+});
+function sipMatcha(){
+  if(matchaBusy) return;
+  if(matchaStage<2){
+    matchaStage++;
+    matchaDrink.style.backgroundPosition=MATCHA_SIDE[matchaStage];
+    matchaDrink.classList.remove('pop'); void matchaDrink.offsetWidth; matchaDrink.classList.add('pop');
+    return;
+  }
+  startMatchaPov();
+}
+matchaDrink.addEventListener('click', sipMatcha);
+function startMatchaPov(){
+  matchaBusy=true;
+  matchaDrink.classList.add('fadeout');
+  const box=document.querySelector('#cakeFrame .cake-frame-box');
+  box.classList.remove('wobble'); void box.offsetWidth; box.classList.add('wobble');
+  matchaPov.classList.remove('hidden');
+  matchaPovImg.classList.remove('show','fadeout');
+  matchaPovImg.style.backgroundPosition=MATCHA_POV[0];
+  void matchaPovImg.offsetWidth;
+  matchaPovImg.classList.add('show');
+  matchaTimers.push(setTimeout(()=>{ matchaPovImg.style.backgroundPosition=MATCHA_POV[1]; },600));
+  matchaTimers.push(setTimeout(()=>{ matchaPovImg.style.backgroundPosition=MATCHA_POV[2]; },1200));
+  matchaTimers.push(setTimeout(()=>{
+    matchaPovImg.classList.add('fadeout');
+    box.classList.remove('wobble');
+  },1850));
+  matchaTimers.push(setTimeout(()=>{
+    matchaPov.classList.add('hidden');
+    matchaDrink.classList.add('hidden');
+    matchaDrink.classList.remove('fadeout','pop');
+    matchaBusy=false;
+  },2350));
+}
+
 cakeEatImg.addEventListener('click',eatCake);
 bakeAgainBtn.addEventListener('click',()=>{ resetCake(); cakeTalkLater(300,'anna',"Round two! Fresh cake incoming!",2400); });
 ['elsa','anna'].forEach(w=>{
