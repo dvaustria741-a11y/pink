@@ -1914,7 +1914,7 @@ ${['kind','supportive','creative','caring','patient','hardworking','humble','ado
     </div>
     <p class="duo-hint">psst... tap the cake and the lilies, they have something for you</p>`,
   message:()=>`
-    <h2>Leave me a message 💌</h2>
+    <h2>Leave me a message</h2>
     <p style="text-align:center;font-size:.95rem;margin-bottom:12px;">Totally optional — no pressure at all. But if you want to say anything, it comes straight to me.</p>
     <textarea id="msgText" rows="5" style="width:100%;font-family:'VT323',monospace;font-size:1.1rem;padding:10px;border:3px solid var(--deep);resize:vertical;background:#fff;color:var(--ink);"></textarea>
     <button class="pxbtn" id="sendMsgBtn" style="margin-top:12px;">Send</button>
@@ -2117,7 +2117,7 @@ function popBalloon(b){
   const r=b.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height*0.4;
   const color=b.dataset.c;
   b.remove(); driftOnScreen--;
-  try{ const a=new Audio('assets/audio/confetti_pop.mp3'); a.volume=.45; a.play().catch(()=>{}); }catch(e){}
+  try{ const a=new Audio('assets/audio/balloon_pop.mp3'); a.volume=.4; a.play().catch(()=>{}); }catch(e){}
   for(let i=0;i<12;i++){
     const bit=document.createElement('div');
     bit.className='popBit';
