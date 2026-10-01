@@ -659,21 +659,6 @@ body.iconsLocked .passChip{pointer-events:none;}
 .fadeOut{opacity:0 !important;transition:opacity .5s ease;pointer-events:none;}
 #blackoutText{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 10%;text-align:center;color:#ffe4d6;font-family:'VT323',monospace;font-size:1.9rem;line-height:1.3;letter-spacing:1px;text-shadow:0 0 10px rgba(246,201,214,.55);opacity:1;transition:opacity .6s ease;}
 #blackout{position:fixed;inset:0;background:#000;opacity:0;z-index:998;pointer-events:none;transition:opacity .4s ease;}
-#daveMsg{position:fixed;inset:0;z-index:90;background:#000;opacity:0;pointer-events:none;transition:opacity .6s ease;overflow:hidden;}
-#daveMsg.show{opacity:1;pointer-events:auto;}
-.dm-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:28px 22px calc(env(safe-area-inset-bottom,0px) + 28px);text-align:center;}
-.dm-card{max-width:420px;width:100%;display:flex;flex-direction:column;gap:24px;align-items:center;}
-.dm-q{color:#fdf3ec;font-size:1.15rem;line-height:1.55;text-shadow:0 0 10px rgba(253,243,236,.55),0 0 22px rgba(253,243,236,.28);margin:0;}
-.dm-brace{font-size:1.8rem;letter-spacing:6px;opacity:.7;animation:dmBrace 1.4s ease-in-out infinite;}
-@keyframes dmBrace{0%,100%{opacity:.35;}50%{opacity:.85;}}
-.dm-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;transition:opacity .4s ease;}
-.dm-row.hidden{opacity:0;pointer-events:none;height:0;overflow:hidden;}
-.dm-btn{min-width:104px;min-height:44px;padding:10px 20px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.55);color:#fdf3ec;font-family:inherit;font-size:1rem;box-shadow:0 0 10px rgba(255,255,255,.2),0 0 22px rgba(255,255,255,.1);text-shadow:0 0 6px rgba(255,255,255,.55);transition:transform .2s ease,background .2s ease,box-shadow .2s ease;cursor:pointer;-webkit-tap-highlight-color:transparent;}
-.dm-btn:active{transform:scale(.94);background:rgba(255,255,255,.15);}
-.dm-text{color:#fff;font-size:1.16rem;line-height:1.7;text-shadow:0 0 8px rgba(255,255,255,.65),0 0 20px rgba(255,255,255,.35),0 0 34px rgba(255,255,255,.18);margin:0;}
-.dm-letter{opacity:0;filter:blur(2px);display:inline-block;transition:opacity .35s ease,filter .35s ease;}
-.dm-letter.on{opacity:1;filter:blur(0);}
-.dm-sign{color:#f6c9d6;font-size:1.05rem;margin:2px 0 0;text-shadow:0 0 10px rgba(246,201,214,.6);}
 </style>
 </head>
 <body>
@@ -683,7 +668,6 @@ body.iconsLocked .passChip{pointer-events:none;}
 <div id="balloonLayer"></div>
 <div id="cameraFlash"></div>
 <div id="blackout"></div>
-<div id="daveMsg" class="hidden"><div id="dmStars"></div><div class="dm-inner" id="dmInner"></div></div>
 
 <div id="gatekeeper">
 
@@ -2208,7 +2192,7 @@ function initPassport(){
   if(bar) requestAnimationFrame(()=>requestAnimationFrame(()=>{ bar.style.width=bar.dataset.w+'%'; }));
   passSeen=passGot.slice(); passSave();
   const fb=document.getElementById('finaleBtn');
-  if(fb) fb.addEventListener('click',()=>{ closeModal(); setTimeout(showFinaleGate,350); });
+  if(fb) fb.addEventListener('click',()=>{ closeModal(); setTimeout(playFinale,350); });
 
   /* keep the close X and Finale button locked until every new stamp has finished popping in */
   let lockMs=0;
@@ -2452,111 +2436,6 @@ function finReset(){
     stage.insertBefore(d,stage.firstChild);
   }
 }
-/* ================= Dave's last message (finale gate) ================= */
-const DM_GATES=[
-  {q:"Dave has a last message for you.\nDo you want to read it?",yes:"Yes",no:"No"},
-  {q:"Are you sure?",yes:"Yes, I'm sure",no:"Actually, no"},
-  {q:"Like\u2026 really sure?",yes:"Yes, really",no:"I changed my mind"},
-  {q:"Okay. There's no turning back after this.",yes:"I'm ready",no:"Wait, no"}
-];
-const DM_CHUNKS=[
-  {text:"This sounds a bit overprotective and dramatic."},
-  {text:"But I hate seeing guys objectify girls, or seeing someone like you, someone I admire with such care and respect, be disrespected, because I know you don't deserve to be treated like that."},
-  {text:"And I hate that I can't do anything about it dahil wala naman akong karapatan\u2026"},
-  {text:"(Joke lang HAHAHAHA)",duck:true},
-  {text:"Also, I don't know why, but seeing someone disrespect you lowkey hurts me, too.",restore:true},
-  {text:"What truly breaks me, though, is when the one disrespecting you, or making those cruel, unfunny jokes, is actually my friend. I feel completely trapped, knowing I can't do anything because I feel I don't have the right to step in."},
-  {text:"At the same time, if I ever say or do something that hurts you, please tell me right away. I always want to be careful with you, and I want to make sure I never make that mistake again, instead of you staying silent, because being in the dark makes me overthink and feel guilty."}
-];
-let daveAudio=null, daveFadeRAF=null;
-function dmFadeVol(target,ms){
-  if(!daveAudio) return;
-  if(daveFadeRAF) cancelAnimationFrame(daveFadeRAF);
-  const start=daveAudio.volume, t0=performance.now();
-  function step(now){
-    const p=Math.min(1,(now-t0)/ms);
-    try{ daveAudio.volume=start+(target-start)*p; }catch(e){}
-    if(p<1) daveFadeRAF=requestAnimationFrame(step); else daveFadeRAF=null;
-  }
-  daveFadeRAF=requestAnimationFrame(step);
-}
-function dmStartAudio(){
-  try{
-    daveAudio=new Audio('assets/audio/panaginip.mp3');
-    daveAudio.loop=true; daveAudio.volume=0;
-    daveAudio.play().catch(()=>{});
-    dmFadeVol(.7,1000);
-  }catch(e){}
-}
-function dmStopAudio(){
-  if(!daveAudio) return;
-  dmFadeVol(0,500);
-  setTimeout(()=>{ try{ daveAudio.pause(); }catch(e){} daveAudio=null; },550);
-}
-function dmSetInner(html){ document.getElementById('dmInner').innerHTML=html; }
-function dmSpawnStars(){
-  const wrap=document.getElementById('dmStars'); wrap.innerHTML='';
-  for(let i=0;i<40;i++){
-    const s=document.createElement('div'); s.className='fin-star';
-    s.style.left=Math.random()*100+'%'; s.style.top=Math.random()*100+'%';
-    s.style.animationDelay=(Math.random()*2)+'s';
-    wrap.appendChild(s);
-  }
-}
-function showFinaleGate(){
-  const el=document.getElementById('daveMsg');
-  musicVol=0; applyVol();
-  el.classList.remove('hidden');
-  dmSpawnStars();
-  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));
-  dmGateStep(0);
-}
-function dmGateStep(i){
-  if(i>=DM_GATES.length){ dmBrace(); return; }
-  const g=DM_GATES[i];
-  dmSetInner('<div class="dm-card"><p class="dm-q">'+g.q.replace(/\n/g,'<br>')+'</p><div class="dm-row"><button class="dm-btn" id="dmYes">'+g.yes+'</button><button class="dm-btn" id="dmNo">'+g.no+'</button></div></div>');
-  document.getElementById('dmYes').addEventListener('click',()=>{
-    if(i===DM_GATES.length-1) dmStartAudio();
-    dmGateStep(i+1);
-  });
-  document.getElementById('dmNo').addEventListener('click',dmExitToFinale);
-}
-function dmBrace(){
-  dmSetInner('<div class="dm-card"><p class="dm-q dm-brace">\u2026</p></div>');
-  setTimeout(()=>dmPlayChunk(0),1500);
-}
-function dmPlayChunk(i){
-  if(i>=DM_CHUNKS.length){ dmEndMessage(); return; }
-  const c=DM_CHUNKS[i];
-  const chars=Array.from(c.text);
-  const spans=chars.map(ch=>ch===' '?' ':'<span class="dm-letter">'+ch+'</span>').join('');
-  dmSetInner('<div class="dm-card"><p class="dm-text" id="dmText">'+spans+'</p><div class="dm-row hidden" id="dmActions"><button class="dm-btn" id="dmContinue">Continue</button><button class="dm-btn" id="dmLeave">Leave</button></div></div>');
-  if(c.duck) dmFadeVol(.04,1200);
-  const letterEls=document.querySelectorAll('#dmText .dm-letter');
-  letterEls.forEach((el,idx)=>{ setTimeout(()=>el.classList.add('on'),idx*32); });
-  const wait=letterEls.length*32+700;
-  setTimeout(()=>{
-    if(c.restore) dmFadeVol(.7,1500);
-    document.getElementById('dmActions').classList.remove('hidden');
-  },wait);
-  document.getElementById('dmContinue').addEventListener('click',()=>dmPlayChunk(i+1));
-  document.getElementById('dmLeave').addEventListener('click',dmExitToFinale);
-}
-function dmEndMessage(){
-  dmSetInner('<div class="dm-card"><p class="dm-text">Happy sweet sixteen, Celyn.</p><p class="dm-sign">\u2014 Dave</p><div class="dm-row"><button class="dm-btn" id="dmClose">Continue</button></div></div>');
-  document.getElementById('dmClose').addEventListener('click',dmExitToFinale);
-}
-function dmExitToFinale(){
-  dmStopAudio();
-  const el=document.getElementById('daveMsg');
-  el.classList.remove('show');
-  setTimeout(()=>{
-    el.classList.add('hidden');
-    dmSetInner('');
-    playFinale();
-  },650);
-}
-
 function playFinale(){
   if(finRunning) return;
   finRunning=true; finaleSeen=true;
