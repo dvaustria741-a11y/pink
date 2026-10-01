@@ -1379,7 +1379,7 @@ function plEnvTap(){
     plStage=2;
     env.animate([{transform:'scale(1)'},{transform:'scale(1.1)'},{transform:'scale(1)'}],{duration:280,easing:'ease-out'});
     setTimeout(()=>{ env.src='assets/envelope_open.png'; },140);
-    document.getElementById('plPrompt').textContent='Tap to pull out the letter! ✨';
+    document.getElementById('plPrompt').textContent='Tap to pull out the letter!';
   }else if(plStage===2){
     /* stage 4: the letter slides up out of the envelope and grows to full size */
     plStage=3;
@@ -2463,9 +2463,8 @@ const DM_CHUNKS=[
   {text:"This sounds a bit overprotective and dramatic."},
   {text:"But I hate seeing guys objectify girls, or seeing someone like you, someone I admire with such care and respect, be disrespected, because I know you don't deserve to be treated like that."},
   {text:"And I hate that I can't do anything about it dahil wala naman akong karapatan\u2026"},
-  {text:"(Joke lang HAHAHAHA\ud83d\ude2d)",duck:true},
-  {text:"Pero totoo\u2026 wala naman talaga.",restore:true},
-  {text:"Also, I don't know why, but seeing someone disrespect you lowkey hurts me, too."},
+  {text:"(Joke lang HAHAHAHA)",duck:true},
+  {text:"Also, I don't know why, but seeing someone disrespect you lowkey hurts me, too.",restore:true},
   {text:"What truly breaks me, though, is when the one disrespecting you, or making those cruel, unfunny jokes, is actually my friend. I feel completely trapped, knowing I can't do anything because I feel I don't have the right to step in."},
   {text:"At the same time, if I ever say or do something that hurts you, please tell me right away. I always want to be careful with you, and I want to make sure I never make that mistake again, instead of you staying silent, because being in the dark makes me overthink and feel guilty."}
 ];
