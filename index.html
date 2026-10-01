@@ -1406,7 +1406,7 @@ const trackableModals=['music','gallery','letter','traits'];
 const visitedModals=new Set();
 document.querySelectorAll('.appicon').forEach(btn=>{
   btn.addEventListener('click',()=>{
-    if(iconsLocked) return;
+    if(iconsLocked || smiling || !overlay.classList.contains('hidden')) return; /* only one thing can open at a time */
     const name=btn.dataset.modal;
     if(trackableModals.includes(name)) visitedModals.add(name);
     if(name==='gallery'){
@@ -2075,7 +2075,7 @@ function initPassport(){
     },lockMs);
   }
 }
-document.getElementById('passChip').addEventListener('click',()=>{ if(iconsLocked) return; openModal('passport'); });
+document.getElementById('passChip').addEventListener('click',()=>{ if(iconsLocked || smiling || !overlay.classList.contains('hidden')) return; openModal('passport'); });
 
 /* ================= balloon pop ================= */
 const POP_LINES=["Happy birthday, Celyn!","Level 16 unlocked!","You deserve today.","No overthinking allowed.","Make it a good one!","Eat the cake. All of it.","You're doing better than you think.","Sixteen looks good on you."];
