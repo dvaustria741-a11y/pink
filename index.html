@@ -1427,10 +1427,10 @@ function initLetter(){
   }
   el.addEventListener('click',finishNow);
   typeTimer=setInterval(()=>{
-    i+=2;
+    i+=1;
     el.textContent=LETTER_TEXT.slice(0,i);
     if(i>=LETTER_TEXT.length) finishNow();
-  },16);
+  },18);
 }
 
 /* ---------- modals ---------- */
@@ -2010,7 +2010,7 @@ const templates={
     <p class="duo-hint">psst... tap Elsa and Anna, they have something to say 💬</p>`,
   letter:()=>`
     <div class="letter-bg">
-      <h2>Happy Birthday, Celyn! 🌸</h2>
+      <h2>Happy Birthday, Celyn!</h2>
       <p id="letterText" class="typewriter"></p>
     </div>`,
   traits:()=>`
