@@ -164,15 +164,15 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 @keyframes cardOutL{0%{opacity:1;transform:translateX(0) rotate(0deg);}15%{opacity:1;transform:translateX(6%) rotate(1.5deg);}100%{opacity:1;transform:translateX(-185%) rotate(-10deg);}}
 @keyframes cardOutR{0%{opacity:1;transform:translateX(0) rotate(0deg);}15%{opacity:1;transform:translateX(-6%) rotate(-1.5deg);}100%{opacity:1;transform:translateX(185%) rotate(10deg);}}
 .hb-wrap{position:relative;width:88%;max-width:300px;aspect-ratio:1652/549;}
-.hb-half{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transform:translateY(-140px) scale(.9);transition:opacity .55s cubic-bezier(.34,1.56,.64,1),transform .55s cubic-bezier(.34,1.56,.64,1);}
+.hb-half{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transform:translateY(-140px) scale(.9);transition:opacity .95s cubic-bezier(.34,1.56,.64,1),transform .95s cubic-bezier(.34,1.56,.64,1);}
 .hb-half.left{clip-path:inset(0 50% 0 0);}
 .hb-half.right{clip-path:inset(0 0 0 50%);}
 .hb-half.show{opacity:1;transform:translateY(0) scale(1);}
 .hb-half.idle{animation:hbFloat 3.2s ease-in-out infinite,hbShimmer 2.6s ease-in-out infinite;}
 @keyframes hbFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
 @keyframes hbShimmer{0%,100%{filter:none;}50%{filter:drop-shadow(0 0 9px #f6c9d6) drop-shadow(0 0 4px #fff6e8);}}
-.hb-half.exitL{animation:hbOutL .6s cubic-bezier(.55,0,.75,.4) forwards;}
-.hb-half.exitR{animation:hbOutR .6s cubic-bezier(.55,0,.75,.4) forwards;}
+.hb-half.exitL{animation:hbOutL 1s cubic-bezier(.55,0,.75,.4) forwards;}
+.hb-half.exitR{animation:hbOutR 1s cubic-bezier(.55,0,.75,.4) forwards;}
 @keyframes hbOutL{0%{opacity:1;transform:translateX(0) rotate(0deg);}15%{opacity:1;transform:translateX(3%) rotate(-1deg);}100%{opacity:1;transform:translateX(-120%) rotate(-16deg);}}
 @keyframes hbOutR{0%{opacity:1;transform:translateX(0) rotate(0deg);}15%{opacity:1;transform:translateX(-3%) rotate(1deg);}100%{opacity:1;transform:translateX(120%) rotate(16deg);}}
 .hb-spark{position:fixed;pointer-events:none;z-index:999;animation:hbSparkBurst .75s ease-out forwards;}
@@ -1094,7 +1094,7 @@ function revealDashboard(){
   const hbLeft=document.getElementById('hbLeft'), hbRight=document.getElementById('hbRight');
   setTimeout(()=>{
     hbLeft.classList.add('show'); hbRight.classList.add('show');
-    setTimeout(()=>{ hbLeft.classList.add('idle'); hbRight.classList.add('idle'); },550);
+    setTimeout(()=>{ hbLeft.classList.add('idle'); hbRight.classList.add('idle'); },950);
   },300);
   setTimeout(()=>{
     document.getElementById('tapHint').classList.add('show');
@@ -1148,8 +1148,8 @@ function onTitleTap(){
   const hbLeft=document.getElementById('hbLeft'), hbRight=document.getElementById('hbRight');
   hbLeft.classList.remove('idle'); hbRight.classList.remove('idle');
   hbLeft.classList.add('exitL'); hbRight.classList.add('exitR');
-  setTimeout(()=>stack.classList.add('dissolve'), 700);
-  setTimeout(revealIcons, 700);
+  setTimeout(()=>stack.classList.add('dissolve'), 1100);
+  setTimeout(revealIcons, 1100);
 }
 
 const balloonColors=['#f6c9d6','#c9dbb0','#cdbfe8','#faf3e0'];
