@@ -572,6 +572,12 @@ body.iconsLocked .passChip{pointer-events:none;}
 .room-elsa{left:4%;}
 .room-puppy{left:16%;bottom:2.5%;}
 .room-anna{right:4%;}
+.room-fa1{left:0%;bottom:15%;}
+.room-fa2{left:10%;bottom:22%;}
+.room-fa3{left:23%;bottom:14%;}
+.room-fb1{right:0%;bottom:15%;}
+.room-fb2{right:10%;bottom:22%;}
+.room-fb3{right:23%;bottom:14%;}
 .room-fa1{left:0%;bottom:14%;}
 .room-fa2{left:8%;bottom:21%;}
 .room-fa3{left:28%;bottom:13%;}
@@ -635,6 +641,9 @@ body.iconsLocked .passChip{pointer-events:none;}
 .c-cake{width:min(24vw,106px);}
 .c-anna{width:min(20vw,88px);}
 .c-dave{width:min(22vw,96px);}
+.c-fa1,.c-fb1{width:min(16vw,70px);}
+.c-fa2,.c-fb2{width:min(13vw,57px);}
+.c-fa3,.c-fb3{width:min(16vw,70px);}
 .fin-lantern{position:absolute;left:50%;bottom:14%;width:min(64vw,260px);margin-left:calc(min(64vw,260px) / -2);z-index:6;opacity:0;text-align:center;pointer-events:none;}
 .fin-lantern.rise{animation:finLantern 7s ease-in forwards;}
 @keyframes finLantern{0%{opacity:0;transform:translateY(0) scale(.7);}10%{opacity:1;}70%{opacity:1;}100%{opacity:0;transform:translateY(-52vh) scale(1);}}
@@ -760,11 +769,17 @@ body.iconsLocked .passChip{pointer-events:none;}
   <div class="fin-count" id="finCount"><div class="fin-label" id="finLabel">LEVEL</div><div class="fin-num" id="finNum">1</div><div class="fin-levelup" id="finLevelUp">LEVEL UP!</div></div>
   <div class="fin-title"><span class="fin-line" id="finL1"></span><span class="fin-line" id="finL2"></span><div class="fin-sub" id="finSub">~ SWEET SIXTEEN ~</div></div>
   <div class="fin-cast" id="finCast">
+    <img class="pixel c-fa1 room-char room-fa1" src="assets/friend2_a1.png" alt="" draggable="false">
     <img class="pixel c-elsa room-char room-elsa" src="assets/elsa.png" alt="" draggable="false">
     <img class="pixel c-puppy room-char room-puppy" src="assets/puppy_no_envelope_v2.png" alt="" draggable="false">
+    <img class="pixel c-fa2 room-char room-fa2" src="assets/friend2_a2.png" alt="" draggable="false">
+    <img class="pixel c-fa3 room-char room-fa3" src="assets/friend2_a3.png" alt="" draggable="false">
     <img class="pixel c-dave room-char room-dave" src="assets/dave_party.png" alt="" draggable="false">
     <img class="pixel c-cake room-char room-cake" src="assets/cake.png" alt="" draggable="false">
+    <img class="pixel c-fb1 room-char room-fb1" src="assets/friend2_b1.png" alt="" draggable="false">
+    <img class="pixel c-fb2 room-char room-fb2" src="assets/friend2_b2.png" alt="" draggable="false">
     <img class="pixel c-anna room-char room-anna" src="assets/anna.png" alt="" draggable="false">
+    <img class="pixel c-fb3 room-char room-fb3" src="assets/friend2_b3.png" alt="" draggable="false">
   </div>
   <div class="fin-lantern" id="finLantern"><div class="fin-lantern-body"><small>YOUR WISH</small><span id="finWishText"></span></div></div>
   <div id="finFlash"></div>
