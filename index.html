@@ -556,10 +556,6 @@ body.iconsLocked .passChip{pointer-events:none;}
 .pupBtn{touch-action:none;}
 .pupImg.pet{animation:pupPet .45s ease;}
 @keyframes pupPet{0%,100%{transform:translateY(0) rotate(0);}20%{transform:translateY(-9px) rotate(-6deg);}45%{transform:translateY(0) rotate(5deg);}70%{transform:translateY(-5px) rotate(-3deg);}}
-.pupBtn.sleepy .pupImg{animation:pupBreathe 3.4s ease-in-out infinite;filter:brightness(.93);}
-@keyframes pupBreathe{0%,100%{transform:scaleY(1);}50%{transform:scaleY(.95) translateY(2px);}}
-.pupZ{position:absolute;left:58px;top:18px;font-family:'Press Start 2P',cursive;font-size:.6rem;color:var(--deep);pointer-events:none;animation:pupZ 2.4s ease-out forwards;}
-@keyframes pupZ{0%{opacity:0;transform:translate(0,0);}20%{opacity:1;}100%{opacity:0;transform:translate(14px,-34px);}}
 .petHeart{position:fixed;pointer-events:none;z-index:80;animation:petHeart 1.2s ease-out forwards;}
 @keyframes petHeart{0%{opacity:0;transform:translate(-50%,0) scale(.5);}20%{opacity:1;}100%{opacity:0;transform:translate(calc(-50% + var(--hx)),-70px) scale(1.3);}}
 
@@ -1252,7 +1248,6 @@ let pupNoEnv=false;
 function spawnPuppy(){
   ['puppy','envelope_closed','envelope_open','letter_parchment'].forEach(n=>{ new Image().src='assets/'+n+'.png'; });
   document.getElementById('pupWrap').classList.add('show');
-  startPupIdle();
 }
 function plHeartSVG(){
   return '<svg viewBox="0 0 7 6" width="18" height="15" shape-rendering="crispEdges" fill="#ff6f9c"><path d="M1 0h2v1h1V0h2v1h1v2H6v1H5v1H4v1H3V5H2V4H1V3H0V1h1z"/></svg>';
@@ -2181,6 +2176,22 @@ function initPassport(){
   passSeen=passGot.slice(); passSave();
   const fb=document.getElementById('finaleBtn');
   if(fb) fb.addEventListener('click',()=>{ closeModal(); setTimeout(showFinaleGate,350); });
+
+  /* keep the close X and Finale button locked until every new stamp has finished popping in */
+  let lockMs=0;
+  document.querySelectorAll('#modalBox .pp-slot.stamp').forEach(el=>{
+    const delay=parseFloat(el.style.animationDelay)||0;
+    lockMs=Math.max(lockMs, delay+700);
+  });
+  if(lockMs>0){
+    const closeBtn=document.querySelector('#modalBox > .closeX');
+    if(closeBtn) closeBtn.disabled=true;
+    if(fb) fb.disabled=true;
+    setTimeout(()=>{
+      if(closeBtn) closeBtn.disabled=false;
+      if(fb) fb.disabled=false;
+    },lockMs);
+  }
 }
 document.getElementById('passChip').addEventListener('click',()=>{ if(iconsLocked) return; openModal('passport'); });
 
@@ -2243,24 +2254,8 @@ function popBalloon(b){
 }
 
 /* ================= puppy: petting and napping ================= */
-let petAcc=0, petMoved=0, petActive=false, petSuppress=false, petCount=0, petLX=0, petLY=0, pupIdleTimer=null, pupZTimer=null, petHintShown=false;
+let petAcc=0, petMoved=0, petActive=false, petSuppress=false, petCount=0, petLX=0, petLY=0, petHintShown=false;
 const pupBtnEl=document.getElementById('pupBtn');
-function wakePuppy(){
-  pupBtnEl.classList.remove('sleepy');
-  clearInterval(pupZTimer); pupZTimer=null;
-  startPupIdle();
-}
-function startPupIdle(){
-  clearTimeout(pupIdleTimer);
-  pupIdleTimer=setTimeout(sleepPuppy,25000);
-}
-function sleepPuppy(){
-  if(anyFrameOpen()){ startPupIdle(); return; }
-  pupBtnEl.classList.add('sleepy');
-  const wrap=document.getElementById('pupWrap');
-  const z=()=>{ const el=document.createElement('span'); el.className='pupZ'; el.textContent='z'; wrap.appendChild(el); setTimeout(()=>el.remove(),2500); };
-  z(); pupZTimer=setInterval(z,1300);
-}
 function petPuppy(x,y){
   petCount++;
   const img=document.getElementById('pupImg');
@@ -2284,7 +2279,7 @@ function showPetHint(){
     setTimeout(()=>p.classList.add('gone'),6000);
   },1000);
 }
-pupBtnEl.addEventListener('pointerdown',e=>{ petActive=true; petLX=e.clientX; petLY=e.clientY; petMoved=0; petAcc=0; wakePuppy(); });
+pupBtnEl.addEventListener('pointerdown',e=>{ petActive=true; petLX=e.clientX; petLY=e.clientY; petMoved=0; petAcc=0; });
 window.addEventListener('pointermove',e=>{
   if(!petActive) return;
   const d=Math.abs(e.clientX-petLX)+Math.abs(e.clientY-petLY);
