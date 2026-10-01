@@ -564,11 +564,9 @@ body.iconsLocked .passChip{pointer-events:none;}
 #finale.show{opacity:1;}
 #finStage{position:absolute;inset:0;margin:auto;aspect-ratio:942/1672;max-width:100%;max-height:100%;}
 #finRoomArt{position:absolute;inset:0;background-image:url('assets/party_room_bg.png');background-size:cover;background-position:center;z-index:3;pointer-events:none;}
-.room-char{position:absolute;bottom:4%;opacity:0;transform:translateY(70px) scale(.5);margin:0;}
+.room-char{position:absolute;bottom:4%;opacity:0;margin:0;}
 .room-char.in{animation:finHop .85s cubic-bezier(.34,1.56,.64,1) forwards;}
-.room-char.beat{opacity:1;transform:none;animation:finBeat .62s ease-in-out infinite;animation-delay:var(--b,0s);}
-.room-cake.beat{animation:none;transform:translateX(-50%) scale(1);}
-.fin-cast img.room-cake.beat{animation:none !important;transform:translateX(-50%) scale(1) !important;}
+.fin-cast img.room-cake.beat{animation:none;}
 .room-elsa{left:4%;}
 .room-puppy{left:16%;bottom:2.5%;}
 .room-anna{right:4%;}
@@ -588,15 +586,9 @@ body.iconsLocked .passChip{pointer-events:none;}
 .room-fb3{right:28%;bottom:13%;}
 .room-fb4{right:21%;bottom:21%;}
 .room-fb5{right:12%;bottom:27%;}
-.room-dave{left:50%;bottom:0%;transform:translateX(-50%) scale(.5);}
-.room-dave.in{animation:none;left:50%;bottom:0%;opacity:1;transform:translateX(-50%) scale(1);transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
-.room-dave.beat{animation:none;transform:translateX(-50%) scale(1);}
-.fin-cast img.room-dave.beat{animation:finBeat .62s ease-in-out infinite;animation-delay:var(--b,0s);transform-origin:50% 100%;}
-.c-fb1,.c-fb2,.c-fb3,.c-fb4,.c-fb5{transform:scaleX(-1);}
-.fin-cast img.room-char.beat.c-fb1,.fin-cast img.room-char.beat.c-fb2,.fin-cast img.room-char.beat.c-fb3,.fin-cast img.room-char.beat.c-fb4,.fin-cast img.room-char.beat.c-fb5{animation:finBeatMirror .62s ease-in-out infinite;animation-delay:var(--b,0s);}
-@keyframes finBeatMirror{0%,100%{transform:scaleX(-1) translateY(0);}50%{transform:scaleX(-1) translateY(-9px);}}
-.room-cake{left:50%;bottom:35%;transform:translateX(-50%) scale(.5);}
-.room-cake.in{animation:none;left:50%;bottom:35%;opacity:1;transform:translateX(-50%) scale(1);transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+.room-dave{left:50%;bottom:0%;--tx:-50%;}
+.c-fb1,.c-fb2,.c-fb3,.c-fb4,.c-fb5{--sx:-1;}
+.room-cake{left:50%;bottom:35%;--tx:-50%;}
 #finStage.shake{animation:finShake .55s ease;}
 @keyframes finShake{0%,100%{transform:translate(0,0);}15%{transform:translate(-9px,5px);}30%{transform:translate(8px,-6px);}45%{transform:translate(-6px,-4px);}60%{transform:translate(5px,5px);}80%{transform:translate(-2px,2px);}}
 .fin-star{position:absolute;width:3px;height:3px;background:#fdf3ec;animation:finTwinkle 2s ease-in-out infinite;}
@@ -630,11 +622,11 @@ body.iconsLocked .passChip{pointer-events:none;}
 .fin-sub.show{animation:finSubIn .7s cubic-bezier(.34,1.56,.64,1) forwards,finBlink 1.6s steps(2) .8s infinite;}
 @keyframes finSubIn{to{opacity:1;transform:scale(1);}}
 .fin-cast{position:absolute;inset:0;z-index:5;pointer-events:none;}
-.fin-cast img{opacity:0;margin:0 -1vw;transform:translateY(70px) scale(.5);}
+.fin-cast img{opacity:0;margin:0 -1vw;transform:translateX(var(--tx,0px)) scaleX(var(--sx,1)) translateY(70px) scale(.5);}
 .fin-cast img.in{animation:finHop .85s cubic-bezier(.34,1.56,.64,1) forwards;}
-.fin-cast img.beat{opacity:1;transform:none;animation:finBeat .62s ease-in-out infinite;animation-delay:var(--b,0s);}
-@keyframes finHop{0%{opacity:0;transform:translateY(70px) scale(.5);}55%{opacity:1;transform:translateY(-28px) scale(1.08);}100%{opacity:1;transform:translateY(0) scale(1);}}
-@keyframes finBeat{0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
+.fin-cast img.beat{opacity:1;transform:translateX(var(--tx,0px)) scaleX(var(--sx,1));animation:finBeat .62s ease-in-out infinite;animation-delay:var(--b,0s);}
+@keyframes finHop{0%{opacity:0;transform:translateX(var(--tx,0px)) scaleX(var(--sx,1)) translateY(70px) scale(.5);}55%{opacity:1;transform:translateX(var(--tx,0px)) scaleX(var(--sx,1)) translateY(-28px) scale(1.08);}100%{opacity:1;transform:translateX(var(--tx,0px)) scaleX(var(--sx,1)) translateY(0) scale(1);}}
+@keyframes finBeat{0%,100%{transform:translateX(var(--tx,0px)) scaleX(var(--sx,1)) translateY(0);}50%{transform:translateX(var(--tx,0px)) scaleX(var(--sx,1)) translateY(-9px);}}
 @keyframes finBeatCake{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-9px);}}
 .c-elsa{width:min(23vw,101px);}
 .c-puppy{width:min(15vw,66px);}
