@@ -1420,11 +1420,15 @@ let typeTimer=null;
 function initLetter(){
   const el=document.getElementById('letterText');
   let i=0;
+  el.style.minHeight='';
+  el.textContent=LETTER_TEXT;
+  el.style.minHeight=el.offsetHeight+'px'; /* reserve the full final height up front so the box doesn't snap taller line by line while typing */
   el.textContent='';
   el.classList.remove('done');
   function finishNow(){
     if(typeTimer){clearInterval(typeTimer);typeTimer=null;}
     el.textContent=LETTER_TEXT;
+    el.style.minHeight='';
     el.classList.add('done');
     el.removeEventListener('click',finishNow);
   }
