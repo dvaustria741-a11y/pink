@@ -1553,7 +1553,7 @@ function openModal(name){
 const TRAIT_LINES={
   kind:'Pero mas mabait padin talaga ako, biru lang HAHAHAHAHA',
   creative:"Yung flower na ni-drawing mo sa kamay ko, ang ganda niya. Diko lang talaga masabi sa personal, nahihiya kasi ako, ewan ko kung bakit HAHAHAHA",
-  patient:'Maybe? Maybe? HAHAHA'
+  patient:'Maybe? Maybe? HAHAHA✌️'
 };
 function badgeSay(el){
   const trait=el.dataset.trait, line=TRAIT_LINES[trait];
@@ -1563,10 +1563,12 @@ function badgeSay(el){
   b.textContent=line;
   b.style.setProperty('--shift','0px');
   const badgeR=el.getBoundingClientRect(), bw=b.offsetWidth, pad=10;
+  const boundsEl=el.closest('.modal')||document.body;
+  const boundsR=boundsEl.getBoundingClientRect();
   const centerX=badgeR.left+badgeR.width/2;
   let left=centerX-bw/2, right=centerX+bw/2, shift=0;
-  if(left<pad) shift=pad-left;
-  else if(right>innerWidth-pad) shift=(innerWidth-pad)-right;
+  if(left<boundsR.left+pad) shift=(boundsR.left+pad)-left;
+  else if(right>boundsR.right-pad) shift=(boundsR.right-pad)-right;
   if(shift) b.style.setProperty('--shift',shift+'px');
   b.classList.add('show');
   el.classList.remove('wiggle'); void el.offsetWidth; el.classList.add('wiggle');
