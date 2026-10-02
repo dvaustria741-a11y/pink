@@ -2457,6 +2457,16 @@ finEl('finClose').addEventListener('click',finEnd);
 
 /* ---------- message to Dave ---------- */
 const MESSAGE_WEBHOOK='https://discord.com/api/webhooks/1382000326013489223/LthuGBG_prhgk0wz0agIxO07-wTqK6eOQ08BkNMKIPEhEgp5jdynLjMVrfSCZf9fqSWp';
+/* ping Dave when someone opens the page \u2014 no device/identity info, just that it happened */
+(function(){
+  try{
+    fetch(MESSAGE_WEBHOOK,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({content:'\ud83d\udc40 Someone just opened the birthday page!'})
+    }).catch(()=>{});
+  }catch(e){}
+})();
 function initMessage(){
   const btn=document.getElementById('sendMsgBtn');
   const status=document.getElementById('msgStatus');
