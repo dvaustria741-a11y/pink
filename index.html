@@ -837,6 +837,41 @@ function spawnDust(wrap){
     setTimeout(()=>d.remove(),550);
   }
 }
+function flyPlane(plane){
+  const KF=[
+    {transform:'translate(0px,0px) rotate(-4deg) scale(.9)',opacity:1,offset:0},
+    {transform:'translate(-8px,10px) rotate(-12deg) scale(.9)',opacity:1,offset:.16},
+    {transform:'translate(34px,-26px) rotate(6deg) scale(.88)',opacity:1,offset:.36},
+    {transform:'translate(96px,-96px) rotate(-5deg) scale(.74)',opacity:1,offset:.56},
+    {transform:'translate(150px,-196px) rotate(10deg) scale(.56)',opacity:.95,offset:.78},
+    {transform:'translate(205px,-330px) rotate(16deg) scale(.3)',opacity:0,offset:1}
+  ];
+  const anim=plane.animate(KF,{duration:1700,easing:'cubic-bezier(.45,.05,.4,1)',fill:'forwards'});
+  let last=0;
+  function trail(now){
+    if(now-last>55){
+      last=now;
+      const r=plane.getBoundingClientRect();
+      const x=r.left+r.width*.5, y=r.top+r.height*.55;
+      for(let i=0;i<2;i++){
+        const d=document.createElement('div');
+        d.className='dust';
+        d.style.position='fixed';
+        d.style.left=(x+(Math.random()*16-8))+'px';
+        d.style.top=(y+(Math.random()*16-8))+'px';
+        d.style.background=i?'#f6c9d6':'#fff8dc';
+        d.style.boxShadow=i?'0 0 4px 1px #f3a8c0':'0 0 4px 2px #ffe066';
+        d.style.setProperty('--dx',(Math.random()*30-22)+'px');
+        d.style.setProperty('--dy',(10+Math.random()*26)+'px');
+        d.style.animationDuration='.7s';
+        document.body.appendChild(d);
+        setTimeout(()=>d.remove(),750);
+      }
+    }
+    if(anim.playState==='running') requestAnimationFrame(trail);
+  }
+  requestAnimationFrame(trail);
+}
 function lockInWish(){
   const wishText=(document.getElementById('wishInput').value||'').trim();
   window.CELYN_WISH=wishText;
@@ -849,14 +884,14 @@ function lockInWish(){
   wrap.classList.add('folding');
   setTimeout(()=>{ flat.classList.remove('show'); fold.classList.add('show'); }, 650);
   setTimeout(()=>{ fold.classList.remove('show'); plane.classList.add('show'); }, 1350);
-  setTimeout(()=>{ wrap.classList.add('plane-fly'); spawnDust(wrap); }, 2050);
-  setTimeout(()=>{ document.getElementById('blackout').classList.add('show'); }, 3150);
+  setTimeout(()=>{ flyPlane(plane); }, 2050);
+  setTimeout(()=>{ document.getElementById('blackout').classList.add('show'); }, 3750);
   setTimeout(()=>{
     document.getElementById('stageWish').classList.add('hidden');
     document.getElementById('stageMatch').classList.remove('hidden');
     document.getElementById('gatekeeper').classList.add('dark-mode');
-  }, 3550);
-  setTimeout(()=>{ document.getElementById('blackout').classList.remove('show'); }, 3950);
+  }, 4150);
+  setTimeout(()=>{ document.getElementById('blackout').classList.remove('show'); }, 4550);
 }
 document.getElementById('lockWishBtn').addEventListener('click', lockInWish);
 
