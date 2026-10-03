@@ -1917,7 +1917,7 @@ function initTraits(){
 /* keep preloaded images referenced (unreferenced Image objects can be dropped before they finish loading) and pre-decode them */
 window.__imgKeep=window.__imgKeep||[];
 function keepPreload(list){ list.forEach(s=>{ const i=new Image(); i.decoding='async'; i.src=s; window.__imgKeep.push(i); if(i.decode) i.decode().catch(()=>{}); }); }
-keepPreload(['pink','green','lavender','cream','yellow','rose'].flatMap(c=>['assets/balloon_'+c+'.png','assets/pop_'+c+'.png']));
+window.addEventListener('load',function(){ setTimeout(function(){ keepPreload(['pink','green','lavender','cream','yellow','rose'].flatMap(c=>['assets/balloon_'+c+'.png','assets/pop_'+c+'.png'])); },1500); });
 const CAKE_STAGES=[1,2,3,4,5,6].map(n=>'assets/cake_stage'+n+'.png');
 const CAKE_PROMPT='Tap the cake to eat it bite by bite!';
 const CAKE_DONE='Yum! That was delicious!';
