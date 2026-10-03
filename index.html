@@ -1106,7 +1106,22 @@ document.getElementById('cakeStage').addEventListener('click',tapBlow);
 /* ---------- title drop, then tap-to-continue ---------- */
 let bgMusic=null;
 let musicVol=1;
-function applyVol(){ try{ player.volume=musicVol; if(bgMusic) bgMusic.volume=musicVol; }catch(e){} }
+let volFade=null, volFadeEnd=null;
+function setVolNow(v){ try{ player.volume=v; if(bgMusic) bgMusic.volume=v; }catch(e){} }
+function applyVol(){
+  if(volFade){ cancelAnimationFrame(volFade); volFade=null; }
+  if(volFadeEnd){ clearTimeout(volFadeEnd); volFadeEnd=null; }
+  const target=musicVol, dur=1200, t0=performance.now();
+  let from=1; try{ from=(bgMusic && !bgMusic.paused)?bgMusic.volume:player.volume; }catch(e){}
+  if(Math.abs(from-target)<0.01){ setVolNow(target); return; }
+  function step(now){
+    const k=Math.min(1,(now-t0)/dur), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    setVolNow(from+(target-from)*e);
+    if(k<1) volFade=requestAnimationFrame(step); else volFade=null;
+  }
+  volFade=requestAnimationFrame(step);
+  volFadeEnd=setTimeout(()=>{ setVolNow(target); },dur+80);
+}
 function pauseBg(){ if(bgMusic && !bgMusic.paused) bgMusic.pause(); }
 function resumeBg(){ applyVol(); if(bgMusic && bgMusic.paused) bgMusic.play().catch(()=>{}); }
 function revealDashboard(){
