@@ -308,6 +308,7 @@ input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:d
 .gframe:nth-child(4){--rot:-6deg;margin-top:-10px;animation-delay:1s;}
 @keyframes polaroidIn{0%{opacity:0;transform:scale(.6) rotate(0deg);}100%{opacity:1;transform:scale(1) rotate(var(--rot));}}
 .gframe-overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;}
+.gframe .gphoto{position:absolute;left:7%;right:7%;top:11%;bottom:10.5%;width:auto;height:auto;object-fit:cover;}
 .lightbox-backdrop{position:fixed;inset:0;z-index:200;background:rgba(40,20,28,0);transition:background .32s ease;}
 .lightbox-backdrop.show{background:rgba(40,20,28,.72);}
 .lightbox-img{position:fixed;z-index:201;transition:left .38s cubic-bezier(.34,1.1,.4,1),top .38s cubic-bezier(.34,1.1,.4,1),width .38s cubic-bezier(.34,1.1,.4,1),height .38s cubic-bezier(.34,1.1,.4,1),border-radius .38s ease;box-shadow:0 8px 28px rgba(0,0,0,.35);border-radius:4px;}
@@ -2008,10 +2009,10 @@ const templates={
     <h2>your Seasons</h2>
     <p class="cheers" aria-label="cheers to every version of you">${cheersHTML('cheers to every version of you')}</p>
     <div class="gallery-grid">
-      <div class="gframe" data-photo="assets/gallery_1.jpg"><img src="assets/gallery_1.jpg" alt="" style="width:100%;height:100%;object-fit:cover"><img class="gframe-overlay pixel" src="assets/photo_frame.png" alt=""></div>
-      <div class="gframe" data-photo="assets/gallery_2.jpg"><img src="assets/gallery_2.jpg" alt="" style="width:100%;height:100%;object-fit:cover"><img class="gframe-overlay pixel" src="assets/photo_frame.png" alt=""></div>
-      <div class="gframe" data-photo="assets/gallery_3.jpg"><img src="assets/gallery_3.jpg" alt="" style="width:100%;height:100%;object-fit:cover"><img class="gframe-overlay pixel" src="assets/photo_frame.png" alt=""></div>
-      <div class="gframe" data-photo="assets/gallery_4.jpg"><img src="assets/gallery_4.jpg" alt="" style="width:100%;height:100%;object-fit:cover"><img class="gframe-overlay pixel" src="assets/photo_frame.png" alt=""></div>
+      <div class="gframe" data-photo="assets/gallery_1.jpg"><img class="gphoto" src="assets/gallery_1.jpg" alt=""><img class="gframe-overlay pixel" src="assets/photo_frame.png" alt=""></div>
+      <div class="gframe" data-photo="assets/gallery_2.jpg"><img class="gphoto" src="assets/gallery_2.jpg" alt=""><img class="gframe-overlay pixel" src="assets/photo_frame.png" alt=""></div>
+      <div class="gframe" data-photo="assets/gallery_3.jpg"><img class="gphoto" src="assets/gallery_3.jpg" alt=""><img class="gframe-overlay pixel" src="assets/photo_frame.png" alt=""></div>
+      <div class="gframe" data-photo="assets/gallery_4.jpg"><img class="gphoto" src="assets/gallery_4.jpg" alt=""><img class="gframe-overlay pixel" src="assets/photo_frame.png" alt=""></div>
     </div>
     <div class="frozen-duo">
       <button class="duo-item" id="elsaBtn" aria-label="Elsa"><div class="bubble" id="elsaBubble"></div><img class="pixel elsa" src="assets/elsa.png" alt="Elsa" draggable="false"></button>
