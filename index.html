@@ -1532,7 +1532,7 @@ document.querySelectorAll('.appicon').forEach(btn=>{
     const name=btn.dataset.modal;
     if(trackableModals.includes(name)) visitedModals.add(name);
     if(name==='gallery'){
-      smileThenFlash();
+      smileThenFlash(btn);
     }else{
       openModal(name);
     }
@@ -1591,19 +1591,43 @@ function vanishGift(){
 document.addEventListener('contextmenu',e=>{ if(e.target.tagName==='IMG') e.preventDefault(); });
 document.addEventListener('dragstart',e=>{ if(e.target.tagName==='IMG') e.preventDefault(); });
 let smiling=false;
-function smileThenFlash(){
+function smileThenFlash(btn){
   if(smiling) return;
   smiling=true;
-  const t=document.createElement('div');
-  t.className='smileText';
-  t.textContent='Smile!!';
-  document.body.appendChild(t);
-  /* "Smile!!" shows first, then boom: flash + shutter sound + gallery */
+  const icon=btn && btn.querySelector('img');
+  let cam=null;
+  if(icon){
+    /* the camera lifts off its spot and glides to the middle of the screen */
+    const r=icon.getBoundingClientRect();
+    cam=document.createElement('img');
+    cam.src=icon.src;
+    cam.className='pixel flyingCamera';
+    cam.style.cssText='position:fixed;z-index:997;pointer-events:none;margin:0;left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px;transform:translate(0,0) scale(1);transition:transform .75s cubic-bezier(.45,0,.2,1);will-change:transform;';
+    document.body.appendChild(cam);
+    icon.style.visibility='hidden';
+    const scale=Math.min(window.innerWidth*.5/r.width,4);
+    const dx=window.innerWidth/2-(r.left+r.width/2);
+    const dy=window.innerHeight/2-(r.top+r.height/2);
+    cam.getBoundingClientRect(); /* force layout so the glide animates */
+    requestAnimationFrame(()=>{ cam.style.transform='translate('+dx+'px,'+dy+'px) scale('+scale+')'; });
+  }
+  /* "Smile!!" pops up once the camera has settled in the middle */
+  const glide=cam?800:0;
   setTimeout(()=>{
-    t.remove();
-    cameraFlash(()=>openModal('gallery'));
-    smiling=false;
-  },1300);
+    const t=document.createElement('div');
+    t.className='smileText';
+    if(cam) t.style.top='24%';
+    t.textContent='Smile!!';
+    document.body.appendChild(t);
+    /* then boom: flash + shutter sound + gallery (same as before) */
+    setTimeout(()=>{
+      t.remove();
+      cameraFlash(()=>openModal('gallery'));
+      if(cam) cam.remove();
+      if(icon) icon.style.visibility='';
+      smiling=false;
+    },1300);
+  },glide);
 }
 function cameraFlash(cb){
   const flash=document.getElementById('cameraFlash');
