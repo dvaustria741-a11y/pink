@@ -1306,6 +1306,13 @@ function bigBalloonIntro(){
   img.src='assets/balloon_rose.png'; img.className='pixel bigBalloon'; img.alt=''; img.draggable=false;
   img.style.width=bw+'px'; img.style.height=bh+'px'; img.style.left=x0+'px';
   card.appendChild(img);
+  function hidePromptNow(){
+    giftPrompt.style.transition='none';
+    giftPrompt.classList.add('gone');
+    void giftPrompt.offsetWidth; /* apply instantly, no fade-out flash */
+    giftPrompt.style.transition='';
+  }
+  hidePromptNow(); /* the prompt stays hidden through the whole balloon + drop */
   const y=f=>Math.round(startY+(endY-startY)*f);
   /* 1) it floats up with a gentle sway */
   const rise=img.animate([
@@ -1350,8 +1357,8 @@ function bigBalloonIntro(){
   }
   /* 4) the gift box falls from where the balloon was, lands with an impact */
   function dropBox(cx,cy){
+    hidePromptNow();
     wrap.classList.add('dropping');
-    giftPrompt.classList.add('gone');
     const ir=giftImg.getBoundingClientRect();
     const dy=(oy+cy)-(ir.top+ir.height/2);
     giftArea.style.setProperty('--dy',dy+'px');
