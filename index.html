@@ -169,7 +169,7 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 /* pixel-art lily frame drawn around the landscape card (overlay, never blocks taps) */
 .sceneFrameWrap{position:absolute;inset:0;padding:22px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:6;}
 .sceneFrame{position:relative;width:92%;max-width:400px;height:70dvh;max-height:680px;opacity:0;transform:translateY(-16px);animation:slideIn .6s ease forwards;pointer-events:none;}
-.sceneFrame::after{content:'';position:absolute;left:-17px;top:-32px;right:-18px;bottom:-21px;border-style:solid;border-color:transparent;border-width:72px 66px 75px 64px;border-image:url(assets/scene_frame.png) 164 149 171 145 / 72px 66px 75px 64px stretch;filter:drop-shadow(2px 3px 0 rgba(122,44,70,.28));}
+.sceneFrame::after{content:'';position:absolute;left:-16px;top:-31px;right:-17px;bottom:-20px;border-style:solid;border-color:transparent;border-width:72px 66px 75px 64px;border-image:url(assets/scene_frame.png) 164 149 171 145 / 72px 66px 75px 64px stretch;filter:drop-shadow(2px 3px 0 rgba(122,44,70,.28));}
 
 .scenic-card > img.banner{width:100%;height:100%;object-fit:cover;z-index:1;}
 .titlestack{z-index:3;width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:6% 8%;cursor:pointer;position:relative;}
