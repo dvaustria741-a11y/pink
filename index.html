@@ -1671,7 +1671,7 @@ let giftCooling=false;
 giftBtn.addEventListener('click',()=>{
   if(giftTaps>=3 || giftCooling) return; /* no spamming: each tap has to finish first */
   giftCooling=true;
-  setTimeout(()=>{ giftCooling=false; },900);
+  setTimeout(()=>{ giftCooling=false; },800);
   giftTaps++;
   if(giftTaps===1){
     giftShake('shake1'); giftDust(10,false);
