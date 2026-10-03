@@ -163,9 +163,14 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 
 /* dashboard */
 #dashboard{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:22px;position:relative;z-index:3;}
-.scenic-card{position:relative;display:grid;grid-template-areas:"stack";grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1fr);width:92%;max-width:400px;height:70dvh;max-height:680px;border:4px solid var(--deep);box-shadow:6px 6px 0 var(--rose);overflow:hidden;background:#eee;opacity:0;transform:translateY(-16px);animation:slideIn .6s ease forwards;}
+.scenic-card{position:relative;display:grid;grid-template-areas:"stack";grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1fr);width:92%;max-width:400px;height:70dvh;max-height:680px;border:0;box-shadow:none;overflow:hidden;background:#eee;opacity:0;transform:translateY(-16px);animation:slideIn .6s ease forwards;}
 @keyframes slideIn{to{opacity:1;transform:translateY(0);}}
 .scenic-card > *{grid-area:stack;}
+/* pixel-art lily frame drawn around the landscape card (overlay, never blocks taps) */
+.sceneFrameWrap{position:absolute;inset:0;padding:22px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:6;}
+.sceneFrame{position:relative;width:92%;max-width:400px;height:70dvh;max-height:680px;opacity:0;transform:translateY(-16px);animation:slideIn .6s ease forwards;pointer-events:none;}
+.sceneFrame::after{content:'';position:absolute;left:-17px;top:-32px;right:-18px;bottom:-21px;border-style:solid;border-color:transparent;border-width:72px 66px 75px 64px;border-image:url(assets/scene_frame.png) 164 149 171 145 / 72px 66px 75px 64px stretch;filter:drop-shadow(2px 3px 0 rgba(122,44,70,.28));}
+
 .scenic-card > img.banner{width:100%;height:100%;object-fit:cover;z-index:1;}
 .titlestack{z-index:3;width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:6% 8%;cursor:pointer;position:relative;}
 .card-stack{display:flex;flex-direction:column;align-items:center;justify-content:center;width:75%;max-width:220px;}
@@ -273,7 +278,7 @@ body.iconsLocked .appicon,body.iconsLocked .appicon.crawl{pointer-events:none !i
 .giftArea.vanish{animation:giftVanish .35s ease-in forwards;}
 @keyframes giftVanish{0%{transform:scale(1);filter:brightness(1);opacity:1;}30%{transform:scale(1.12);filter:brightness(3);opacity:1;}100%{transform:scale(0);filter:brightness(3);opacity:0;}}
 /* message icon sits bottom-right, outside the 2x2 grid flow */
-#messageIcon{position:absolute;right:4%;bottom:3%;max-width:34%;text-align:center;}
+#messageIcon{position:absolute;right:9%;bottom:4.5%;max-width:34%;text-align:center;}
 
 /* no long-press image menu / drag / text selection (inputs still work) */
 img{-webkit-touch-callout:none;-webkit-user-drag:none;user-select:none;-webkit-user-select:none;}
@@ -911,6 +916,7 @@ setTimeout(finish,30000); /* never leave her stuck on a bad connection */
       <button class="appicon gift late hidden" id="messageIcon" data-modal="message"><img class="pixel" src="assets/message_icon.png" alt=""><span>Message (optional)</span></button>
     </div>
   </div>
+  <div class="sceneFrameWrap" aria-hidden="true"><div class="sceneFrame"></div></div>
 </div>
 
 <script>
