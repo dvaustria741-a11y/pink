@@ -601,14 +601,14 @@ body.iconsLocked .passChip{pointer-events:none;}
 .modal.framed-music .playlist-wrap{width:86%;margin:0 auto;}
 .modal.framed-music .playlist-note{padding:0 14%;font-size:.95rem;margin-top:8px;text-wrap:balance;}
 .modal .closeX{z-index:5;}
-/* message popup: lily frame + party button */
-.modal.framed-message{background-image:url('assets/frame_lily.webp');aspect-ratio:1086/1448;width:min(100%,440px,calc((100vh - 32px)*.75));width:min(100%,440px,calc((100dvh - 32px)*.75));--ft:21%;--fb:12%;--fl:12%;--fr:12%;filter:drop-shadow(4px 5px 0 rgba(122,44,70,.35));}
-.modal.framed-message .closeX{top:11.6%;right:17.4%;width:5.7%;aspect-ratio:1/1;padding:0;color:transparent;font-size:12px;}
+/* message popup: custom frame, textbox and Send button */
+.modal.framed-message{background-image:url('assets/frame_msg.webp');aspect-ratio:1086/1448;width:min(100%,440px,calc((100vh - 32px)*.75));width:min(100%,440px,calc((100dvh - 32px)*.75));--ft:17.5%;--fb:10%;--fl:10.5%;--fr:10.5%;filter:drop-shadow(4px 5px 0 rgba(122,44,70,.35));}
+.modal.framed-message .closeX{top:8.8%;right:15.7%;width:6.5%;aspect-ratio:1/1;padding:0;display:flex;align-items:center;justify-content:center;font-size:clamp(9px,3vw,13px);line-height:1;}
 .modal.framed-message h2{font-size:.95rem;margin-bottom:6px;}
-.modal.framed-message .msg-note{text-align:center;font-size:.9rem;line-height:1.15;margin-bottom:8px;}
-.modal.framed-message .msg-text{width:100%;height:clamp(84px,24vh,150px);font-family:'VT323',monospace;font-size:1.1rem;line-height:1.1;padding:8px 10px;border:3px solid var(--deep);border-radius:0;resize:none;background:#fffaf6;color:var(--ink);box-shadow:inset 2px 2px 0 rgba(193,75,112,.18);outline:none;}
-.modal.framed-message .msg-text:focus{border-color:var(--rose);}
-#sendMsgBtn{background:url(assets/btn_party.webp) center/100% 100% no-repeat;border:none;box-shadow:none;width:min(62%,210px);aspect-ratio:700/93;min-height:0;min-width:0;padding:0 17%;margin:10px auto 0;display:flex;align-items:center;justify-content:center;font-size:.9rem;line-height:1;color:var(--deep);filter:drop-shadow(2px 3px 0 rgba(122,44,70,.3));-webkit-tap-highlight-color:transparent;}
+.modal.framed-message .msg-note{text-align:center;font-size:.9rem;line-height:1.15;margin-bottom:10px;}
+.msg-box{border-style:solid;border-color:transparent;border-width:14px 13px 12px 14px;border-image:url(assets/msg_textbox.webp) 58 55 50 57 fill / 14px 13px 12px 14px stretch;padding:0 4px;}
+.msg-box .msg-text{display:block;width:100%;height:clamp(96px,24vh,170px);font-family:'VT323',monospace;font-size:1.1rem;line-height:1.15;padding:2px 4px;border:none;border-radius:0;resize:none;background:transparent;color:var(--ink);outline:none;}
+#sendMsgBtn{background:none;box-shadow:none;border-style:solid;border-color:transparent;border-width:15px 28px 15px 45px;border-image:url(assets/btn_send.webp) 35 65 35 105 fill / 15px 28px 15px 45px stretch;width:min(72%,250px);height:42px;min-height:0;min-width:0;padding:0;margin:12px auto 0;display:flex;align-items:center;justify-content:center;font-size:.95rem;line-height:1;color:var(--deep);filter:drop-shadow(2px 3px 0 rgba(122,44,70,.3));-webkit-tap-highlight-color:transparent;}
 #sendMsgBtn:active{box-shadow:none;filter:brightness(.93) drop-shadow(1px 1px 0 rgba(122,44,70,.3));}
 #sendMsgBtn:disabled{opacity:.6;}
 
@@ -2321,7 +2321,7 @@ ${['kind','supportive','creative','caring','patient','hardworking','humble','ado
     <div class="fscroll">
     <h2>Leave me a message</h2>
     <p class="msg-note">Totally optional — no pressure at all. But if you want to say anything, it comes straight to me.</p>
-    <textarea id="msgText" rows="4" class="msg-text"></textarea>
+    <div class="msg-box"><textarea id="msgText" rows="4" class="msg-text"></textarea></div>
     <button class="pxbtn" id="sendMsgBtn">Send</button>
     <p id="msgStatus" style="margin-top:6px;font-size:.9rem;text-align:center;min-height:1.2em;"></p>
     </div>`
