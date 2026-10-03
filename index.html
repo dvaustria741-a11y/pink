@@ -2257,12 +2257,34 @@ function spawnDriftBalloon(){
   b.addEventListener('animationend',e=>{ if(e.target===b){ b.remove(); driftOnScreen--; } });
   b.addEventListener('click',()=>popBalloon(b));
 }
+let popCtx=null, popBuf=null, popGain=null, popFallback=null;
+function initPop(){
+  try{
+    popFallback=new Audio('assets/audio/balloon_pop.mp3'); popFallback.preload='auto'; popFallback.volume=.4;
+    const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return;
+    popCtx=new AC(); popGain=popCtx.createGain(); popGain.gain.value=.4; popGain.connect(popCtx.destination);
+    fetch('assets/audio/balloon_pop.mp3').then(r=>r.arrayBuffer()).then(buf=>new Promise((res,rej)=>{ const pr=popCtx.decodeAudioData(buf,res,rej); if(pr&&pr.then) pr.then(res,rej); })).then(b=>{ popBuf=b; }).catch(()=>{});
+    const wake=()=>{ try{ if(popCtx&&popCtx.state==='suspended') popCtx.resume(); }catch(e){} };
+    ['pointerdown','touchstart','click'].forEach(ev=>document.addEventListener(ev,wake,{passive:true}));
+  }catch(e){}
+}
+function playPop(){
+  try{
+    if(popCtx && popBuf){
+      if(popCtx.state==='suspended') popCtx.resume();
+      const src=popCtx.createBufferSource(); src.buffer=popBuf; src.connect(popGain); src.start(0); return;
+    }
+    if(popFallback){ const a=popFallback.cloneNode(); a.volume=.4; a.play().catch(()=>{}); return; }
+    const a=new Audio('assets/audio/balloon_pop.mp3'); a.volume=.4; a.play().catch(()=>{});
+  }catch(e){}
+}
+initPop();
 function popBalloon(b){
   if(b._popped) return; b._popped=true;
   const r=b.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height*0.4;
   const color=b.dataset.c;
   b.remove(); driftOnScreen--;
-  try{ const a=new Audio('assets/audio/balloon_pop.mp3'); a.volume=.4; a.play().catch(()=>{}); }catch(e){}
+  playPop();
   for(let i=0;i<12;i++){
     const bit=document.createElement('div');
     bit.className='popBit';
