@@ -1200,18 +1200,19 @@ function spawnWind(strong){
 function windBurst(n,strong){ for(let i=0;i<n;i++) setTimeout(()=>spawnWind(strong),i*(380/n)); }
 
 /* mic-based blow detection via Web Audio API */
-const BLOW_THRESHOLD=42; // 0-255 average frequency level; tune if too sensitive/insensitive
-const WIND_THRESHOLD=18; // lower level that just makes the flame flicker in the "wind"
+const BLOW_THRESHOLD=50; // 0-255 average level of the low band (breath noise); lower = easier, raise if it triggers by itself
+const WIND_THRESHOLD=20; // lower level that just makes the flame flicker in the "wind"
 async function enableMicBlow(){
   const micBtn=document.getElementById('micBtn');
   const flame=document.getElementById('flame');
   try{
-    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}}); /* the phone's noise suppression was erasing breath noise */
     const AudioCtx=window.AudioContext||window.webkitAudioContext;
     const ctx=new AudioCtx();
     const source=ctx.createMediaStreamSource(stream);
     const analyser=ctx.createAnalyser();
     analyser.fftSize=512;
+    analyser.smoothingTimeConstant=0.5;
     source.connect(analyser);
     const data=new Uint8Array(analyser.frequencyBinCount);
     micBtn.textContent='Listening… blow now!';
@@ -1225,8 +1226,9 @@ async function enableMicBlow(){
       if(blownAlready||blowStarted){ stopMic(); return; }
       analyser.getByteFrequencyData(data);
       let sum=0;
-      for(let i=0;i<data.length;i++) sum+=data[i];
-      const avg=sum/data.length;
+      const LOW=40; /* breath/wind noise lives in the low bins */
+      for(let i=0;i<LOW;i++) sum+=data[i];
+      const avg=sum/LOW;
       if(avg>BLOW_THRESHOLD){
         stopMic();
         triggerBlowOut('mic');
