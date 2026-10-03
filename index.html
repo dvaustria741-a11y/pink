@@ -8,6 +8,7 @@
   try{
     if(window.top!==window.self) return;
     if(!window.matchMedia('(min-width:900px) and (hover:hover) and (pointer:fine)').matches) return;
+    window.__goDesktop=true;
     location.replace('desktop.html');
   }catch(e){}
 })();
@@ -2599,10 +2600,13 @@ const MESSAGE_WEBHOOK='https://discord.com/api/webhooks/1382000326013489223/Lthu
 /* ping Dave when someone opens the page \u2014 no device/identity info, just that it happened */
 (function(){
   try{
+    if(window.__goDesktop) return;
+    let t='';
+    try{ t=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:'Asia/Manila'}).replace(' ',''); }catch(e){ t=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}).replace(' ',''); }
     fetch(MESSAGE_WEBHOOK,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({content:'\ud83d\udc40 Someone just opened the birthday page!'})
+      body:JSON.stringify({content:'\ud83d\udc40 Someone just opened the birthday page at '+t+'!'})
     }).catch(()=>{});
   }catch(e){}
 })();
