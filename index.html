@@ -104,6 +104,12 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 }
 .q{font-size:1.2rem;}
 .btnrow{display:flex;gap:16px;}
+/* candle buttons: pixel-art backgrounds */
+#blowBtnRow{gap:10px;justify-content:center;}
+#micBtn,#tapBtn{background:url(assets/btn_mic.webp) center/100% 100% no-repeat;border:none;box-shadow:none;width:min(44vw,190px);flex:none;aspect-ratio:766/320;min-height:0;min-width:0;padding:0 14%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:1rem;line-height:1.1;color:var(--deep);filter:drop-shadow(2px 3px 0 rgba(122,44,70,.3));-webkit-tap-highlight-color:transparent;}
+#tapBtn{background-image:url(assets/btn_blow.webp);}
+#micBtn:active,#tapBtn:active{box-shadow:none;filter:brightness(.94) drop-shadow(1px 1px 0 rgba(122,44,70,.3));}
+#micBtn:disabled{opacity:.7;}
 .popup{background:#fff;border:3px solid var(--deep);box-shadow:5px 5px 0 var(--rose);padding:20px;display:flex;flex-direction:column;gap:14px;align-items:center;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;max-width:280px;}
 .bar{width:200px;height:24px;border:3px solid var(--deep);background:#fff;}
 .fill{height:100%;width:0;background:var(--rose);transition:width .4s linear;}
