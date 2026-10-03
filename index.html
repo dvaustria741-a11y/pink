@@ -246,6 +246,24 @@ body.iconsLocked .appicon,body.iconsLocked .appicon.crawl{pointer-events:none !i
 .grid.ready .appicon.gift{pointer-events:auto;}
 .grid.ready .appicon.gift span{opacity:1;}
 
+/* big balloon intro: it floats up, pops, and the gift box drops from the sky */
+.giftWrap.dropping{opacity:1;transition:none;}
+.giftWrap.dropping .giftBtn{animation:none;pointer-events:none;}
+.giftArea.dropIn{transform-origin:50% 100%;animation:giftDrop 1.15s both;}
+@keyframes giftDrop{
+  0%{opacity:0;transform:translateY(var(--dy)) scale(.3) rotate(-14deg);animation-timing-function:ease-out;}
+  6%{opacity:1;transform:translateY(var(--dy)) scale(1) rotate(-10deg);animation-timing-function:cubic-bezier(.5,0,.9,.6);}
+  48%{opacity:1;transform:translateY(0) scale(1) rotate(4deg);animation-timing-function:linear;}
+  50%{opacity:1;transform:translateY(0) scale(1.3,.66) rotate(0);animation-timing-function:ease-out;}
+  62%{transform:translateY(-30px) scale(.9,1.12) rotate(-3deg);animation-timing-function:ease-in;}
+  74%{transform:translateY(0) scale(1.14,.84) rotate(0);animation-timing-function:ease-out;}
+  86%{transform:translateY(-7px) scale(.98,1.03);animation-timing-function:ease-in;}
+  100%{opacity:1;transform:translateY(0) scale(1);}
+}
+.bigBalloon{position:absolute;left:0;top:0;z-index:5;pointer-events:none;display:block;filter:drop-shadow(2px 2px 0 rgba(0,0,0,.12));will-change:transform;}
+.bigPop{position:absolute;z-index:6;pointer-events:none;background-repeat:no-repeat;background-size:500% 100%;background-position:0 0;image-rendering:pixelated;}
+.landPuff{position:absolute;z-index:6;pointer-events:none;image-rendering:pixelated;}
+.landRing{position:absolute;z-index:6;pointer-events:none;border:3px solid rgba(255,255,255,.9);border-radius:50%;box-sizing:border-box;}
 .giftArea.vanish{animation:giftVanish .35s ease-in forwards;}
 @keyframes giftVanish{0%{transform:scale(1);filter:brightness(1);opacity:1;}30%{transform:scale(1.12);filter:brightness(3);opacity:1;}100%{transform:scale(0);filter:brightness(3);opacity:0;}}
 /* message icon sits bottom-right, outside the 2x2 grid flow */
@@ -1256,9 +1274,131 @@ function spawnBalloons(){
   }
 }
 function revealIcons(){
-  /* the icons now come out of the mystery box; first show the box */
+  /* the icons come out of the mystery box; a big balloon floats up, pops, and the box drops from the sky */
   new Image().src='assets/gift_box_open.png';
-  document.getElementById('giftWrap').classList.add('show');
+  new Image().src='assets/balloon_rose.png';
+  new Image().src='assets/pop_rose.png';
+  try{ bigBalloonIntro(); }
+  catch(e){ document.getElementById('giftWrap').classList.add('show'); }
+}
+function playThud(vol){
+  try{
+    if(!popCtx) return;
+    if(popCtx.state==='suspended') popCtx.resume();
+    const t=popCtx.currentTime, o=popCtx.createOscillator(), g=popCtx.createGain();
+    o.type='sine';
+    o.frequency.setValueAtTime(150,t); o.frequency.exponentialRampToValueAtTime(40,t+.16);
+    g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(.001,t+.22);
+    o.connect(g); g.connect(popCtx.destination); o.start(t); o.stop(t+.24);
+  }catch(e){}
+}
+function bigBalloonIntro(){
+  const card=document.querySelector('.scenic-card');
+  const wrap=document.getElementById('giftWrap');
+  const cr=card.getBoundingClientRect();
+  const ox=cr.left+card.clientLeft, oy=cr.top+card.clientTop; /* card inner origin on screen */
+  const W=card.clientWidth, H=card.clientHeight;
+  const bw=Math.min(Math.round(W*.3),120), bh=Math.round(bw*306/160);
+  const x0=Math.round(W/2-bw/2);
+  const endY=Math.round(H*.3-bh*.3);   /* balloon top when it hangs in the middle of the sky */
+  const startY=H+12;
+  const img=document.createElement('img');
+  img.src='assets/balloon_rose.png'; img.className='pixel bigBalloon'; img.alt=''; img.draggable=false;
+  img.style.width=bw+'px'; img.style.height=bh+'px'; img.style.left=x0+'px';
+  card.appendChild(img);
+  const y=f=>Math.round(startY+(endY-startY)*f);
+  /* 1) it floats up with a gentle sway */
+  const rise=img.animate([
+    {transform:`translate(0px,${startY}px) rotate(-3deg)`},
+    {transform:`translate(-16px,${y(.35)}px) rotate(3deg)`,offset:.35},
+    {transform:`translate(12px,${y(.7)}px) rotate(-3deg)`,offset:.7},
+    {transform:`translate(0px,${endY}px) rotate(0deg)`}
+  ],{duration:2600,easing:'cubic-bezier(.3,.5,.4,1)',fill:'forwards'});
+  rise.onfinish=()=>{
+    /* 2) it swells for a moment... */
+    const swell=img.animate([
+      {transform:`translate(0px,${endY}px) scale(1)`},
+      {transform:`translate(0px,${endY}px) scale(1.08,1.12)`,offset:.4},
+      {transform:`translate(0px,${endY}px) scale(1.04,1.06)`,offset:.55},
+      {transform:`translate(0px,${endY}px) scale(1.2,1.26)`}
+    ],{duration:460,easing:'ease-in-out',fill:'forwards'});
+    swell.onfinish=pop;
+  };
+  /* 3) ...and pops in the sky */
+  function pop(){
+    const cx=W/2, cy=endY+bh*.3;
+    img.remove();
+    playPop();
+    const D=Math.round(bw*2.4);
+    const sp=document.createElement('div');
+    sp.className='bigPop';
+    sp.style.cssText='left:'+Math.round(cx-D/2)+'px;top:'+Math.round(cy-D/2)+'px;width:'+D+'px;height:'+D+'px;background-image:url(assets/pop_rose.png)';
+    card.appendChild(sp);
+    [0,90,190,310,440].forEach((t,k)=>setTimeout(()=>{ sp.style.backgroundPosition=(k*25)+'% 0'; },t));
+    setTimeout(()=>sp.remove(),620);
+    const cols=['#fdf3ec','#e98aa6','#c14b70','#ffd84d','#ffb3c7'];
+    for(let i=0;i<18;i++){
+      const bit=document.createElement('div');
+      bit.className='landPuff';
+      const sz=5+Math.floor(Math.random()*4);
+      bit.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+cx+'px;top:'+cy+'px;background:'+cols[i%cols.length];
+      card.appendChild(bit);
+      const ang=Math.PI*2*i/18+Math.random()*.3, d=40+Math.random()*60;
+      bit.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${Math.cos(ang)*d}px,${Math.sin(ang)*d+22}px) scale(.3)`,opacity:0}],{duration:760,easing:'ease-out'}).onfinish=()=>bit.remove();
+    }
+    setTimeout(()=>dropBox(cx,cy),320);
+  }
+  /* 4) the gift box falls from where the balloon was, lands with an impact */
+  function dropBox(cx,cy){
+    wrap.classList.add('dropping');
+    giftPrompt.classList.add('gone');
+    const ir=giftImg.getBoundingClientRect();
+    const dy=(oy+cy)-(ir.top+ir.height/2);
+    giftArea.style.setProperty('--dy',dy+'px');
+    giftArea.classList.add('dropIn');
+    let done=false;
+    const finish=()=>{
+      if(done) return; done=true;
+      giftArea.classList.remove('dropIn');
+      wrap.classList.remove('dropping');
+      wrap.classList.add('show');
+      giftPrompt.classList.remove('gone');
+    };
+    giftArea.addEventListener('animationend',function h(e){
+      if(e.target!==giftArea || e.animationName!=='giftDrop') return;
+      giftArea.removeEventListener('animationend',h); finish();
+    });
+    setTimeout(finish,1400); /* safety net */
+    setTimeout(()=>impact(1),560);
+    setTimeout(()=>impact(.45),850);
+  }
+  function impact(power){
+    const br=giftImg.getBoundingClientRect();
+    const bx=br.left+br.width/2-ox, by=br.bottom-oy-4;
+    const n=Math.round(12*power);
+    const cols=['#f6e3cf','#e8c9a8','#ffffff','#d9c2a0'];
+    for(let i=0;i<n;i++){
+      const d=document.createElement('div');
+      d.className='landPuff';
+      const sz=Math.round((7+Math.random()*7)*(.6+power*.4));
+      d.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+bx+'px;top:'+by+'px;background:'+cols[i%cols.length];
+      card.appendChild(d);
+      const sign=i%2?1:-1, dx=sign*(16+Math.random()*54)*(.6+power*.4), dyy=-(2+Math.random()*20)*power;
+      d.animate([{transform:'translate(0,0) scale(1)',opacity:.95},{transform:`translate(${dx}px,${dyy}px) scale(.35)`,opacity:0}],{duration:520,easing:'ease-out'}).onfinish=()=>d.remove();
+    }
+    const ring=document.createElement('div');
+    ring.className='landRing';
+    ring.style.cssText='width:70px;height:20px;left:'+(bx-35)+'px;top:'+(by-12)+'px';
+    card.appendChild(ring);
+    ring.animate([{transform:'scale(.3)',opacity:.95},{transform:`scale(${1.4+power*1.6})`,opacity:0}],{duration:480,easing:'ease-out'}).onfinish=()=>ring.remove();
+    const s=3.5*power;
+    card.animate([
+      {transform:'translate(0,0)'},{transform:`translate(${-s}px,${s*1.2}px)`,offset:.2},
+      {transform:`translate(${s}px,${-s}px)`,offset:.45},{transform:`translate(${-s*.5}px,${s*.5}px)`,offset:.7},{transform:'translate(0,0)'}
+    ],{duration:340,easing:'ease-out',composite:'add'});
+    playThud(.5*power);
+    try{ if(navigator.vibrate) navigator.vibrate(power>.6?35:15); }catch(e){}
+  }
 }
 
 /* ---------- mystery box reveal ---------- */
