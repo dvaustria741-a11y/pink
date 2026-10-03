@@ -353,6 +353,12 @@ input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:d
 .bubble{position:absolute;bottom:100%;left:50%;width:max-content;max-width:150px;margin-bottom:10px;background:#fff;color:var(--deep);border:3px solid var(--deep);box-shadow:3px 3px 0 rgba(60,43,48,.25);padding:6px 8px;font-size:.72rem;line-height:1.35;text-align:center;opacity:0;pointer-events:none;transform:translateX(-50%) scale(.6);transform-origin:50% 100%;transition:opacity .15s ease,transform .25s cubic-bezier(.34,1.56,.64,1);z-index:3;}
 .bubble.show{opacity:1;transform:translateX(-50%) scale(1);}
 .bubble::after{content:"";position:absolute;top:100%;left:50%;margin-left:-6px;border:6px solid transparent;border-top-color:var(--deep);}
+/* gallery duo: pixel-art 9-slice bubbles, tail lined up over each character */
+.bubble{background:none;box-shadow:none;border-style:solid;border-color:transparent;padding:2px 6px 3px;max-width:172px;min-width:92px;margin-bottom:3px;left:auto;line-height:1.35;}
+.bubble::after{display:none;}
+#elsaBubble{left:calc(50% - 20px);right:auto;transform:scale(.6);transform-origin:20px 100%;border-width:16px 19px 11px 27px;border-image:url(assets/bubble_elsa.webp) 68 78 45 113 fill / 16px 19px 11px 27px stretch;}
+#annaBubble{left:auto;right:calc(50% - 20px);transform:scale(.6);transform-origin:calc(100% - 20px) 100%;border-width:13px 26px 11px 13px;border-image:url(assets/bubble_anna.webp) 53 108 45 53 fill / 13px 26px 11px 13px stretch;}
+#elsaBubble.show,#annaBubble.show{transform:scale(1);}
 .frozen-duo img{height:130px;width:auto;opacity:0;transform:translateY(14px) scale(.7);animation:duoIn .6s cubic-bezier(.34,1.56,.64,1) forwards,duoBob 2.4s ease-in-out infinite;transform-origin:50% 100%;}
 .frozen-duo .elsa{animation-delay:1.5s,2.2s;}
 .frozen-duo .anna{animation-delay:1.8s,2.6s;}
