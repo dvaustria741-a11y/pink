@@ -301,12 +301,16 @@ input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:d
 
 /* gallery */
 .gallery-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px 18px;padding:10px 8px 4px;}
-.gframe{background:#fff;border:3px solid var(--deep);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--deep);overflow:hidden;box-shadow:4px 4px 0 rgba(60,43,48,.25);opacity:0;transform:scale(.6) rotate(0deg);animation:polaroidIn .55s cubic-bezier(.34,1.56,.64,1) forwards;}
+.gframe{background:#fff;position:relative;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--deep);overflow:hidden;cursor:pointer;opacity:0;transform:scale(.6) rotate(0deg);animation:polaroidIn .55s cubic-bezier(.34,1.56,.64,1) forwards;}
 .gframe:nth-child(1){--rot:-8deg;margin-top:-6px;animation-delay:.1s;}
 .gframe:nth-child(2){--rot:6deg;margin-top:16px;animation-delay:.4s;}
 .gframe:nth-child(3){--rot:5deg;margin-top:10px;animation-delay:.7s;}
 .gframe:nth-child(4){--rot:-6deg;margin-top:-10px;animation-delay:1s;}
 @keyframes polaroidIn{0%{opacity:0;transform:scale(.6) rotate(0deg);}100%{opacity:1;transform:scale(1) rotate(var(--rot));}}
+.gframe-overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;}
+.lightbox-backdrop{position:fixed;inset:0;z-index:200;background:rgba(40,20,28,0);transition:background .32s ease;}
+.lightbox-backdrop.show{background:rgba(40,20,28,.72);}
+.lightbox-img{position:fixed;z-index:201;transition:left .38s cubic-bezier(.34,1.1,.4,1),top .38s cubic-bezier(.34,1.1,.4,1),width .38s cubic-bezier(.34,1.1,.4,1),height .38s cubic-bezier(.34,1.1,.4,1),border-radius .38s ease;box-shadow:0 8px 28px rgba(0,0,0,.35);border-radius:4px;}
 /* animated caption: letters pop in one by one, then ripple gently */
 .cheers{text-align:center;font-style:italic;margin-bottom:14px;}
 .cheers .cw{display:inline-block;white-space:nowrap;}
@@ -1555,7 +1559,9 @@ function cameraFlash(cb){
     });
   });
 }
-function closeModal(){if(currentModalName==='letter' && !puppySpawned){puppySpawned=true;setTimeout(spawnPuppy,700);} /* the puppy shows up after she leaves the Letter */
+function closeModal(){
+  if(lightboxOpen){ lightboxOpen=false; document.querySelectorAll('.lightbox-backdrop,.lightbox-img').forEach(e=>e.remove()); }
+  if(currentModalName==='letter' && !puppySpawned){puppySpawned=true;setTimeout(spawnPuppy,700);} /* the puppy shows up after she leaves the Letter */
   currentModalName=null;
   if(typeof closeCakeFrame==='function') closeCakeFrame();if(typeof closeFlowerFrame==='function') closeFlowerFrame();overlay.classList.add('hidden');galleryTimers.forEach(clearTimeout);galleryTimers=[];if(messagePending){messagePending=false;lockIcons();setTimeout(flyMessageIcon,400);}musicVol=1;applyVol();modalBox.innerHTML='';modalBox.classList.remove('passport-modal');modalBox.classList.remove('traits-modal');if(typeTimer){clearInterval(typeTimer);typeTimer=null;}}
 let currentModalName=null, puppySpawned=false;
@@ -1919,7 +1925,57 @@ function say(who,text,ms){
   const item=document.getElementById(who+'Btn');
   item.classList.remove('hop'); void item.offsetWidth; item.classList.add('hop');
 }
+let lightboxOpen=false;
+function openLightbox(frameEl){
+  if(lightboxOpen) return;
+  lightboxOpen=true;
+  const photoSrc=frameEl.dataset.photo;
+  const startRect=frameEl.getBoundingClientRect();
+  const backdrop=document.createElement('div');
+  backdrop.className='lightbox-backdrop';
+  const img=document.createElement('img');
+  img.className='lightbox-img pixel';
+  img.src=photoSrc;
+  img.style.left=startRect.left+'px';
+  img.style.top=startRect.top+'px';
+  img.style.width=startRect.width+'px';
+  img.style.height=startRect.height+'px';
+  img.style.objectFit='cover';
+  document.body.appendChild(backdrop);
+  document.body.appendChild(img);
+  function closeLightbox(){
+    if(!lightboxOpen) return;
+    lightboxOpen=false;
+    const backRect=frameEl.getBoundingClientRect();
+    backdrop.classList.remove('show');
+    img.style.objectFit='cover';
+    img.style.borderRadius='0px';
+    img.style.left=backRect.left+'px';
+    img.style.top=backRect.top+'px';
+    img.style.width=backRect.width+'px';
+    img.style.height=backRect.height+'px';
+    setTimeout(()=>{ backdrop.remove(); img.remove(); },400);
+  }
+  backdrop.addEventListener('click',closeLightbox);
+  img.addEventListener('click',closeLightbox);
+  requestAnimationFrame(()=>{
+    backdrop.classList.add('show');
+    const natW=img.naturalWidth||1, natH=img.naturalHeight||1;
+    const maxW=innerWidth*.86, maxH=innerHeight*.72;
+    let tw=maxW, th=tw*(natH/natW);
+    if(th>maxH){ th=maxH; tw=th*(natW/natH); }
+    img.style.left=((innerWidth-tw)/2)+'px';
+    img.style.top=((innerHeight-th)/2)+'px';
+    img.style.width=tw+'px';
+    img.style.height=th+'px';
+    img.style.objectFit='contain';
+    img.style.borderRadius='10px';
+  });
+}
 function initGallery(){
+  document.querySelectorAll('.gframe').forEach(fr=>{
+    fr.addEventListener('click',()=>openLightbox(fr));
+  });
   ['elsa','anna'].forEach(w=>{
     document.getElementById(w+'Btn').addEventListener('click',()=>{
       galleryTimers.forEach(clearTimeout); galleryTimers=[]; /* stop the greeting if she taps */
@@ -1952,10 +2008,10 @@ const templates={
     <h2>your Seasons</h2>
     <p class="cheers" aria-label="cheers to every version of you">${cheersHTML('cheers to every version of you')}</p>
     <div class="gallery-grid">
-      <div class="gframe"><img src="assets/gallery_1.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
-      <div class="gframe"><img src="assets/gallery_2.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
-      <div class="gframe"><img src="assets/gallery_3.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
-      <div class="gframe"><img src="assets/gallery_4.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
+      <div class="gframe" data-photo="assets/gallery_1.jpg"><img src="assets/gallery_1.jpg" alt="" style="width:100%;height:100%;object-fit:cover"><img class="gframe-overlay pixel" src="assets/photo_frame.png" alt=""></div>
+      <div class="gframe" data-photo="assets/gallery_2.jpg"><img src="assets/gallery_2.jpg" alt="" style="width:100%;height:100%;object-fit:cover"><img class="gframe-overlay pixel" src="assets/photo_frame.png" alt=""></div>
+      <div class="gframe" data-photo="assets/gallery_3.jpg"><img src="assets/gallery_3.jpg" alt="" style="width:100%;height:100%;object-fit:cover"><img class="gframe-overlay pixel" src="assets/photo_frame.png" alt=""></div>
+      <div class="gframe" data-photo="assets/gallery_4.jpg"><img src="assets/gallery_4.jpg" alt="" style="width:100%;height:100%;object-fit:cover"><img class="gframe-overlay pixel" src="assets/photo_frame.png" alt=""></div>
     </div>
     <div class="frozen-duo">
       <button class="duo-item" id="elsaBtn" aria-label="Elsa"><div class="bubble" id="elsaBubble"></div><img class="pixel elsa" src="assets/elsa.png" alt="Elsa" draggable="false"></button>
