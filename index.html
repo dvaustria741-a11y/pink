@@ -1932,8 +1932,8 @@ flowerFrame.addEventListener('click',e=>{ if(e.target===flowerFrame) closeFlower
 /* ---------- Elsa & Anna dialogue ---------- */
 let galleryTimers=[];
 const duoLines={
-  elsa:["Make a wish, Cel. I'll add the sparkle! ❄️","You're stronger and kinder than you know.","Your smile could melt any winter.","Ice cream for breakfast? On your birthday, yes.","Whatever this year brings, you've got this."],
-  anna:["Cake first, everything else later! 🍰","Today is all about you, Cel!","Best friends make the best adventures!","Wish big! I'm cheering for you!","Did someone say party? 🎉","If you have a problem, just put it in a Messenger note and it will disappear in 24 hours!"]
+  elsa:["Make a wish, Cel. I'll add the sparkle!","You're stronger and kinder than you know.","Your smile could melt any winter.","Ice cream for breakfast? On your birthday, yes.","Whatever this year brings, you've got this."],
+  anna:["Cake first, everything else later!","Today is all about you, Cel!","Best friends make the best adventures!","Wish big! I'm cheering for you!","Did someone say party?","If you have a problem, just put it in a Messenger note and it will disappear in 24 hours!"]
 };
 const duoBag={elsa:[],anna:[]};
 function nextLine(who){
@@ -2012,8 +2012,8 @@ function initGallery(){
     });
   });
   /* they greet her when the gallery opens, one after the other */
-  galleryTimers.push(setTimeout(()=>say('elsa','Happy birthday, Cel! ❄️',2600),2300));
-  galleryTimers.push(setTimeout(()=>say('anna','Happy birthday, Cel! 🎉',2600),5100));
+  galleryTimers.push(setTimeout(()=>say('elsa','Happy birthday, Cel!',2600),2300));
+  galleryTimers.push(setTimeout(()=>say('anna','Happy birthday, Cel!',2600),5100));
 }
 const PLAYLIST_NOTE='Pasensya random lang itong mga music';
 function noteWordsHTML(text){
@@ -2046,7 +2046,7 @@ const templates={
       <button class="duo-item" id="elsaBtn" aria-label="Elsa"><div class="bubble" id="elsaBubble"></div><img class="pixel elsa" src="assets/elsa.png" alt="Elsa" draggable="false"></button>
       <button class="duo-item" id="annaBtn" aria-label="Anna"><div class="bubble" id="annaBubble"></div><img class="pixel anna" src="assets/anna.png" alt="Anna" draggable="false"></button>
     </div>
-    <p class="duo-hint">psst... tap Elsa and Anna, they have something to say 💬</p>
+    <p class="duo-hint">psst... tap Elsa and Anna, they have something to say</p>
     </div>`,
   letter:()=>`
     <div class="letter-bg fscroll">
