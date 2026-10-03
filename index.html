@@ -601,6 +601,17 @@ body.iconsLocked .passChip{pointer-events:none;}
 .modal.framed-music .playlist-wrap{width:86%;margin:0 auto;}
 .modal.framed-music .playlist-note{padding:0 14%;font-size:.95rem;margin-top:8px;text-wrap:balance;}
 .modal .closeX{z-index:5;}
+/* message popup: lily frame + party button */
+.modal.framed-message{background-image:url('assets/frame_lily.webp');aspect-ratio:1086/1448;width:min(100%,440px,calc((100vh - 32px)*.75));width:min(100%,440px,calc((100dvh - 32px)*.75));--ft:21%;--fb:12%;--fl:12%;--fr:12%;filter:drop-shadow(4px 5px 0 rgba(122,44,70,.35));}
+.modal.framed-message .closeX{top:11.6%;right:17.4%;width:5.7%;aspect-ratio:1/1;padding:0;color:transparent;font-size:12px;}
+.modal.framed-message h2{font-size:.95rem;margin-bottom:6px;}
+.modal.framed-message .msg-note{text-align:center;font-size:.9rem;line-height:1.15;margin-bottom:8px;}
+.modal.framed-message .msg-text{width:100%;height:clamp(84px,24vh,150px);font-family:'VT323',monospace;font-size:1.1rem;line-height:1.1;padding:8px 10px;border:3px solid var(--deep);border-radius:0;resize:none;background:#fffaf6;color:var(--ink);box-shadow:inset 2px 2px 0 rgba(193,75,112,.18);outline:none;}
+.modal.framed-message .msg-text:focus{border-color:var(--rose);}
+#sendMsgBtn{background:url(assets/btn_party.webp) center/100% 100% no-repeat;border:none;box-shadow:none;width:min(62%,210px);aspect-ratio:700/93;min-height:0;min-width:0;padding:0 17%;margin:10px auto 0;display:flex;align-items:center;justify-content:center;font-size:.9rem;line-height:1;color:var(--deep);filter:drop-shadow(2px 3px 0 rgba(122,44,70,.3));-webkit-tap-highlight-color:transparent;}
+#sendMsgBtn:active{box-shadow:none;filter:brightness(.93) drop-shadow(1px 1px 0 rgba(122,44,70,.3));}
+#sendMsgBtn:disabled{opacity:.6;}
+
 .pp-frame{position:relative;margin:-20px -20px 0;width:calc(100% + 40px);aspect-ratio:638/1004;background:url('assets/passport_frame.webp') center/100% 100% no-repeat;}
 .pp-slot{position:absolute;width:27.03%;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .pp-slot img{width:100%;height:100%;object-fit:contain;}
@@ -1832,7 +1843,8 @@ function openModal(name){
   currentModalName=name;
   modalBox.classList.toggle('passport-modal', name==='passport');
   modalBox.classList.toggle('traits-modal', name==='traits');
-  modalBox.classList.toggle('framed', name==='letter'||name==='gallery'||name==='music');
+  modalBox.classList.toggle('framed', name==='letter'||name==='gallery'||name==='music'||name==='message');
+  modalBox.classList.toggle('framed-message', name==='message');
   modalBox.classList.toggle('framed-letter', name==='letter');
   modalBox.classList.toggle('framed-gallery', name==='gallery');
   modalBox.classList.toggle('framed-music', name==='music');
@@ -2306,11 +2318,13 @@ ${['kind','supportive','creative','caring','patient','hardworking','humble','ado
     </div>
     <p class="duo-hint">psst... tap the cake and the lilies, they have something for you</p>`,
   message:()=>`
+    <div class="fscroll">
     <h2>Leave me a message</h2>
-    <p style="text-align:center;font-size:.95rem;margin-bottom:12px;">Totally optional — no pressure at all. But if you want to say anything, it comes straight to me.</p>
-    <textarea id="msgText" rows="5" style="width:100%;font-family:'VT323',monospace;font-size:1.1rem;padding:10px;border:3px solid var(--deep);resize:vertical;background:#fff;color:var(--ink);"></textarea>
-    <button class="pxbtn" id="sendMsgBtn" style="margin-top:12px;">Send</button>
-    <p id="msgStatus" style="margin-top:8px;font-size:.9rem;text-align:center;min-height:1.2em;"></p>`
+    <p class="msg-note">Totally optional — no pressure at all. But if you want to say anything, it comes straight to me.</p>
+    <textarea id="msgText" rows="4" class="msg-text"></textarea>
+    <button class="pxbtn" id="sendMsgBtn">Send</button>
+    <p id="msgStatus" style="margin-top:6px;font-size:.9rem;text-align:center;min-height:1.2em;"></p>
+    </div>`
 };
 
 /* ---------- music player ---------- */
