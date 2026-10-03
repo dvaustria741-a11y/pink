@@ -1834,7 +1834,7 @@ function smileThenFlash(btn){
 }
 function cameraFlash(cb){
   const flash=document.getElementById('cameraFlash');
-  try{ new Audio('assets/audio/camera_shutter.mp3').play(); }catch(e){}
+  playSfx('camera_shutter');
   flash.style.transition='none';
   flash.style.opacity='1';
   cb();
@@ -2558,13 +2558,13 @@ initPop();
 /* instant sound effects: decoded into memory at load so there's no delay when they play */
 const sfxBufs={}, sfxAudio={}; let sfxCtx=null, sfxGain=null;
 function initSfx(){
-  ['match_strike','blow_candle','gift_open','puppy_whine','puppy_yip','puppy_pant','cake_bite_1','cake_bite_2','cake_done','lily_petal_1','lily_petal_2','lily_petal_3','lily_petal_4','lily_bloom','banner_rip','gift_vanish'].forEach(n=>{
+  ['match_strike','blow_candle','gift_open','puppy_whine','puppy_yip','puppy_pant','cake_bite_1','cake_bite_2','cake_done','lily_petal_1','lily_petal_2','lily_petal_3','lily_petal_4','lily_bloom','banner_rip','gift_vanish','camera_shutter'].forEach(n=>{
     try{ const a=new Audio('assets/audio/'+n+'.mp3'); a.preload='auto'; a.load(); sfxAudio[n]=a; }catch(e){}
   });
   try{
     const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return;
     sfxCtx=new AC(); sfxGain=sfxCtx.createGain(); sfxGain.connect(sfxCtx.destination);
-    ['match_strike','blow_candle','gift_open','puppy_whine','puppy_yip','puppy_pant','cake_bite_1','cake_bite_2','cake_done','lily_petal_1','lily_petal_2','lily_petal_3','lily_petal_4','lily_bloom','banner_rip','gift_vanish'].forEach(n=>{
+    ['match_strike','blow_candle','gift_open','puppy_whine','puppy_yip','puppy_pant','cake_bite_1','cake_bite_2','cake_done','lily_petal_1','lily_petal_2','lily_petal_3','lily_petal_4','lily_bloom','banner_rip','gift_vanish','camera_shutter'].forEach(n=>{
       fetch('assets/audio/'+n+'.mp3').then(r=>r.arrayBuffer()).then(buf=>new Promise((res,rej)=>{ const pr=sfxCtx.decodeAudioData(buf,res,rej); if(pr&&pr.then) pr.then(res,rej); })).then(b=>{ sfxBufs[n]=b; }).catch(()=>{});
     });
     const wake=()=>{ try{ if(sfxCtx&&sfxCtx.state==='suspended') sfxCtx.resume(); }catch(e){} };
