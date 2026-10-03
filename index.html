@@ -522,12 +522,12 @@ body.iconsLocked .passChip{pointer-events:none;}
 .pass-foot{text-align:center;margin-top:18px;color:var(--deep);font-size:1rem;}
 .pass-foot .pxbtn{animation:finBtnPulse 1.1s ease-in-out infinite;}
 .modal.passport-modal{background:transparent;border:none;box-shadow:none;}
-.modal.traits-modal{background-image:url('assets/traits_bg_v2.png');background-size:100% 100%;background-repeat:no-repeat;background-color:var(--cream);border:none;box-shadow:none;padding:34px 26px 54px;aspect-ratio:1122/1402;}
+.modal.traits-modal{background-image:url('assets/traits_bg_v2.webp');background-size:100% 100%;background-repeat:no-repeat;background-color:var(--cream);border:none;box-shadow:none;padding:34px 26px 54px;aspect-ratio:1122/1402;}
 /* framed popups (letter / gallery / music): the art keeps its own shape, content scrolls inside a safe area */
 .modal.framed{background-color:var(--cream);background-repeat:no-repeat;background-size:100% 100%;border:none;box-shadow:none;padding:0;overflow:hidden;max-height:none;}
 .modal.framed .fscroll{scrollbar-width:thin;scrollbar-color:#d98aa5 transparent;position:absolute;inset:var(--ft) var(--fr) var(--fb) var(--fl);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;}
-.modal.framed-letter{background-image:url('assets/letter_bg.png');aspect-ratio:940/1672;width:min(100%,420px,calc((100vh - 32px)*.5622));width:min(100%,420px,calc((100dvh - 32px)*.5622));--ft:12.5%;--fb:16.5%;--fl:9%;--fr:9%;}
-.modal.framed-gallery{background-image:url('assets/gallery_bg.png');aspect-ratio:941/1672;width:min(100%,420px,calc((100vh - 32px)*.5628));width:min(100%,420px,calc((100dvh - 32px)*.5628));--ft:7.2%;--fb:4%;--fl:6%;--fr:6%;}
+.modal.framed-letter{background-image:url('assets/letter_bg.webp');aspect-ratio:940/1672;width:min(100%,420px,calc((100vh - 32px)*.5622));width:min(100%,420px,calc((100dvh - 32px)*.5622));--ft:12.5%;--fb:16.5%;--fl:9%;--fr:9%;}
+.modal.framed-gallery{background-image:url('assets/gallery_bg.webp');aspect-ratio:941/1672;width:min(100%,420px,calc((100vh - 32px)*.5628));width:min(100%,420px,calc((100dvh - 32px)*.5628));--ft:7.2%;--fb:4%;--fl:6%;--fr:6%;}
 .modal.framed-gallery h2{margin-bottom:6px;}
 .modal.framed-gallery .cheers{margin-bottom:4px;}
 .modal.framed-gallery .gallery-grid{gap:10px 12px;padding:20px 51px 0 21px;}
@@ -536,11 +536,11 @@ body.iconsLocked .passChip{pointer-events:none;}
 .modal.framed-gallery .frozen-duo{padding-top:64px;margin-top:2px;}
 .modal.framed-gallery .frozen-duo img{height:90px;}
 .modal.framed-gallery .duo-hint{font-size:.85rem;line-height:1.2;margin:2px 0 0;padding:0 50px;text-wrap:balance;}
-.modal.framed-music{background-image:url('assets/music_bg_v2.png');aspect-ratio:1122/1402;width:min(100%,420px,calc((100vh - 32px)*.8003));width:min(100%,420px,calc((100dvh - 32px)*.8003));--ft:9%;--fb:3%;--fl:6%;--fr:6%;}
+.modal.framed-music{background-image:url('assets/music_bg_v2.webp');aspect-ratio:1122/1402;width:min(100%,420px,calc((100vh - 32px)*.8003));width:min(100%,420px,calc((100dvh - 32px)*.8003));--ft:9%;--fb:3%;--fl:6%;--fr:6%;}
 .modal.framed-music .playlist-wrap{width:86%;margin:0 auto;}
 .modal.framed-music .playlist-note{padding:0 14%;font-size:.95rem;margin-top:8px;text-wrap:balance;}
 .modal .closeX{z-index:5;}
-.pp-frame{position:relative;margin:-20px -20px 0;width:calc(100% + 40px);aspect-ratio:638/1004;background:url('assets/passport_frame.png') center/100% 100% no-repeat;}
+.pp-frame{position:relative;margin:-20px -20px 0;width:calc(100% + 40px);aspect-ratio:638/1004;background:url('assets/passport_frame.webp') center/100% 100% no-repeat;}
 .pp-slot{position:absolute;width:27.03%;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .pp-slot img{width:100%;height:100%;object-fit:contain;}
 .pp-hint{display:block;padding:0 16%;text-align:center;font-family:'VT323',monospace;font-size:clamp(14px,4.6vw,20px);line-height:1;color:var(--deep);opacity:.8;}
@@ -655,6 +655,7 @@ body.iconsLocked .passChip{pointer-events:none;}
 #blackoutText{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 10%;text-align:center;color:#ffe4d6;font-family:'VT323',monospace;font-size:1.9rem;line-height:1.3;letter-spacing:1px;text-shadow:0 0 10px rgba(246,201,214,.55);opacity:1;transition:opacity .6s ease;}
 #blackout{position:fixed;inset:0;background:#000;opacity:0;z-index:998;pointer-events:none;transition:opacity .4s ease;}
 </style>
+<script>window.addEventListener('load',function(){setTimeout(function(){['passport_frame','music_bg_v2','letter_bg','gallery_bg','traits_bg_v2'].forEach(function(n){var i=new Image();i.src='assets/'+n+'.webp';});},1200);});</script>
 </head>
 <body>
 
