@@ -310,7 +310,7 @@ input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:d
 .gframe-overlay{position:absolute;left:-2.75%;top:-5.32%;width:105.71%;height:110.86%;pointer-events:none;z-index:2;}
 .lightbox-backdrop{position:fixed;inset:0;z-index:200;background:rgba(40,20,28,0);transition:background .32s ease;}
 .lightbox-backdrop.show{background:rgba(40,20,28,.72);}
-.lightbox-img{position:fixed;z-index:201;transition:left .38s cubic-bezier(.34,1.1,.4,1),top .38s cubic-bezier(.34,1.1,.4,1),width .38s cubic-bezier(.34,1.1,.4,1),height .38s cubic-bezier(.34,1.1,.4,1),border-radius .38s ease;box-shadow:0 8px 28px rgba(0,0,0,.35);border-radius:4px;}
+.lightbox-img{position:fixed;z-index:201;will-change:left,top,width,height;transform:translateZ(0);backface-visibility:hidden;transition:left .38s cubic-bezier(.34,1.1,.4,1),top .38s cubic-bezier(.34,1.1,.4,1),width .38s cubic-bezier(.34,1.1,.4,1),height .38s cubic-bezier(.34,1.1,.4,1),border-radius .38s ease;box-shadow:0 8px 28px rgba(0,0,0,.35);border-radius:4px;}
 /* animated caption: letters pop in one by one, then ripple gently */
 .cheers{text-align:center;font-style:italic;margin-bottom:14px;}
 .cheers .cw{display:inline-block;white-space:nowrap;}
@@ -530,7 +530,7 @@ body.iconsLocked .passChip{pointer-events:none;}
 .modal.framed-gallery{background-image:url('assets/gallery_bg.png');aspect-ratio:941/1672;width:min(100%,420px,calc((100vh - 32px)*.5628));width:min(100%,420px,calc((100dvh - 32px)*.5628));--ft:7.2%;--fb:4%;--fl:6%;--fr:6%;}
 .modal.framed-gallery h2{margin-bottom:6px;}
 .modal.framed-gallery .cheers{margin-bottom:4px;}
-.modal.framed-gallery .gallery-grid{gap:10px 12px;padding:2px 51px 0 21px;}
+.modal.framed-gallery .gallery-grid{gap:10px 12px;padding:20px 51px 0 21px;}
 .modal.framed-gallery .gframe:nth-child(3){margin-top:22px;}
 .modal.framed-gallery .gframe:nth-child(4){margin-top:10px;}
 .modal.framed-gallery .frozen-duo{padding-top:64px;margin-top:2px;}
@@ -1958,7 +1958,7 @@ function openLightbox(frameEl){
   }
   backdrop.addEventListener('click',closeLightbox);
   img.addEventListener('click',closeLightbox);
-  requestAnimationFrame(()=>{
+  const startOpen=()=>{
     backdrop.classList.add('show');
     const natW=img.naturalWidth||1, natH=img.naturalHeight||1;
     const maxW=innerWidth*.86, maxH=innerHeight*.72;
@@ -1970,9 +1970,12 @@ function openLightbox(frameEl){
     img.style.height=th+'px';
     img.style.objectFit='contain';
     img.style.borderRadius='10px';
-  });
+  };
+  const go=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{ if(lightboxOpen) startOpen(); }));
+  if(img.decode){ img.decode().then(go,go); } else { go(); }
 }
 function initGallery(){
+  [1,2,3,4].forEach(n=>{ const pi=new Image(); pi.src='assets/gallery_'+n+'.jpg'; if(pi.decode) pi.decode().catch(()=>{}); });
   document.querySelectorAll('.gframe').forEach(fr=>{
     fr.addEventListener('click',()=>openLightbox(fr));
   });
