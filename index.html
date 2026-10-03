@@ -96,16 +96,20 @@ button{font-family:'VT323',monospace;cursor:pointer;}
   100%{opacity:0;transform:translate(-50%,-90%) skewX(-4deg) scale(.15,0);}
 }
 #smokeWrap{position:absolute;top:10%;left:50%;width:1px;height:1px;pointer-events:none;}
-/* pixel wind blowing from the viewer (bottom of screen) toward the cake: streaks rise, shrink and converge on the flame */
+/* wind sprites (rings / swirls) blowing from the viewer toward the cake: they rise, spin, shrink with distance and converge on the flame */
 #windWrap{position:absolute;top:10%;left:50%;width:1px;height:1px;pointer-events:none;z-index:4;}
-.wind{position:absolute;left:0;top:0;width:2px;height:2px;background:transparent;opacity:0;transform-origin:0 0;animation:windGo var(--wd,.8s) cubic-bezier(.3,.1,.5,1) forwards;}
+.wind{position:absolute;left:0;top:0;width:0;height:0;opacity:0;transform-origin:0 0;animation:windGo var(--wd,1s) cubic-bezier(.3,.1,.5,1) forwards;}
+.wind img{position:absolute;left:0;top:0;display:block;max-width:none;image-rendering:pixelated;animation:windSpin var(--wd,1s) linear forwards;}
 @keyframes windGo{
   0%{opacity:0;transform:translate(var(--sx),var(--sy)) scale(1.5);}
-  20%{opacity:1;}
-  75%{opacity:.9;}
-  100%{opacity:0;transform:translate(var(--ex),var(--ey)) scale(.35);}
+  18%{opacity:.95;}
+  72%{opacity:.85;}
+  100%{opacity:0;transform:translate(var(--ex),var(--ey)) scale(.3);}
 }
-@media (prefers-reduced-motion:reduce){.wind{animation-duration:.01s;}}
+@keyframes windSpin{from{rotate:0deg;}to{rotate:var(--rot,160deg);}}
+.windspark{position:absolute;pointer-events:none;opacity:0;image-rendering:pixelated;max-width:none;animation:sparkPop .75s ease-out forwards;}
+@keyframes sparkPop{0%{opacity:0;transform:scale(.4);}30%{opacity:1;transform:scale(1.05);}100%{opacity:0;transform:scale(1.2) translateY(-8px);}}
+@media (prefers-reduced-motion:reduce){.wind,.wind img,.windspark{animation-duration:.01s;}}
 .smoke{position:absolute;bottom:0;left:0;width:8px;height:8px;background:rgba(140,140,140,.55);border-radius:2px;animation:smokeRise 1.4s ease-out forwards;}
 @keyframes smokeRise{
   0%{opacity:.7;transform:translate(-50%,0) scale(.6);}
@@ -1172,32 +1176,49 @@ function triggerBlowOut(source){
   },1100);
 }
 
-/* pixel wind streaks (no asset needed): vertical wavy lines drawn from tiny box-shadow pixels.
-   They start near the viewer (bottom), travel up toward the candle, shrink with distance and converge on the flame. */
-const WIND_SEGS=[[0,1,6],[6,0,4],[10,1,6],[16,0,3]], WIND_U=2;
-let windShadow=null;
-function windShadowCss(){
-  if(windShadow) return windShadow;
-  const px=[];
-  WIND_SEGS.forEach(([x,y,l])=>{ for(let i=0;i<l;i++) px.push((y*WIND_U)+'px '+((x+i)*WIND_U)+'px 0 #7fbfdc'); });
-  windShadow=px.join(',');
-  return windShadow;
-}
+/* wind sprites: rings + swirls start near the viewer (bottom), travel up to the candle, shrink with distance and converge on the flame */
+const WIND_SPR={"ring": [["wind_ring1.png", 92, 104], ["wind_ring2.png", 114, 124], ["wind_ring3.png", 151, 156], ["wind_ring4.png", 186, 193]], "swirl": [["wind_swirl1.png", 88, 76], ["wind_swirl2.png", 120, 97], ["wind_swirl3.png", 137, 115], ["wind_swirl4.png", 168, 132]], "spark": [["wind_spark1.png", 46, 42], ["wind_spark2.png", 71, 52], ["wind_spark3.png", 89, 67], ["wind_spark4.png", 134, 82]]};
+const WIND_K=0.38;
+Object.values(WIND_SPR).flat().forEach(([f])=>{ const im=new Image(); im.src='assets/'+f; });
 function spawnWind(strong){
   const wrap=document.getElementById('windWrap'); if(!wrap) return;
-  const w=document.createElement('div'); w.className='wind';
-  w.style.boxShadow=windShadowCss();
-  const spread=strong?70:55;
-  const sx=(Math.random()*2-1)*spread, sy=150+Math.random()*30;
-  const ex=sx*0.12+(Math.random()*2-1)*6, ey=-6-Math.random()*8;
-  const d=(strong?.5:.7)+Math.random()*.25;
-  w.style.setProperty('--sx',sx+'px'); w.style.setProperty('--sy',sy+'px');
-  w.style.setProperty('--ex',ex+'px'); w.style.setProperty('--ey',ey+'px');
-  w.style.setProperty('--wd',d+'s');
-  wrap.appendChild(w);
-  setTimeout(()=>w.remove(),d*1000+100);
+  const list=WIND_SPR[Math.random()<.65?'ring':'swirl'];
+  const idx=strong?1+Math.floor(Math.random()*(list.length-1)):Math.floor(Math.random()*list.length);
+  const [fn,w,h]=list[idx];
+  const wd=w*WIND_K, hd=h*WIND_K;
+  const el=document.createElement('div'); el.className='wind';
+  const im=document.createElement('img');
+  im.src='assets/'+fn; im.alt=''; im.draggable=false;
+  im.style.width=wd+'px'; im.style.height=hd+'px'; im.style.marginLeft=(-wd/2)+'px'; im.style.marginTop=(-hd/2)+'px';
+  el.appendChild(im);
+  const spread=strong?60:45;
+  const sx=(Math.random()*2-1)*spread, sy=140+Math.random()*30;
+  const ex=sx*0.1+(Math.random()*2-1)*5, ey=-4-Math.random()*8;
+  const d=(strong?.85:1)+Math.random()*.3;
+  el.style.setProperty('--sx',sx+'px'); el.style.setProperty('--sy',sy+'px');
+  el.style.setProperty('--ex',ex+'px'); el.style.setProperty('--ey',ey+'px');
+  el.style.setProperty('--wd',d+'s');
+  el.style.setProperty('--rot',((Math.random()<.5?-1:1)*(120+Math.random()*140))+'deg');
+  wrap.appendChild(el);
+  setTimeout(()=>el.remove(),d*1000+100);
 }
-function windBurst(n,strong){ for(let i=0;i<n;i++) setTimeout(()=>spawnWind(strong),i*(380/n)); }
+function spawnSparkles(n){
+  const wrap=document.getElementById('windWrap'); if(!wrap) return;
+  for(let i=0;i<n;i++){
+    setTimeout(()=>{
+      const [fn,w,h]=WIND_SPR.spark[Math.floor(Math.random()*WIND_SPR.spark.length)];
+      const im=document.createElement('img'); im.className='windspark'; im.src='assets/'+fn; im.alt=''; im.draggable=false;
+      const wd=w*.3, hd=h*.3;
+      im.style.width=wd+'px'; im.style.height=hd+'px';
+      im.style.left=(Math.random()*56-28-wd/2)+'px'; im.style.top=(Math.random()*40-30-hd/2)+'px';
+      wrap.appendChild(im); setTimeout(()=>im.remove(),850);
+    },i*120);
+  }
+}
+function windBurst(n,strong){
+  for(let i=0;i<n;i++) setTimeout(()=>spawnWind(strong),i*(380/n));
+  if(strong) setTimeout(()=>spawnSparkles(3),520);
+}
 
 /* mic-based blow detection via Web Audio API */
 const BLOW_THRESHOLD=50; // 0-255 average level of the low band (breath noise); lower = easier, raise if it triggers by itself
