@@ -1061,7 +1061,7 @@ async function enableMicBlow(){
     analyser.fftSize=512;
     source.connect(analyser);
     const data=new Uint8Array(analyser.frequencyBinCount);
-    micBtn.textContent='🎤 Listening… blow now!';
+    micBtn.textContent='Listening… blow now!';
     micBtn.disabled=true;
     function stopMic(){
       stream.getTracks().forEach(t=>t.stop());
