@@ -15,7 +15,27 @@
 </script>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>for Celyn</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<meta name="description" content="A little birthday surprise, made just for you.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="for Celyn">
+<meta property="og:description" content="A little birthday surprise, made just for you.">
+<meta property="og:url" content="https://dvaustria741-a11y.github.io/pink/">
+<meta property="og:image" content="https://dvaustria741-a11y.github.io/pink/assets/og_preview.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Pixel-art sunset meadow with the words happy birthday Celyn and a pink gift box">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="for Celyn">
+<meta name="twitter:description" content="A little birthday surprise, made just for you.">
+<meta name="twitter:image" content="https://dvaustria741-a11y.github.io/pink/assets/og_preview.jpg">
+<meta name="theme-color" content="#f6c9d6">
+<link rel="preload" href="assets/fonts/press-start-2p-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/vt323-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Press Start 2P';font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/press-start-2p-latin-400-normal.woff2) format('woff2');}
+@font-face{font-family:'VT323';font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/vt323-latin-400-normal.woff2) format('woff2');}
+</style>
 <style>
 :root{--pink:#f6c9d6;--deep:#7a2c46;--rose:#c14b70;--cream:#fdf3ec;--sage:#8fae87;--ink:#3c2b30;}
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -163,9 +183,14 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 
 /* dashboard */
 #dashboard{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:22px;position:relative;z-index:3;}
-.scenic-card{position:relative;display:grid;grid-template-areas:"stack";grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1fr);width:92%;max-width:400px;height:70dvh;max-height:680px;border:4px solid var(--deep);box-shadow:6px 6px 0 var(--rose);overflow:hidden;background:#eee;opacity:0;transform:translateY(-16px);animation:slideIn .6s ease forwards;}
+.scenic-card{position:relative;display:grid;grid-template-areas:"stack";grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1fr);width:92%;max-width:400px;height:70dvh;max-height:680px;border:0;box-shadow:none;overflow:hidden;background:#eee;opacity:0;transform:translateY(-16px);animation:slideIn .6s ease forwards;}
 @keyframes slideIn{to{opacity:1;transform:translateY(0);}}
 .scenic-card > *{grid-area:stack;}
+/* pixel-art lily frame drawn around the landscape card (overlay, never blocks taps) */
+.sceneFrameWrap{position:absolute;inset:0;padding:22px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:6;}
+.sceneFrame{position:relative;width:92%;max-width:400px;height:70dvh;max-height:680px;opacity:0;transform:translateY(-16px);animation:slideIn .6s ease forwards;pointer-events:none;}
+.sceneFrame::after{content:'';position:absolute;left:-16px;top:-31px;right:-17px;bottom:-20px;border-style:solid;border-color:transparent;border-width:72px 66px 75px 64px;border-image:url(assets/scene_frame.webp) 164 149 171 145 / 72px 66px 75px 64px stretch;filter:drop-shadow(2px 3px 0 rgba(122,44,70,.28));}
+
 .scenic-card > img.banner{width:100%;height:100%;object-fit:cover;z-index:1;}
 .titlestack{z-index:3;width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:6% 8%;cursor:pointer;position:relative;}
 .card-stack{display:flex;flex-direction:column;align-items:center;justify-content:center;width:75%;max-width:220px;}
@@ -273,7 +298,7 @@ body.iconsLocked .appicon,body.iconsLocked .appicon.crawl{pointer-events:none !i
 .giftArea.vanish{animation:giftVanish .35s ease-in forwards;}
 @keyframes giftVanish{0%{transform:scale(1);filter:brightness(1);opacity:1;}30%{transform:scale(1.12);filter:brightness(3);opacity:1;}100%{transform:scale(0);filter:brightness(3);opacity:0;}}
 /* message icon sits bottom-right, outside the 2x2 grid flow */
-#messageIcon{position:absolute;right:4%;bottom:3%;max-width:34%;text-align:center;}
+#messageIcon{position:absolute;right:9%;bottom:4.5%;max-width:34%;text-align:center;}
 
 /* no long-press image menu / drag / text selection (inputs still work) */
 img{-webkit-touch-callout:none;-webkit-user-drag:none;user-select:none;-webkit-user-select:none;}
@@ -416,10 +441,10 @@ input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:d
 .badge-bubble{--shift:0px;}
 .badge-bubble.show{opacity:1;transform:translateX(calc(-50% + var(--shift))) rotate(0deg) scale(1);}
 .badge-bubble::after{content:'';position:absolute;top:100%;left:calc(50% - var(--shift));margin-left:-6px;border:6px solid transparent;border-top-color:var(--deep);}
-.badge-bubble{background:none;box-shadow:none;border-style:solid;border-color:transparent;border-width:10px 12px 15px 11px;border-image:url(assets/bubble_body.png) 18 22 28 20 fill / 10px 12px 15px 11px stretch;image-rendering:pixelated;padding:2px 4px 3px;min-width:70px;}
+.badge-bubble{background:none;box-shadow:none;border-style:solid;border-color:transparent;border-width:10px 12px 15px 11px;border-image:url(assets/bubble_body.webp) 18 22 28 20 fill / 10px 12px 15px 11px stretch;image-rendering:pixelated;padding:2px 4px 3px;min-width:70px;}
 .badge-bubble{transform-origin:calc(50% - var(--shift)) 100%;}
 .badge-bubble::after{display:block;content:'';position:absolute;top:auto;bottom:-15px;margin:0;border:0;left:clamp(6px,calc(50% - var(--shift) - 8.5px),calc(100% - 23px));width:17px;height:11px;background:url(assets/bubble_tail.png) no-repeat 0 0/100% 100%;image-rendering:pixelated;}
-.badge{background:none;border-style:solid;border-color:transparent;border-width:0 6px 0 20px;border-image:url(assets/tag_pink.png) 0 12 0 38 fill / 0 6px 0 20px stretch;image-rendering:pixelated;box-sizing:border-box;height:32px;display:inline-flex;align-items:center;justify-content:center;padding:0 3px;font-size:.9rem;color:var(--deep);--rot:0deg;--lift:0px;opacity:0;transform:scale(.3) rotate(calc(var(--rot) * -2)) translateY(24px);}
+.badge{background:none;border-style:solid;border-color:transparent;border-width:0 6px 0 20px;border-image:url(assets/tag_pink.webp) 0 12 0 38 fill / 0 6px 0 20px stretch;image-rendering:pixelated;box-sizing:border-box;height:32px;display:inline-flex;align-items:center;justify-content:center;padding:0 3px;font-size:.9rem;color:var(--deep);--rot:0deg;--lift:0px;opacity:0;transform:scale(.3) rotate(calc(var(--rot) * -2)) translateY(24px);}
 .badge.show{animation:badgePop .6s steps(6) forwards;}
 @keyframes badgePop{
   0%{opacity:0;transform:scale(.3) rotate(calc(var(--rot) * -2)) translateY(24px);}
@@ -543,7 +568,7 @@ input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:d
 #reBloomBtn{margin-top:14px;}
 #reBloomBtn.pop{animation:btnPop .45s cubic-bezier(.34,1.56,.64,1) both;}
 .petal-hint{position:absolute;pointer-events:none;z-index:4;font-family:'Press Start 2P',cursive;font-size:.5rem;color:var(--deep);background:#fff;border:2px solid var(--rose);padding:4px 6px;white-space:nowrap;animation:hintFloat 1.7s ease-out forwards;}
-.petal-hint{background:none;border-style:solid;border-color:transparent;border-width:8px 9px 9px 8px;border-image:url(assets/tag_label.png) 14 16 16 14 fill / 8px 9px 9px 8px stretch;image-rendering:pixelated;padding:1px 3px 0;}
+.petal-hint{background:none;border-style:solid;border-color:transparent;border-width:8px 9px 9px 8px;border-image:url(assets/tag_label.webp) 14 16 16 14 fill / 8px 9px 9px 8px stretch;image-rendering:pixelated;padding:1px 3px 0;}
 @keyframes hintFloat{0%{opacity:0;transform:translateY(8px) scale(.6);}20%{opacity:1;transform:translateY(0) scale(1.05);}75%{opacity:1;transform:translateY(-16px) scale(1);}100%{opacity:0;transform:translateY(-30px) scale(1);}}
 .pix-sparkle{position:absolute;width:12px;height:12px;pointer-events:none;z-index:3;background:#ffe27a;
   clip-path:polygon(37% 0,62% 0,62% 37%,100% 37%,100% 62%,62% 62%,62% 100%,37% 100%,37% 62%,0 62%,0 37%,37% 37%);
@@ -593,6 +618,9 @@ body.iconsLocked .passChip{pointer-events:none;}
 .pass-foot{text-align:center;margin-top:18px;color:var(--deep);font-size:1rem;}
 .pass-foot .pxbtn{animation:finBtnPulse 1.1s ease-in-out infinite;}
 .modal.passport-modal{background:transparent;border:none;box-shadow:none;}
+.modal.passport-modal > .closeX{display:none;}
+.pp-frame .ppClose{position:absolute;top:5.9%;left:91.2%;right:auto;transform:translate(-50%,-50%);width:11%;aspect-ratio:1/1;padding:0;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--deep);font-size:clamp(15px,5vw,22px);line-height:1;z-index:7;text-shadow:1px 1px 0 #fff,-1px -1px 0 #fff,1px -1px 0 #fff,-1px 1px 0 #fff;-webkit-tap-highlight-color:transparent;}
+.pp-frame .ppClose:active{transform:translate(-50%,-50%) scale(.9);}
 .modal.traits-modal{background-image:url('assets/traits_bg_v2.webp');background-size:100% 100%;background-repeat:no-repeat;background-color:var(--cream);border:none;box-shadow:none;padding:34px 26px 54px;aspect-ratio:1122/1402;}
 /* framed popups (letter / gallery / music): the art keeps its own shape, content scrolls inside a safe area */
 .modal.framed{background-color:var(--cream);background-repeat:no-repeat;background-size:100% 100%;border:none;box-shadow:none;padding:0;overflow:hidden;max-height:none;}
@@ -629,6 +657,9 @@ body.iconsLocked .passChip{pointer-events:none;}
 .pp-slot.stamp{animation:stickerStamp .7s cubic-bezier(.34,1.56,.64,1) both;}
 .pp-foot{text-align:center;margin-top:16px;color:var(--deep);font-size:1rem;}
 .pp-foot .pxbtn{animation:finBtnPulse 1.1s ease-in-out infinite;}
+#finaleBtn{background:url('assets/finale_btn.webp') center/100% 100% no-repeat;border:none;box-shadow:none;image-rendering:pixelated;width:min(82%,300px);aspect-ratio:1861/407;min-height:0;min-width:0;padding:0 15% 2.6% 15%;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;font-size:clamp(15px,4.7vw,19px);line-height:1;color:var(--deep);cursor:pointer;-webkit-tap-highlight-color:transparent;}
+#finaleBtn:active{box-shadow:none;filter:brightness(.94);transform:translate(2px,2px);}
+#finaleBtn:disabled{opacity:.6;}
 @keyframes finBtnPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
 #popLayer{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:6;}
 .driftBalloon{position:absolute;bottom:-100px;background:none;border:none;padding:10px;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;animation:driftUp var(--dur,11s) linear forwards;}
@@ -738,7 +769,45 @@ body.iconsLocked .passChip{pointer-events:none;}
 #blackoutText{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 10%;text-align:center;color:#ffe4d6;font-family:'VT323',monospace;font-size:1.9rem;line-height:1.3;letter-spacing:1px;text-shadow:0 0 10px rgba(246,201,214,.55);opacity:1;transition:opacity .6s ease;}
 #blackout{position:fixed;inset:0;background:#000;opacity:0;z-index:998;pointer-events:none;transition:opacity .4s ease;}
 </style>
-<script>window.addEventListener('load',function(){setTimeout(function(){['pass_chip_bg','passport_frame','music_bg_v2','letter_bg','gallery_bg','traits_bg_v2','party_room_bg'].forEach(function(n){var i=new Image();i.src='assets/'+n+'.webp';});['pink','green','lavender','cream','yellow','rose'].forEach(function(n){var a=new Image();a.src='assets/pop_'+n+'.png';var b=new Image();b.src='assets/balloon_'+n+'.png';});},1200);});</script>
+<style>
+#preloadGate{position:fixed;inset:0;z-index:10000;background:var(--cream,#fdf3ec);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:0 10%;text-align:center;transition:opacity .5s ease;}
+#preloadGate.out{opacity:0;pointer-events:none;}
+#preloadGate .pgTitle{font-family:'Press Start 2P',cursive;font-size:clamp(11px,3.6vw,15px);line-height:1.6;color:#7a2c46;}
+#preloadGate .pgSub{font-family:'VT323',monospace;font-size:1.15rem;color:#3c2b30;opacity:.8;}
+#preloadGate .pgBar{width:min(260px,70vw);height:18px;background:#fff;border:3px solid #7a2c46;box-shadow:3px 3px 0 #7a2c46;}
+#preloadGate .pgFill{height:100%;width:0;background:#f6c9d6;transition:width .2s steps(8);}
+</style>
+<script>(function(){
+var KEY='pinkPreloaded',done=false;
+try{ if(localStorage.getItem(KEY)) return; }catch(e){}
+var imgs=['finale_btn','pass_chip_bg','passport_frame','music_bg_v2','letter_bg','gallery_bg','traits_bg_v2','party_room_bg'].map(function(n){return 'assets/'+n+'.webp';});
+['pink','green','lavender','cream','yellow','rose'].forEach(function(c){imgs.push('assets/balloon_'+c+'.webp','assets/pop_'+c+'.webp');});
+[1,2,3,4,5,6].forEach(function(n){imgs.push('assets/cake_stage'+n+'.webp','assets/bouquet_stage'+n+'.webp');});
+['gift_box_open','puppy_no_envelope_v2','puppy','envelope_closed','envelope_open','letter_parchment','gallery_1','gallery_2','gallery_3','gallery_4'].forEach(function(n){imgs.push('assets/'+n+(n.indexOf('gallery_')==0?'.jpg':'.webp'));});
+var snd=['match_strike','blow_candle','gift_open','puppy_whine','puppy_yip','puppy_pant','cake_bite_1','cake_bite_2','cake_done','lily_petal_1','lily_petal_2','lily_petal_3','lily_petal_4','lily_bloom','banner_rip','gift_vanish','camera_shutter','balloon_pop'].map(function(n){return 'assets/audio/'+n+'.mp3';});
+var total=imgs.length+snd.length+1,count=0,fill,sub,gate;
+var keep=window.__imgKeep=window.__imgKeep||[];
+function finish(){
+  if(done) return; done=true;
+  try{ localStorage.setItem(KEY,'1'); }catch(e){}
+  if(fill) fill.style.width='100%';
+  if(gate){ gate.classList.add('out'); setTimeout(function(){ if(gate.parentNode) gate.parentNode.removeChild(gate); },600); }
+}
+function tick(){
+  count++; if(fill) fill.style.width=Math.round(count/total*100)+'%';
+  if(sub) sub.textContent=Math.min(count,total)+' / '+total;
+  if(count>=total) setTimeout(finish,250);
+}
+gate=document.createElement('div'); gate.id='preloadGate';
+gate.innerHTML='<div class="pgTitle">Getting everything ready...</div><div class="pgBar"><div class="pgFill"></div></div><div class="pgSub">0 / '+total+'</div>';
+document.documentElement.appendChild(gate);
+fill=gate.querySelector('.pgFill'); sub=gate.querySelector('.pgSub');
+imgs.forEach(function(src){ var i=new Image(); i.decoding='async'; i.onload=i.onerror=tick; i.src=src; keep.push(i); });
+snd.forEach(function(src){ fetch(src).then(function(r){return r.blob();}).catch(function(){}).then(tick); });
+(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).catch(function(){}).then(tick);
+setTimeout(finish,30000); /* never leave her stuck on a bad connection */
+})();</script>
+<script>window.addEventListener('load',function(){setTimeout(function(){['pass_chip_bg','passport_frame','music_bg_v2','letter_bg','gallery_bg','traits_bg_v2','party_room_bg'].forEach(function(n){var i=new Image();i.src='assets/'+n+'.webp';});['pink','green','lavender','cream','yellow','rose'].forEach(function(n){var a=new Image();a.src='assets/pop_'+n+'.webp';var b=new Image();b.src='assets/balloon_'+n+'.webp';});},1200);});</script>
 </head>
 <body>
 
@@ -752,9 +821,9 @@ body.iconsLocked .passChip{pointer-events:none;}
 
   <div class="stage" id="stageWish">
     <div class="paper-wish" id="paperWish">
-      <img src="assets/wish_paper_flat_v2.png" class="pixel paper-layer flat show" id="paperFlat" alt="">
-      <img src="assets/wish_paper_fold_v2.png" class="pixel paper-layer fold" id="paperFold" alt="">
-      <img src="assets/wish_paper_plane_v2.png" class="pixel paper-layer plane" id="paperPlane" alt="">
+      <img src="assets/wish_paper_flat_v2.webp" class="pixel paper-layer flat show" id="paperFlat" alt="">
+      <img src="assets/wish_paper_fold_v2.webp" class="pixel paper-layer fold" id="paperFold" alt="">
+      <img src="assets/wish_paper_plane_v2.webp" class="pixel paper-layer plane" id="paperPlane" alt="">
       <div class="paper-content" id="paperContent">
         <p class="dialogue-text">Before we bring out the cake, write down your wish for this year...</p>
         <input type="text" id="wishInput" class="wish-input" maxlength="80" placeholder="I wish for...">
@@ -765,14 +834,14 @@ body.iconsLocked .passChip{pointer-events:none;}
 
   <div class="stage hidden" id="stageMatch">
     <div class="cakeStage" id="cakeStageMatch">
-      <img src="assets/cake_unlit.png" class="pixel cake" id="cakeImgMatch" alt="cake">
+      <img src="assets/cake_unlit.webp" class="pixel cake" id="cakeImgMatch" alt="cake">
       <div class="flame hidden" id="flameMatch"></div>
       <div class="candle-target" id="candleTarget"></div>
     </div>
     <p class="q light-q">Strike the match to light the candle!</p>
     <div class="match-scene" id="matchScene">
-      <img src="assets/matchbox.png" class="matchbox" alt="matchbox" draggable="false">
-      <img src="assets/match_unlit.png" class="matchstick" id="matchstick" alt="match" draggable="false">
+      <img src="assets/matchbox.webp" class="matchbox" alt="matchbox" draggable="false">
+      <img src="assets/match_unlit.webp" class="matchstick" id="matchstick" alt="match" draggable="false">
       <div id="sparkWrap"></div>
     </div>
     <p class="strike-hint" id="strikeHint">tap or swipe the match</p>
@@ -780,7 +849,7 @@ body.iconsLocked .passChip{pointer-events:none;}
 
   <div class="stage hidden" id="stageBlow">
     <div class="cakeStage" id="cakeStage">
-      <img src="assets/cake_lit.png" class="pixel cake" id="cakeImg" alt="cake">
+      <img src="assets/cake_lit.webp" class="pixel cake" id="cakeImg" alt="cake">
       <div class="flame" id="flame"></div>
       <div id="smokeWrap"></div>
     </div>
@@ -799,16 +868,16 @@ body.iconsLocked .passChip{pointer-events:none;}
   <div id="cakeEatStage">
     <div class="cake-bubble" id="elsaCakeBubble"></div>
     <div class="cake-bubble" id="annaCakeBubble"></div>
-    <button class="cake-buddy elsa" id="elsaCakeBtn" aria-label="Elsa"><img class="pixel" src="assets/elsa.png" alt="Elsa" draggable="false"></button>
-    <img class="pixel" id="cakeEatImg" src="assets/cake_stage1.png" alt="cake" draggable="false">
-    <button class="cake-buddy anna" id="annaCakeBtn" aria-label="Anna"><img class="pixel" src="assets/anna.png" alt="Anna" draggable="false"></button>
+    <button class="cake-buddy elsa" id="elsaCakeBtn" aria-label="Elsa"><img class="pixel" src="assets/elsa.webp" alt="Elsa" draggable="false"></button>
+    <img class="pixel" id="cakeEatImg" src="assets/cake_stage1.webp" alt="cake" draggable="false">
+    <button class="cake-buddy anna" id="annaCakeBtn" aria-label="Anna"><img class="pixel" src="assets/anna.webp" alt="Anna" draggable="false"></button>
   </div>
   <button class="pxbtn hidden" id="bakeAgainBtn">Bake Another Cake</button>
 </div></div>
 <div id="flowerFrame" class="hidden"><div class="cake-frame-box fr lily">
   <button class="closeX" id="flowerFrameClose" aria-label="close">X</button>
   <p id="flowerPrompt"></p>
-  <div id="flowerStage"><img class="pixel" id="flowerImg" src="assets/bouquet_stage1.png" alt="bouquet" draggable="false"></div>
+  <div id="flowerStage"><img class="pixel" id="flowerImg" src="assets/bouquet_stage1.webp" alt="bouquet" draggable="false"></div>
   <p id="flowerBanner"></p>
   <div class="secret-tape hidden" id="secretTape"><small>HIDDEN TRAIT UNLOCKED</small><span id="secretText"></span><em class="secret-kidding" id="secretKidding">...just kidding!</em></div>
   <div><button class="pxbtn hidden" id="reBloomBtn">Re-Bloom Flowers</button></div>
@@ -821,15 +890,15 @@ body.iconsLocked .passChip{pointer-events:none;}
   <div class="fin-count" id="finCount"><div class="fin-label" id="finLabel">LEVEL</div><div class="fin-num" id="finNum">1</div><div class="fin-levelup" id="finLevelUp">LEVEL UP!</div></div>
   <div class="fin-title"><span class="fin-line" id="finL1"></span><span class="fin-line" id="finL2"></span><div class="fin-sub" id="finSub">~ SWEET SIXTEEN ~</div></div>
   <div class="fin-cast" id="finCast">
-    <img class="pixel c-fa1 room-char room-fa1" src="assets/friend2_a1.png" alt="" draggable="false">
-    <img class="pixel c-fa3 room-char room-fa3" src="assets/friend2_a3.png" alt="" draggable="false">
-    <img class="pixel c-fb1 room-char room-fb1" src="assets/friend2_b1.png" alt="" draggable="false">
-    <img class="pixel c-fb2 room-char room-fb2" src="assets/friend2_b2.png" alt="" draggable="false">
-    <img class="pixel c-elsa room-char room-elsa" src="assets/elsa.png" alt="" draggable="false">
-    <img class="pixel c-puppy room-char room-puppy" src="assets/puppy_no_envelope_v2.png" alt="" draggable="false">
-    <img class="pixel c-dave room-char room-dave" src="assets/dave_party.png" alt="" draggable="false">
-    <img class="pixel c-cake room-char room-cake" src="assets/cake.png" alt="" draggable="false">
-    <img class="pixel c-anna room-char room-anna" src="assets/anna.png" alt="" draggable="false">
+    <img class="pixel c-fa1 room-char room-fa1" src="assets/friend2_a1.webp" alt="" draggable="false">
+    <img class="pixel c-fa3 room-char room-fa3" src="assets/friend2_a3.webp" alt="" draggable="false">
+    <img class="pixel c-fb1 room-char room-fb1" src="assets/friend2_b1.webp" alt="" draggable="false">
+    <img class="pixel c-fb2 room-char room-fb2" src="assets/friend2_b2.webp" alt="" draggable="false">
+    <img class="pixel c-elsa room-char room-elsa" src="assets/elsa.webp" alt="" draggable="false">
+    <img class="pixel c-puppy room-char room-puppy" src="assets/puppy_no_envelope_v2.webp" alt="" draggable="false">
+    <img class="pixel c-dave room-char room-dave" src="assets/dave_party.webp" alt="" draggable="false">
+    <img class="pixel c-cake room-char room-cake" src="assets/cake.webp" alt="" draggable="false">
+    <img class="pixel c-anna room-char room-anna" src="assets/anna.webp" alt="" draggable="false">
   </div>
   <div class="fin-lantern" id="finLantern"><div class="fin-lantern-body"><small>YOUR WISH</small><span id="finWishText"></span></div></div>
   <div id="finFlash"></div>
@@ -842,44 +911,45 @@ body.iconsLocked .passChip{pointer-events:none;}
     <img src="assets/banner_landscape.jpg" class="pixel banner" alt="">
     <div class="titlestack" id="titlestack">
       <div class="card-stack hidden">
-        <img src="assets/happy_card.png" class="pixel" alt="happy" id="w1">
-        <img src="assets/birthday_card.png" class="pixel" alt="birthday" id="w2">
-        <img src="assets/celyn_card.png" class="pixel sparkle" alt="Celyn!" id="w3">
+        <img src="assets/happy_card.webp" class="pixel" alt="happy" id="w1">
+        <img src="assets/birthday_card.webp" class="pixel" alt="birthday" id="w2">
+        <img src="assets/celyn_card.webp" class="pixel sparkle" alt="Celyn!" id="w3">
       </div>
       <div class="hb-wrap" id="hbWrap">
-        <img src="assets/happy_birthday_banner.png" class="pixel hb-half left" id="hbLeft" alt="">
-        <img src="assets/happy_birthday_banner.png" class="pixel hb-half right" id="hbRight" alt="">
+        <img src="assets/happy_birthday_banner.webp" class="pixel hb-half left" id="hbLeft" alt="">
+        <img src="assets/happy_birthday_banner.webp" class="pixel hb-half right" id="hbRight" alt="">
       </div>
       <p class="tapHint hidden" id="tapHint">tap</p>
-      <img src="assets/cursor_hand.png" class="pixel cursorHint" id="cursorHint" alt="">
+      <img src="assets/cursor_hand.webp" class="pixel cursorHint" id="cursorHint" alt="">
     </div>
     <div class="giftWrap" id="giftWrap">
       <p class="giftPrompt" id="giftPrompt">Tap 3 times to open!</p>
       <div class="giftArea" id="giftArea">
-        <button class="giftBtn" id="giftBtn" aria-label="open the gift"><img class="pixel giftImg" id="giftImg" src="assets/gift_box_closed.png" alt="gift box" draggable="false"></button>
+        <button class="giftBtn" id="giftBtn" aria-label="open the gift"><img class="pixel giftImg" id="giftImg" src="assets/gift_box_closed.webp" alt="gift box" draggable="false"></button>
       </div>
     </div>
     <div class="pupWrap" id="pupWrap">
       <p class="pupPrompt" id="pupPrompt">A puppy brought you something! Tap the puppy</p>
-      <button class="pupBtn" id="pupBtn" aria-label="puppy"><img class="pixel pupImg" id="pupImg" src="assets/puppy.png" alt="puppy" draggable="false"></button>
+      <button class="pupBtn" id="pupBtn" aria-label="puppy"><img class="pixel pupImg" id="pupImg" src="assets/puppy.webp" alt="puppy" draggable="false"></button>
     </div>
     <div id="popLayer"></div>
     <button class="passChip hidden" id="passChip" aria-label="Birthday Passport"><svg viewBox="0 0 12 12" width="18" height="18" shape-rendering="crispEdges"><rect x="1" y="1" width="10" height="10" fill="#c14b70"/><rect x="3" y="1" width="8" height="10" fill="#fdf3ec"/><rect x="1" y="1" width="2" height="10" fill="#7a2c46"/><rect x="5" y="3" width="4" height="1" fill="#c14b70"/><rect x="5" y="5" width="4" height="1" fill="#f6c9d6"/><rect x="5" y="7" width="3" height="1" fill="#f6c9d6"/></svg><b id="passCount">0/8</b></button>
     <div class="grid">
-      <button class="appicon gift" data-modal="music"><img class="pixel" src="assets/record.png" alt=""><span>Music</span></button>
-      <button class="appicon gift" data-modal="gallery"><img class="pixel" src="assets/camera.png" alt=""><span>Gallery</span></button>
-      <button class="appicon gift" data-modal="letter"><img class="pixel" src="assets/envelope.png" alt=""><span>Letter</span></button>
-      <button class="appicon gift" data-modal="traits"><img class="pixel" src="assets/question_block.png" alt=""><span>Traits</span></button>
-      <button class="appicon gift late hidden" id="messageIcon" data-modal="message"><img class="pixel" src="assets/message_icon.png" alt=""><span>Message (optional)</span></button>
+      <button class="appicon gift" data-modal="music"><img class="pixel" src="assets/record.webp" alt=""><span>Music</span></button>
+      <button class="appicon gift" data-modal="gallery"><img class="pixel" src="assets/camera.webp" alt=""><span>Gallery</span></button>
+      <button class="appicon gift" data-modal="letter"><img class="pixel" src="assets/envelope.webp" alt=""><span>Letter</span></button>
+      <button class="appicon gift" data-modal="traits"><img class="pixel" src="assets/question_block.webp" alt=""><span>Traits</span></button>
+      <button class="appicon gift late hidden" id="messageIcon" data-modal="message"><img class="pixel" src="assets/message_icon.webp" alt=""><span>Message (optional)</span></button>
     </div>
   </div>
+  <div class="sceneFrameWrap" aria-hidden="true"><div class="sceneFrame"></div></div>
 </div>
 
 <script>
 /* ---------- particles ---------- */
 for(let i=0;i<16;i++){
   const p=document.createElement('img');
-  p.src='assets/petal.png';
+  p.src='assets/petal.webp';
   p.className='pixel petal';
   p.alt='';
   p.style.left=Math.random()*100+'vw';
@@ -989,7 +1059,7 @@ function lightCandle(){
   const stick=document.getElementById('matchstick');
   stick.style.transition='opacity .25s ease';
   stick.style.opacity='0';
-  document.getElementById('cakeImgMatch').src='assets/cake_lit.png';
+  document.getElementById('cakeImgMatch').src='assets/cake_lit.webp';
   document.getElementById('flameMatch').classList.remove('hidden');
   setTimeout(()=>{
     stick.remove();
@@ -1011,7 +1081,7 @@ function doStrike(){
   setTimeout(()=>{
     const stick=document.getElementById('matchstick');
     stick.classList.remove('struck');
-    stick.src='assets/match_lit.png';
+    stick.src='assets/match_lit.webp';
     stick.classList.add('lit');
     matchLit=true;
     const hint=document.getElementById('strikeHint');
@@ -1125,7 +1195,7 @@ function triggerBlowOut(source){
   flame.classList.remove('blowing','blowLong');
   flame.classList.add('out');
 
-  document.getElementById('cakeImg').src='assets/cake_off.png';
+  document.getElementById('cakeImg').src='assets/cake_off.webp';
   spawnSmoke();
 
   const q=document.getElementById('candleQ');
@@ -1264,7 +1334,7 @@ function spawnConfetti(){
   const layer=document.getElementById('confettiLayer');
   for(let i=0;i<26;i++){
     const c=document.createElement('img');
-    c.src='assets/confetti_'+confettiColors[i%confettiColors.length]+'.png';
+    c.src='assets/confetti_'+confettiColors[i%confettiColors.length]+'.webp';
     c.className='pixel confetti';
     c.alt='';
     c.style.left=Math.random()*100+'vw';
@@ -1313,7 +1383,7 @@ const balloonColors=['#f6c9d6','#c9dbb0','#cdbfe8','#faf3e0'];
 const BALLOON_NAMES={'#f6c9d6':'pink','#c9dbb0':'green','#cdbfe8':'lavender','#faf3e0':'cream','#f3d27a':'yellow','#e98aa6':'rose'};
 function balloonName(color){ return BALLOON_NAMES[String(color).toLowerCase()]||'pink'; }
 function balloonSVG(color){
-  return `<img src="assets/balloon_${balloonName(color)}.png" width="${Math.round(34+Math.random()*16)}" alt="" draggable="false">`;
+  return `<img src="assets/balloon_${balloonName(color)}.webp" width="${Math.round(34+Math.random()*16)}" alt="" draggable="false">`;
 }
 function spawnBalloons(){
   const layer=document.getElementById('balloonLayer');
@@ -1330,9 +1400,9 @@ function spawnBalloons(){
 }
 function revealIcons(){
   /* the icons come out of the mystery box; a big balloon floats up, pops, and the box drops from the sky */
-  new Image().src='assets/gift_box_open.png';
-  new Image().src='assets/balloon_rose.png';
-  new Image().src='assets/pop_rose.png';
+  new Image().src='assets/gift_box_open.webp';
+  new Image().src='assets/balloon_rose.webp';
+  new Image().src='assets/pop_rose.webp';
   try{ bigBalloonIntro(); }
   catch(e){ document.getElementById('giftWrap').classList.add('show'); }
 }
@@ -1358,7 +1428,7 @@ function bigBalloonIntro(){
   const endY=Math.round(H*.3-bh*.3);   /* balloon top when it hangs in the middle of the sky */
   const startY=H+12;
   const img=document.createElement('img');
-  img.src='assets/balloon_rose.png'; img.className='pixel bigBalloon'; img.alt=''; img.draggable=false;
+  img.src='assets/balloon_rose.webp'; img.className='pixel bigBalloon'; img.alt=''; img.draggable=false;
   img.style.width=bw+'px'; img.style.height=bh+'px'; img.style.left=x0+'px';
   card.appendChild(img);
   function hidePromptNow(){
@@ -1394,7 +1464,7 @@ function bigBalloonIntro(){
     const D=Math.round(bw*2.4);
     const sp=document.createElement('div');
     sp.className='bigPop';
-    sp.style.cssText='left:'+Math.round(cx-D/2)+'px;top:'+Math.round(cy-D/2)+'px;width:'+D+'px;height:'+D+'px;background-image:url(assets/pop_rose.png)';
+    sp.style.cssText='left:'+Math.round(cx-D/2)+'px;top:'+Math.round(cy-D/2)+'px;width:'+D+'px;height:'+D+'px;background-image:url(assets/pop_rose.webp)';
     card.appendChild(sp);
     [0,90,190,310,440].forEach((t,k)=>setTimeout(()=>{ sp.style.backgroundPosition=(k*25)+'% 0'; },t));
     setTimeout(()=>sp.remove(),620);
@@ -1528,9 +1598,9 @@ const PL_TEXT=`<p>You found the secret message!</p>
 <p>Quick reminder from your puppy friend: No overthinking or stress allowed today! It's your day to relax and be celebrated.</p>
 <p>Thank you for being such a kind, hardworking, and wonderful person. You make every day feel a little brighter, and you deserve the happiest birthday today!</p>`;
 let pupNoEnv=false;
-(function(){ const t=new Image(); t.onload=()=>{pupNoEnv=true;}; t.src='assets/puppy_no_envelope_v2.png'; })();
+(function(){ const t=new Image(); t.onload=()=>{pupNoEnv=true;}; t.src='assets/puppy_no_envelope_v2.webp'; })();
 function spawnPuppy(){
-  ['puppy','envelope_closed','envelope_open','letter_parchment'].forEach(n=>{ new Image().src='assets/'+n+'.png'; });
+  ['puppy','envelope_closed','envelope_open','letter_parchment'].forEach(n=>{ new Image().src='assets/'+n+'.webp'; });
   document.getElementById('pupWrap').classList.add('show');
 }
 function plHeartSVG(){
@@ -1571,7 +1641,7 @@ function returnEnvelope(){
   if(prompt) prompt.style.opacity='0';
   if(letter && !letter.classList.contains('hidden')) letter.animate([{opacity:1},{opacity:0}],{duration:250,fill:'forwards'});
   env.getAnimations().forEach(a=>a.cancel());
-  env.src='assets/envelope_closed.png';
+  env.src='assets/envelope_closed.webp';
   const pup=document.getElementById('pupImg').getBoundingClientRect();
   const fin=env.getBoundingClientRect();
   const dx=(pup.left+pup.width*0.42)-(fin.left+fin.width/2), dy=(pup.top+pup.height*0.68)-(fin.top+fin.height/2);
@@ -1584,7 +1654,7 @@ function returnEnvelope(){
   setTimeout(()=>{
     o.remove();
     plStage=0; plReturning=false;
-    document.getElementById('pupImg').src='assets/puppy.png'; /* envelope is back in its mouth */
+    document.getElementById('pupImg').src='assets/puppy.webp'; /* envelope is back in its mouth */
     showPetHint();
   },850);
 }
@@ -1594,15 +1664,15 @@ function openPuppyLetter(){
   plStage=1;
   document.getElementById('pupPrompt').classList.add('gone');
   const pup=document.getElementById('pupImg').getBoundingClientRect();
-  if(pupNoEnv) setTimeout(()=>{ document.getElementById('pupImg').src='assets/puppy_no_envelope_v2.png'; },120); /* the envelope has left its mouth */
+  if(pupNoEnv) setTimeout(()=>{ document.getElementById('pupImg').src='assets/puppy_no_envelope_v2.webp'; },120); /* the envelope has left its mouth */
   const btn=document.getElementById('pupBtn');
   btn.classList.remove('hop'); void btn.offsetWidth; btn.classList.add('hop');
   const o=document.createElement('div');
   o.id='pupOverlay';
   o.innerHTML=`<div class="pl-wrap">
     <div class="pl-area" id="plArea">
-      <img class="pixel pl-env" id="plEnv" src="assets/envelope_closed.png" alt="envelope" draggable="false">
-      <div class="pl-letter hidden" id="plLetter"><img class="pixel" src="assets/letter_parchment.png" alt="" draggable="false"><div class="pl-text" id="plText">${PL_TEXT}</div></div>
+      <img class="pixel pl-env" id="plEnv" src="assets/envelope_closed.webp" alt="envelope" draggable="false">
+      <div class="pl-letter hidden" id="plLetter"><img class="pixel" src="assets/letter_parchment.webp" alt="" draggable="false"><div class="pl-text" id="plText">${PL_TEXT}</div></div>
       <p class="pl-prompt" id="plPrompt" style="opacity:0">Tap the envelope to open it!</p>
     </div>
     <button class="pxbtn pl-close hidden" id="plClose">Close [X]</button>
@@ -1630,7 +1700,7 @@ function plEnvTap(){
     /* stage 3: bounce, then show the open envelope */
     plStage=2;
     env.animate([{transform:'scale(1)'},{transform:'scale(1.1)'},{transform:'scale(1)'}],{duration:280,easing:'ease-out'});
-    setTimeout(()=>{ env.src='assets/envelope_open.png'; },140);
+    setTimeout(()=>{ env.src='assets/envelope_open.webp'; },140);
     document.getElementById('plPrompt').textContent='Tap to pull out the letter!';
   }else if(plStage===2){
     /* stage 4: the letter slides up out of the envelope and grows to full size */
@@ -1661,7 +1731,7 @@ function openGift(){
   playSfx('gift_open'); /* magical pop + sparkle chime on the flash */
   flashbang(()=>{
     giftImg.classList.remove('shake1','shake2');
-    giftImg.src='assets/gift_box_open.png';
+    giftImg.src='assets/gift_box_open.webp';
     giftPrompt.classList.add('gone');
   });
   playTrack(1); /* Birthday by Katy Perry starts when the 4-icon dashboard appears */
@@ -1917,8 +1987,8 @@ function initTraits(){
 /* keep preloaded images referenced (unreferenced Image objects can be dropped before they finish loading) and pre-decode them */
 window.__imgKeep=window.__imgKeep||[];
 function keepPreload(list){ list.forEach(s=>{ const i=new Image(); i.decoding='async'; i.src=s; window.__imgKeep.push(i); if(i.decode) i.decode().catch(()=>{}); }); }
-keepPreload(['pink','green','lavender','cream','yellow','rose'].flatMap(c=>['assets/balloon_'+c+'.png','assets/pop_'+c+'.png']));
-const CAKE_STAGES=[1,2,3,4,5,6].map(n=>'assets/cake_stage'+n+'.png');
+window.addEventListener('load',function(){ setTimeout(function(){ keepPreload(['pink','green','lavender','cream','yellow','rose'].flatMap(c=>['assets/balloon_'+c+'.webp','assets/pop_'+c+'.webp'])); },1500); });
+const CAKE_STAGES=[1,2,3,4,5,6].map(n=>'assets/cake_stage'+n+'.webp');
 const CAKE_PROMPT='Tap the cake to eat it bite by bite!';
 const CAKE_DONE='Yum! That was delicious!';
 const CRUMB_COLORS=['#f3c26b','#e8a94a','#ff8fab','#fff4e0','#d9483b'];
@@ -2065,7 +2135,7 @@ cakeFrame.addEventListener('click',e=>{ if(e.target===cakeFrame) closeCakeFrame(
 
 
 /* ---------- flower picking mini-game ---------- */
-const FLOWER_STAGES=[1,2,3,4,5,6].map(n=>'assets/bouquet_stage'+n+'.png');
+const FLOWER_STAGES=[1,2,3,4,5,6].map(n=>'assets/bouquet_stage'+n+'.webp');
 const FLOWER_PROMPT='Tap to pick a petal for Celyn!';
 const FLOWER_DONE="Yum! Celyn's wishes bloomed!";
 const SECRET_TRAIT='SECRETLY A YEARNER';
@@ -2293,8 +2363,8 @@ const templates={
   music:()=>`
     <div class="fscroll">
     <div class="playlist-wrap">
-      <img class="wide pixel" src="assets/playlist_card.png" alt="playlist">
-      ${trackPositions.map((top,i)=>`<button class="track-btn" id="tbtn${i}" style="top:${top}%" aria-label="play"><img class="pixel" id="ticon${i}" src="assets/btn_play.png" alt="play"></button>`).join('')}
+      <img class="wide pixel" src="assets/playlist_card.webp" alt="playlist">
+      ${trackPositions.map((top,i)=>`<button class="track-btn" id="tbtn${i}" style="top:${top}%" aria-label="play"><img class="pixel" id="ticon${i}" src="assets/btn_play.webp" alt="play"></button>`).join('')}
     </div>
     <p class="playlist-note" aria-label="${PLAYLIST_NOTE}">${noteWordsHTML(PLAYLIST_NOTE)}</p>
     </div>`,
@@ -2303,14 +2373,14 @@ const templates={
     <h2>your Seasons</h2>
     <p class="cheers" aria-label="cheers to every version of you">${cheersHTML('cheers to every version of you')}</p>
     <div class="gallery-grid">
-      <div class="gframe" data-photo="assets/gallery_1.jpg"><img src="assets/gallery_1.jpg" alt="" style="width:100%;height:100%;object-fit:cover"><img class="gframe-overlay pixel" src="assets/photo_frame.png" alt=""></div>
-      <div class="gframe" data-photo="assets/gallery_2.jpg"><img src="assets/gallery_2.jpg" alt="" style="width:100%;height:100%;object-fit:cover"><img class="gframe-overlay pixel" src="assets/photo_frame.png" alt=""></div>
-      <div class="gframe" data-photo="assets/gallery_3.jpg"><img src="assets/gallery_3.jpg" alt="" style="width:100%;height:100%;object-fit:cover"><img class="gframe-overlay pixel" src="assets/photo_frame.png" alt=""></div>
-      <div class="gframe" data-photo="assets/gallery_4.jpg"><img src="assets/gallery_4.jpg" alt="" style="width:100%;height:100%;object-fit:cover"><img class="gframe-overlay pixel" src="assets/photo_frame.png" alt=""></div>
+      <div class="gframe" data-photo="assets/gallery_1.jpg"><img src="assets/gallery_1.jpg" alt="" style="width:100%;height:100%;object-fit:cover"><img class="gframe-overlay pixel" src="assets/photo_frame.webp" alt=""></div>
+      <div class="gframe" data-photo="assets/gallery_2.jpg"><img src="assets/gallery_2.jpg" alt="" style="width:100%;height:100%;object-fit:cover"><img class="gframe-overlay pixel" src="assets/photo_frame.webp" alt=""></div>
+      <div class="gframe" data-photo="assets/gallery_3.jpg"><img src="assets/gallery_3.jpg" alt="" style="width:100%;height:100%;object-fit:cover"><img class="gframe-overlay pixel" src="assets/photo_frame.webp" alt=""></div>
+      <div class="gframe" data-photo="assets/gallery_4.jpg"><img src="assets/gallery_4.jpg" alt="" style="width:100%;height:100%;object-fit:cover"><img class="gframe-overlay pixel" src="assets/photo_frame.webp" alt=""></div>
     </div>
     <div class="frozen-duo">
-      <button class="duo-item" id="elsaBtn" aria-label="Elsa"><div class="bubble" id="elsaBubble"></div><img class="pixel elsa" src="assets/elsa.png" alt="Elsa" draggable="false"></button>
-      <button class="duo-item" id="annaBtn" aria-label="Anna"><div class="bubble" id="annaBubble"></div><img class="pixel anna" src="assets/anna.png" alt="Anna" draggable="false"></button>
+      <button class="duo-item" id="elsaBtn" aria-label="Elsa"><div class="bubble" id="elsaBubble"></div><img class="pixel elsa" src="assets/elsa.webp" alt="Elsa" draggable="false"></button>
+      <button class="duo-item" id="annaBtn" aria-label="Anna"><div class="bubble" id="annaBubble"></div><img class="pixel anna" src="assets/anna.webp" alt="Anna" draggable="false"></button>
     </div>
     <p class="duo-hint">psst... tap Elsa and Anna, they have something to say</p>
     </div>`,
@@ -2321,9 +2391,9 @@ const templates={
     </div>`,
   traits:()=>`
     <div class="traits-scene">
-      <img class="pixel side left cake-eat-link" id="traitsCake" src="assets/cake.png" alt="cake">
-      <img class="frame-photo pixel" src="assets/celyn_frame.png" alt="Celyn">
-      <img class="pixel side right cake-eat-link" id="traitsBouquet" src="assets/flower_bouquet.png" alt="bouquet">
+      <img class="pixel side left cake-eat-link" id="traitsCake" src="assets/cake.webp" alt="cake">
+      <img class="frame-photo pixel" src="assets/celyn_frame.webp" alt="Celyn">
+      <img class="pixel side right cake-eat-link" id="traitsBouquet" src="assets/flower_bouquet.webp" alt="bouquet">
     </div>
     <div class="badges">
 ${['kind','supportive','creative','caring','patient','hardworking','humble','adorable'].map((t,i)=>{
@@ -2363,7 +2433,7 @@ function refreshIcons(){
   tracks.forEach((t,i)=>{
     const btn=document.getElementById('tbtn'+i), icon=document.getElementById('ticon'+i);
     const on=(currentIdx===i);
-    if(icon) icon.src=on?'assets/btn_pause.png':'assets/btn_play.png';
+    if(icon) icon.src=on?'assets/btn_pause.webp':'assets/btn_play.webp';
     if(btn){btn.classList.toggle('playing',on);btn.setAttribute('aria-label',on?'pause':'play');}
   });
 }
@@ -2408,14 +2478,14 @@ function sendWish(text){
 
 /* ================= Birthday Passport ================= */
 const PASSPORT=[
-  {id:'wish',label:'Wish',hint:'Lock in a wish',img:'assets/sticker_wish.png'},
-  {id:'cake',label:'Cake',hint:'Eat the whole cake',img:'assets/sticker_cake.png'},
-  {id:'lily',label:'Lilies',hint:'Pick every lily',img:'assets/sticker_lily.png'},
-  {id:'photo',label:'Photo',hint:'Open the Gallery',img:'assets/sticker_photo.png'},
-  {id:'music',label:'Music',hint:'Play a song',img:'assets/sticker_music.png'},
-  {id:'letter',label:'Secret',hint:'Read the puppy\u2019s letter',img:'assets/sticker_secret.png'},
-  {id:'puppy',label:'Puppy',hint:'Hold & swipe on the puppy',img:'assets/sticker_puppy.png'},
-  {id:'balloon',label:'Balloons',hint:'Pop 3 balloons',img:'assets/sticker_balloons.png'}
+  {id:'wish',label:'Wish',hint:'Lock in a wish',img:'assets/sticker_wish.webp'},
+  {id:'cake',label:'Cake',hint:'Eat the whole cake',img:'assets/sticker_cake.webp'},
+  {id:'lily',label:'Lilies',hint:'Pick every lily',img:'assets/sticker_lily.webp'},
+  {id:'photo',label:'Photo',hint:'Open the Gallery',img:'assets/sticker_photo.webp'},
+  {id:'music',label:'Music',hint:'Play a song',img:'assets/sticker_music.webp'},
+  {id:'letter',label:'Secret',hint:'Read the puppy\u2019s letter',img:'assets/sticker_secret.webp'},
+  {id:'puppy',label:'Puppy',hint:'Hold & swipe on the puppy',img:'assets/sticker_puppy.webp'},
+  {id:'balloon',label:'Balloons',hint:'Pop 3 balloons',img:'assets/sticker_balloons.webp'}
 ];
 let passGot=[], passSeen=[], passReady=false, toastTimer=null;
 try{
@@ -2475,7 +2545,7 @@ templates.passport=()=>{
     return `<div class="pp-slot${stamp?' stamp':''}" style="left:${pos[i].left}%;top:${pos[i].top}%${stamp?`;animation-delay:${i*90+300}ms`:''}" title="${s.label}">${stickerIco(s)}</div>`;
   }).join('');
   return `<h2 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Celyn's Birthday Passport</h2>
-    <div class="pp-frame">${slots}</div>
+    <div class="pp-frame">${slots}<button class="closeX ppClose" onclick="closeModal()" aria-label="close">X</button></div>
     <div class="pp-foot">${n>=total?`<button class="pxbtn" id="finaleBtn">${finaleSeen?'Replay the Finale':'Play the Finale'}</button>`:`${total-n} more to go, keep exploring!`}</div>`;
 };
 function initPassport(){
@@ -2492,7 +2562,7 @@ function initPassport(){
     lockMs=Math.max(lockMs, delay+700);
   });
   if(lockMs>0){
-    const closeBtn=document.querySelector('#modalBox > .closeX');
+    const closeBtn=document.querySelector('#modalBox .ppClose')||document.querySelector('#modalBox > .closeX');
     if(closeBtn) closeBtn.disabled=true;
     if(fb) fb.disabled=true;
     setTimeout(()=>{
@@ -2595,7 +2665,7 @@ function popBalloon(b){
     const D=bw*1.9;
     const sp=document.createElement('div');
     sp.className='popSprite';
-    sp.style.cssText='left:'+(cx-D/2)+'px;top:'+(cy-D/2)+'px;width:'+D+'px;height:'+D+'px;background-image:url(assets/pop_'+balloonName(color)+'.png)';
+    sp.style.cssText='left:'+(cx-D/2)+'px;top:'+(cy-D/2)+'px;width:'+D+'px;height:'+D+'px;background-image:url(assets/pop_'+balloonName(color)+'.webp)';
     document.body.appendChild(sp);
     [0,90,190,310,440].forEach((t,k)=>setTimeout(()=>{ sp.style.backgroundPosition=(k*25)+'% 0'; },t));
     setTimeout(()=>sp.remove(),620);
@@ -2752,7 +2822,7 @@ function finConfetti(n){
   const layer=finEl('finConfetti'), cols=['gold','green','purple','pink','red'];
   for(let i=0;i<n;i++){
     const c=document.createElement('img');
-    c.src='assets/confetti_'+cols[i%cols.length]+'.png';
+    c.src='assets/confetti_'+cols[i%cols.length]+'.webp';
     c.className='pixel confetti'; c.alt='';
     c.style.left=Math.random()*100+'vw';
     c.style.width=(14+Math.random()*12)+'px';
