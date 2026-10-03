@@ -96,6 +96,11 @@ button{font-family:'VT323',monospace;cursor:pointer;}
   100%{opacity:0;transform:translate(-110%,-92%) skewX(-70deg) scale(0,0);}
 }
 #smokeWrap{position:absolute;top:10%;left:50%;width:1px;height:1px;pointer-events:none;}
+/* pixel wind streaks blowing across the candle */
+#windWrap{position:absolute;top:10%;left:50%;width:1px;height:1px;pointer-events:none;z-index:4;}
+.wind{position:absolute;width:2px;height:2px;background:transparent;opacity:0;animation:windGo var(--wd,.75s) ease-out forwards;}
+@keyframes windGo{0%{opacity:0;transform:translateX(0);}18%{opacity:1;}70%{opacity:.9;}100%{opacity:0;transform:translateX(var(--wx,120px));}}
+@media (prefers-reduced-motion:reduce){.wind{animation-duration:.01s;}}
 .smoke{position:absolute;bottom:0;left:0;width:8px;height:8px;background:rgba(140,140,140,.55);border-radius:2px;animation:smokeRise 1.4s ease-out forwards;}
 @keyframes smokeRise{
   0%{opacity:.7;transform:translate(-50%,0) scale(.6);}
@@ -779,6 +784,7 @@ body.iconsLocked .passChip{pointer-events:none;}
       <img src="assets/cake_lit.png" class="pixel cake" id="cakeImg" alt="cake">
       <div class="flame" id="flame"></div>
       <div id="smokeWrap"></div>
+      <div id="windWrap"></div>
     </div>
     <p class="q" id="candleQ">Make a wish &amp; blow out the candle!</p>
     <div class="btnrow" id="blowBtnRow">
@@ -1116,6 +1122,7 @@ function spawnSmoke(){
 function triggerBlowOut(source){
   if(blownAlready) return;
   blownAlready=true;
+  if(source==='mic') windBurst(8,true);
 
   const flame=document.getElementById('flame');
   flame.classList.remove('blowing','blowLong');
@@ -1160,6 +1167,30 @@ function triggerBlowOut(source){
   },1100);
 }
 
+/* pixel wind streaks (no asset needed): drawn from tiny box-shadow pixels */
+const WIND_SEGS=[[0,1,6],[6,0,4],[10,1,6],[16,0,3]], WIND_U=2;
+let windShadow=null;
+function windShadowCss(){
+  if(windShadow) return windShadow;
+  const px=[];
+  WIND_SEGS.forEach(([x,y,l])=>{ for(let i=0;i<l;i++) px.push(((x+i)*WIND_U)+'px '+(y*WIND_U)+'px 0 #7fbfdc'); });
+  windShadow=px.join(',');
+  return windShadow;
+}
+function spawnWind(strong){
+  const wrap=document.getElementById('windWrap'); if(!wrap) return;
+  const w=document.createElement('div'); w.className='wind';
+  w.style.boxShadow=windShadowCss();
+  w.style.left=(-80-Math.random()*20)+'px';
+  w.style.top=(-18+Math.random()*34)+'px';
+  const d=(strong?.55:.75)+Math.random()*.25;
+  w.style.setProperty('--wd',d+'s');
+  w.style.setProperty('--wx',(strong?160:125)+'px');
+  wrap.appendChild(w);
+  setTimeout(()=>w.remove(),d*1000+100);
+}
+function windBurst(n,strong){ for(let i=0;i<n;i++) setTimeout(()=>spawnWind(strong),i*(380/n)); }
+
 /* mic-based blow detection via Web Audio API */
 const BLOW_THRESHOLD=42; // 0-255 average frequency level; tune if too sensitive/insensitive
 const WIND_THRESHOLD=18; // lower level that just makes the flame flicker in the "wind"
@@ -1181,6 +1212,7 @@ async function enableMicBlow(){
       stream.getTracks().forEach(t=>t.stop());
       ctx.close();
     }
+    let lastWind=0;
     function checkLevel(){
       if(blownAlready||blowStarted){ stopMic(); return; }
       analyser.getByteFrequencyData(data);
@@ -1192,6 +1224,7 @@ async function enableMicBlow(){
         triggerBlowOut('mic');
       }else{
         flame.classList.toggle('blowing', avg>WIND_THRESHOLD);
+        if(avg>WIND_THRESHOLD){ const nowT=performance.now(); if(nowT-lastWind>(avg>30?70:120)){ lastWind=nowT; spawnWind(avg>30); } }
         requestAnimationFrame(checkLevel);
       }
     }
@@ -1210,6 +1243,7 @@ function tapBlow(){
   const flame=document.getElementById('flame');
   /* sound starts on the tap, the snuff follows 0.4s later */
   playSfx('blow_candle');
+  windBurst(8,true);
   const btnRow=document.getElementById('blowBtnRow');
   if(btnRow) btnRow.classList.add('fadeOut');
   setTimeout(()=>triggerBlowOut('tap'),400); /* flame goes out 0.4s after the sound starts */
