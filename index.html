@@ -72,9 +72,9 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 }
 .flame.blowing{animation:flameBlowFlicker .18s ease-in-out infinite;opacity:.8;}
 @keyframes flameBlowFlicker{
-  0%{transform:translate(-50%,-100%) skewX(-25deg) scaleY(.7) scaleX(.85);}
-  50%{transform:translate(-62%,-94%) skewX(-38deg) scaleY(.55) scaleX(.75);}
-  100%{transform:translate(-50%,-100%) skewX(-25deg) scaleY(.7) scaleX(.85);}
+  0%{transform:translate(-50%,-100%) skewX(-7deg) scaleY(.72) scaleX(.9);}
+  50%{transform:translate(-50%,-96%) skewX(7deg) scaleY(.52) scaleX(.82);}
+  100%{transform:translate(-50%,-100%) skewX(-7deg) scaleY(.72) scaleX(.9);}
 }
 .flame.blowLong{animation:flameBlowLong 1.5s ease-in forwards;opacity:1;}
 @keyframes flameBlowLong{
@@ -92,14 +92,19 @@ button{font-family:'VT323',monospace;cursor:pointer;}
 .flame.out{animation:flameSnuff .8s ease-out forwards;}
 @keyframes flameSnuff{
   0%{opacity:1;transform:translate(-50%,-100%) skewX(0deg) scale(1);filter:brightness(1.2);}
-  30%{opacity:1;transform:translate(-72%,-95%) skewX(-48deg) scale(.65,.5);filter:brightness(1.5);}
-  100%{opacity:0;transform:translate(-110%,-92%) skewX(-70deg) scale(0,0);}
+  30%{opacity:1;transform:translate(-50%,-95%) skewX(6deg) scale(.7,.45);filter:brightness(1.5);}
+  100%{opacity:0;transform:translate(-50%,-90%) skewX(-4deg) scale(.15,0);}
 }
 #smokeWrap{position:absolute;top:10%;left:50%;width:1px;height:1px;pointer-events:none;}
-/* pixel wind streaks blowing across the candle */
+/* pixel wind blowing from the viewer (bottom of screen) toward the cake: streaks rise, shrink and converge on the flame */
 #windWrap{position:absolute;top:10%;left:50%;width:1px;height:1px;pointer-events:none;z-index:4;}
-.wind{position:absolute;width:2px;height:2px;background:transparent;opacity:0;animation:windGo var(--wd,.75s) ease-out forwards;}
-@keyframes windGo{0%{opacity:0;transform:translateX(0);}18%{opacity:1;}70%{opacity:.9;}100%{opacity:0;transform:translateX(var(--wx,120px));}}
+.wind{position:absolute;left:0;top:0;width:2px;height:2px;background:transparent;opacity:0;transform-origin:0 0;animation:windGo var(--wd,.8s) cubic-bezier(.3,.1,.5,1) forwards;}
+@keyframes windGo{
+  0%{opacity:0;transform:translate(var(--sx),var(--sy)) scale(1.5);}
+  20%{opacity:1;}
+  75%{opacity:.9;}
+  100%{opacity:0;transform:translate(var(--ex),var(--ey)) scale(.35);}
+}
 @media (prefers-reduced-motion:reduce){.wind{animation-duration:.01s;}}
 .smoke{position:absolute;bottom:0;left:0;width:8px;height:8px;background:rgba(140,140,140,.55);border-radius:2px;animation:smokeRise 1.4s ease-out forwards;}
 @keyframes smokeRise{
@@ -1167,13 +1172,14 @@ function triggerBlowOut(source){
   },1100);
 }
 
-/* pixel wind streaks (no asset needed): drawn from tiny box-shadow pixels */
+/* pixel wind streaks (no asset needed): vertical wavy lines drawn from tiny box-shadow pixels.
+   They start near the viewer (bottom), travel up toward the candle, shrink with distance and converge on the flame. */
 const WIND_SEGS=[[0,1,6],[6,0,4],[10,1,6],[16,0,3]], WIND_U=2;
 let windShadow=null;
 function windShadowCss(){
   if(windShadow) return windShadow;
   const px=[];
-  WIND_SEGS.forEach(([x,y,l])=>{ for(let i=0;i<l;i++) px.push(((x+i)*WIND_U)+'px '+(y*WIND_U)+'px 0 #7fbfdc'); });
+  WIND_SEGS.forEach(([x,y,l])=>{ for(let i=0;i<l;i++) px.push((y*WIND_U)+'px '+((x+i)*WIND_U)+'px 0 #7fbfdc'); });
   windShadow=px.join(',');
   return windShadow;
 }
@@ -1181,11 +1187,13 @@ function spawnWind(strong){
   const wrap=document.getElementById('windWrap'); if(!wrap) return;
   const w=document.createElement('div'); w.className='wind';
   w.style.boxShadow=windShadowCss();
-  w.style.left=(-80-Math.random()*20)+'px';
-  w.style.top=(-18+Math.random()*34)+'px';
-  const d=(strong?.55:.75)+Math.random()*.25;
+  const spread=strong?70:55;
+  const sx=(Math.random()*2-1)*spread, sy=150+Math.random()*30;
+  const ex=sx*0.12+(Math.random()*2-1)*6, ey=-6-Math.random()*8;
+  const d=(strong?.5:.7)+Math.random()*.25;
+  w.style.setProperty('--sx',sx+'px'); w.style.setProperty('--sy',sy+'px');
+  w.style.setProperty('--ex',ex+'px'); w.style.setProperty('--ey',ey+'px');
   w.style.setProperty('--wd',d+'s');
-  w.style.setProperty('--wx',(strong?160:125)+'px');
   wrap.appendChild(w);
   setTimeout(()=>w.remove(),d*1000+100);
 }
