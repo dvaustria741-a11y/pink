@@ -2060,7 +2060,7 @@ const tracks=[
   {title:"About You",artist:"The 1975",src:"assets/audio/5_about_you.mp3"}
 ];
 const trackPositions=[28.7,42.55,56.5,70.2,84.4];
-const player=new Audio();
+const player=new Audio(); player.preload="auto";
 let currentIdx=null;
 function setDisc(on){
   document.querySelectorAll('.appicon[data-modal="music"] img').forEach(i=>i.classList.toggle('spin',on));
