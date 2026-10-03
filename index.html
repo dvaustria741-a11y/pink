@@ -564,7 +564,7 @@ body.iconsLocked .passChip{pointer-events:none;}
 @keyframes driftUp{to{transform:translateY(-820px);}}
 @keyframes driftSway{from{transform:translateX(-9px) rotate(-4deg);}to{transform:translateX(9px) rotate(4deg);}}
 .popBit{position:fixed;width:7px;height:7px;pointer-events:none;z-index:75;}
-.popLine{position:fixed;z-index:76;pointer-events:none;transform:translate(-50%,0);background:none;color:var(--deep);border-style:solid;border-width:16px 19px 9px 19px;border-image:url('assets/pop_box.png') 33 38 18 38 fill / 16px 19px 9px 19px stretch;padding:3px 6px 2px;font-size:1rem;line-height:1.1;text-align:center;max-width:70vw;box-sizing:content-box;animation:popLine 2.2s ease-out forwards;}
+.popLine{position:fixed;z-index:76;pointer-events:none;transform:translate(-50%,0);background:linear-gradient(#fcefe8,#fcefe8) no-repeat 8px 8px/calc(100% - 16px) calc(100% - 16px);background-origin:border-box;color:var(--deep);border-style:solid;border-width:16px 19px 9px 19px;border-image:url('assets/pop_box.png') 16 19 9 19 fill / 16px 19px 9px 19px stretch;image-rendering:pixelated;image-rendering:pixelated;padding:3px 6px 2px;font-size:1rem;line-height:1.1;text-align:center;max-width:70vw;box-sizing:content-box;animation:popLine 2.2s ease-out forwards;}
 @keyframes popLine{0%{opacity:0;transform:translate(-50%,10px) scale(.6);}12%{opacity:1;transform:translate(-50%,0) scale(1.08);}22%{transform:translate(-50%,0) scale(1);}80%{opacity:1;transform:translate(-50%,-30px);}100%{opacity:0;transform:translate(-50%,-48px);}}
 .pupBtn{touch-action:none;}
 .pupImg.pet{animation:pupPet .45s ease;}
