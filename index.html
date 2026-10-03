@@ -951,7 +951,7 @@ function lightCandle(){
 function doStrike(){
   if(matchStruck) return;
   matchStruck=true;
-  try{ new Audio('assets/audio/match_strike.mp3').play(); }catch(e){}
+  playSfx('match_strike');
   document.getElementById('matchstick').classList.add('struck');
   spawnSparks();
   setTimeout(()=>{
@@ -1159,7 +1159,7 @@ function tapBlow(){
   blowStarted=true;
   const flame=document.getElementById('flame');
   /* sound starts on the tap, the snuff follows 0.4s later */
-  try{ new Audio('assets/audio/blow_candle.mp3').play(); }catch(e){}
+  playSfx('blow_candle');
   const btnRow=document.getElementById('blowBtnRow');
   if(btnRow) btnRow.classList.add('fadeOut');
   setTimeout(()=>triggerBlowOut('tap'),400); /* flame goes out 0.4s after the sound starts */
@@ -2486,6 +2486,34 @@ function playPop(){
   }catch(e){}
 }
 initPop();
+/* instant sound effects: decoded into memory at load so there's no delay when they play */
+const sfxBufs={}, sfxAudio={}; let sfxCtx=null, sfxGain=null;
+function initSfx(){
+  ['match_strike','blow_candle'].forEach(n=>{
+    try{ const a=new Audio('assets/audio/'+n+'.mp3'); a.preload='auto'; a.load(); sfxAudio[n]=a; }catch(e){}
+  });
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return;
+    sfxCtx=new AC(); sfxGain=sfxCtx.createGain(); sfxGain.connect(sfxCtx.destination);
+    ['match_strike','blow_candle'].forEach(n=>{
+      fetch('assets/audio/'+n+'.mp3').then(r=>r.arrayBuffer()).then(buf=>new Promise((res,rej)=>{ const pr=sfxCtx.decodeAudioData(buf,res,rej); if(pr&&pr.then) pr.then(res,rej); })).then(b=>{ sfxBufs[n]=b; }).catch(()=>{});
+    });
+    const wake=()=>{ try{ if(sfxCtx&&sfxCtx.state==='suspended') sfxCtx.resume(); }catch(e){} };
+    ['pointerdown','touchstart','click'].forEach(ev=>document.addEventListener(ev,wake,{passive:true}));
+  }catch(e){}
+}
+function playSfx(n){
+  try{
+    if(sfxCtx && sfxBufs[n]){
+      if(sfxCtx.state==='suspended') sfxCtx.resume();
+      const src=sfxCtx.createBufferSource(); src.buffer=sfxBufs[n]; src.connect(sfxGain); src.start(0); return;
+    }
+    const base=sfxAudio[n];
+    const a=base?base.cloneNode():new Audio('assets/audio/'+n+'.mp3');
+    a.play().catch(()=>{});
+  }catch(e){}
+}
+initSfx();
 function popBalloon(b){
   if(b._popped) return; b._popped=true;
   const imEl=b.querySelector('img'), r=(imEl||b).getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height*0.28, bw=r.width;
