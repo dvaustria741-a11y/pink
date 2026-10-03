@@ -618,6 +618,9 @@ body.iconsLocked .passChip{pointer-events:none;}
 .pass-foot{text-align:center;margin-top:18px;color:var(--deep);font-size:1rem;}
 .pass-foot .pxbtn{animation:finBtnPulse 1.1s ease-in-out infinite;}
 .modal.passport-modal{background:transparent;border:none;box-shadow:none;}
+.modal.passport-modal > .closeX{display:none;}
+.pp-frame .ppClose{position:absolute;top:5.9%;left:91.2%;right:auto;transform:translate(-50%,-50%);width:11%;aspect-ratio:1/1;padding:0;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--deep);font-size:clamp(15px,5vw,22px);line-height:1;z-index:7;text-shadow:1px 1px 0 #fff,-1px -1px 0 #fff,1px -1px 0 #fff,-1px 1px 0 #fff;-webkit-tap-highlight-color:transparent;}
+.pp-frame .ppClose:active{transform:translate(-50%,-50%) scale(.9);}
 .modal.traits-modal{background-image:url('assets/traits_bg_v2.webp');background-size:100% 100%;background-repeat:no-repeat;background-color:var(--cream);border:none;box-shadow:none;padding:34px 26px 54px;aspect-ratio:1122/1402;}
 /* framed popups (letter / gallery / music): the art keeps its own shape, content scrolls inside a safe area */
 .modal.framed{background-color:var(--cream);background-repeat:no-repeat;background-size:100% 100%;border:none;box-shadow:none;padding:0;overflow:hidden;max-height:none;}
@@ -2539,7 +2542,7 @@ templates.passport=()=>{
     return `<div class="pp-slot${stamp?' stamp':''}" style="left:${pos[i].left}%;top:${pos[i].top}%${stamp?`;animation-delay:${i*90+300}ms`:''}" title="${s.label}">${stickerIco(s)}</div>`;
   }).join('');
   return `<h2 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Celyn's Birthday Passport</h2>
-    <div class="pp-frame">${slots}</div>
+    <div class="pp-frame">${slots}<button class="closeX ppClose" onclick="closeModal()" aria-label="close">X</button></div>
     <div class="pp-foot">${n>=total?`<button class="pxbtn" id="finaleBtn">${finaleSeen?'Replay the Finale':'Play the Finale'}</button>`:`${total-n} more to go, keep exploring!`}</div>`;
 };
 function initPassport(){
@@ -2556,7 +2559,7 @@ function initPassport(){
     lockMs=Math.max(lockMs, delay+700);
   });
   if(lockMs>0){
-    const closeBtn=document.querySelector('#modalBox > .closeX');
+    const closeBtn=document.querySelector('#modalBox .ppClose')||document.querySelector('#modalBox > .closeX');
     if(closeBtn) closeBtn.disabled=true;
     if(fb) fb.disabled=true;
     setTimeout(()=>{
