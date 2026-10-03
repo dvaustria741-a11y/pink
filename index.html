@@ -418,7 +418,7 @@ input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:d
 .badge-bubble::after{content:'';position:absolute;top:100%;left:calc(50% - var(--shift));margin-left:-6px;border:6px solid transparent;border-top-color:var(--deep);}
 .badge-bubble{background:none;box-shadow:none;border-style:solid;border-color:transparent;border-width:10px 12px 15px 11px;border-image:url(assets/bubble_msg.png) 18 22 28 20 fill / 10px 12px 15px 11px stretch;image-rendering:pixelated;padding:2px 4px 3px;min-width:70px;}
 .badge-bubble::after{display:none;}
-.badge{background:var(--pink);border:2px solid var(--deep);padding:6px 12px;font-size:.9rem;color:var(--deep);--rot:0deg;--lift:0px;opacity:0;transform:scale(.3) rotate(calc(var(--rot) * -2)) translateY(24px);}
+.badge{background:none;border-style:solid;border-color:transparent;border-width:0 9px 0 28px;border-image:url(assets/tag_pink.png) 0 12 0 38 fill / 0 9px 0 28px stretch;image-rendering:pixelated;box-sizing:border-box;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0 4px;font-size:.9rem;color:var(--deep);--rot:0deg;--lift:0px;opacity:0;transform:scale(.3) rotate(calc(var(--rot) * -2)) translateY(24px);}
 .badge.show{animation:badgePop .6s steps(6) forwards;}
 @keyframes badgePop{
   0%{opacity:0;transform:scale(.3) rotate(calc(var(--rot) * -2)) translateY(24px);}
