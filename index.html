@@ -657,6 +657,9 @@ body.iconsLocked .passChip{pointer-events:none;}
 .pp-slot.stamp{animation:stickerStamp .7s cubic-bezier(.34,1.56,.64,1) both;}
 .pp-foot{text-align:center;margin-top:16px;color:var(--deep);font-size:1rem;}
 .pp-foot .pxbtn{animation:finBtnPulse 1.1s ease-in-out infinite;}
+#finaleBtn{background:url('assets/finale_btn.webp') center/100% 100% no-repeat;border:none;box-shadow:none;image-rendering:pixelated;width:min(82%,300px);aspect-ratio:1861/407;min-height:0;min-width:0;padding:0 15% 2.6% 15%;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;font-size:clamp(15px,4.7vw,19px);line-height:1;color:var(--deep);cursor:pointer;-webkit-tap-highlight-color:transparent;}
+#finaleBtn:active{box-shadow:none;filter:brightness(.94);transform:translate(2px,2px);}
+#finaleBtn:disabled{opacity:.6;}
 @keyframes finBtnPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
 #popLayer{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:6;}
 .driftBalloon{position:absolute;bottom:-100px;background:none;border:none;padding:10px;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;animation:driftUp var(--dur,11s) linear forwards;}
@@ -777,7 +780,7 @@ body.iconsLocked .passChip{pointer-events:none;}
 <script>(function(){
 var KEY='pinkPreloaded',done=false;
 try{ if(localStorage.getItem(KEY)) return; }catch(e){}
-var imgs=['pass_chip_bg','passport_frame','music_bg_v2','letter_bg','gallery_bg','traits_bg_v2','party_room_bg'].map(function(n){return 'assets/'+n+'.webp';});
+var imgs=['finale_btn','pass_chip_bg','passport_frame','music_bg_v2','letter_bg','gallery_bg','traits_bg_v2','party_room_bg'].map(function(n){return 'assets/'+n+'.webp';});
 ['pink','green','lavender','cream','yellow','rose'].forEach(function(c){imgs.push('assets/balloon_'+c+'.webp','assets/pop_'+c+'.webp');});
 [1,2,3,4,5,6].forEach(function(n){imgs.push('assets/cake_stage'+n+'.webp','assets/bouquet_stage'+n+'.webp');});
 ['gift_box_open','puppy_no_envelope_v2','puppy','envelope_closed','envelope_open','letter_parchment','gallery_1','gallery_2','gallery_3','gallery_4'].forEach(function(n){imgs.push('assets/'+n+(n.indexOf('gallery_')==0?'.jpg':'.webp'));});
