@@ -416,8 +416,9 @@ input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:d
 .badge-bubble{--shift:0px;}
 .badge-bubble.show{opacity:1;transform:translateX(calc(-50% + var(--shift))) rotate(0deg) scale(1);}
 .badge-bubble::after{content:'';position:absolute;top:100%;left:calc(50% - var(--shift));margin-left:-6px;border:6px solid transparent;border-top-color:var(--deep);}
-.badge-bubble{background:none;box-shadow:none;border-style:solid;border-color:transparent;border-width:10px 12px 15px 11px;border-image:url(assets/bubble_msg.png) 18 22 28 20 fill / 10px 12px 15px 11px stretch;image-rendering:pixelated;padding:2px 4px 3px;min-width:70px;}
-.badge-bubble::after{display:none;}
+.badge-bubble{background:none;box-shadow:none;border-style:solid;border-color:transparent;border-width:10px 12px 15px 11px;border-image:url(assets/bubble_body.png) 18 22 28 20 fill / 10px 12px 15px 11px stretch;image-rendering:pixelated;padding:2px 4px 3px;min-width:70px;}
+.badge-bubble{transform-origin:calc(50% - var(--shift)) 100%;}
+.badge-bubble::after{display:block;content:'';position:absolute;top:auto;bottom:-15px;margin:0;border:0;left:clamp(6px,calc(50% - var(--shift) - 8.5px),calc(100% - 23px));width:17px;height:11px;background:url(assets/bubble_tail.png) no-repeat 0 0/100% 100%;image-rendering:pixelated;}
 .badge{background:none;border-style:solid;border-color:transparent;border-width:0 6px 0 20px;border-image:url(assets/tag_pink.png) 0 12 0 38 fill / 0 6px 0 20px stretch;image-rendering:pixelated;box-sizing:border-box;height:32px;display:inline-flex;align-items:center;justify-content:center;padding:0 3px;font-size:.9rem;color:var(--deep);--rot:0deg;--lift:0px;opacity:0;transform:scale(.3) rotate(calc(var(--rot) * -2)) translateY(24px);}
 .badge.show{animation:badgePop .6s steps(6) forwards;}
 @keyframes badgePop{
@@ -1872,7 +1873,7 @@ function openModal(name){
 }
 const TRAIT_LINES={
   kind:'Pero mas mabait padin talaga ako, biru lang HAHAHAHAHA',
-  creative:"Yung flower na ni-drawing mo sa kamay ko, ang ganda niya. Diko lang talaga masabi sa personal, nahihiya kasi ako, ewan ko kung bakit HAHAHAHA",
+  creative:"Yung flower na ni-drawing mo sa kamay ko, ang ganda niya.",
   patient:'Maybe? Maybe? HAHAHA✌️'
 };
 function badgeSay(el){
@@ -1916,6 +1917,7 @@ function initTraits(){
 /* keep preloaded images referenced (unreferenced Image objects can be dropped before they finish loading) and pre-decode them */
 window.__imgKeep=window.__imgKeep||[];
 function keepPreload(list){ list.forEach(s=>{ const i=new Image(); i.decoding='async'; i.src=s; window.__imgKeep.push(i); if(i.decode) i.decode().catch(()=>{}); }); }
+keepPreload(['pink','green','lavender','cream','yellow','rose'].flatMap(c=>['assets/balloon_'+c+'.png','assets/pop_'+c+'.png']));
 const CAKE_STAGES=[1,2,3,4,5,6].map(n=>'assets/cake_stage'+n+'.png');
 const CAKE_PROMPT='Tap the cake to eat it bite by bite!';
 const CAKE_DONE='Yum! That was delicious!';
