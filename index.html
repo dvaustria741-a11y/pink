@@ -1298,6 +1298,7 @@ function onTitleTap(){
   document.getElementById('confettiLayer').innerHTML='';
   const stack=document.querySelector('.titlestack');
   stack.classList.add('leaving');
+  playSfx('banner_rip');
   spawnBalloons();
   hbBurst();
   const hbLeft=document.getElementById('hbLeft'), hbRight=document.getElementById('hbRight');
@@ -1522,7 +1523,7 @@ function unpackIcons(){
 
 /* ---------- puppy & secret letter ---------- */
 let plStage=0, plHeartTimer=null;
-const PL_TEXT=`<p>You found the secret message! 🐶</p>
+const PL_TEXT=`<p>You found the secret message!</p>
 <p>Quick reminder from your puppy friend: No overthinking or stress allowed today! It's your day to relax and be celebrated.</p>
 <p>Thank you for being such a kind, hardworking, and wonderful person. You make every day feel a little brighter, and you deserve the happiest birthday today!</p>`;
 let pupNoEnv=false;
@@ -2556,13 +2557,13 @@ initPop();
 /* instant sound effects: decoded into memory at load so there's no delay when they play */
 const sfxBufs={}, sfxAudio={}; let sfxCtx=null, sfxGain=null;
 function initSfx(){
-  ['match_strike','blow_candle','gift_open','puppy_whine','puppy_yip','puppy_pant','cake_bite_1','cake_bite_2','cake_done','lily_petal_1','lily_petal_2','lily_petal_3','lily_petal_4','lily_bloom'].forEach(n=>{
+  ['match_strike','blow_candle','gift_open','puppy_whine','puppy_yip','puppy_pant','cake_bite_1','cake_bite_2','cake_done','lily_petal_1','lily_petal_2','lily_petal_3','lily_petal_4','lily_bloom','banner_rip'].forEach(n=>{
     try{ const a=new Audio('assets/audio/'+n+'.mp3'); a.preload='auto'; a.load(); sfxAudio[n]=a; }catch(e){}
   });
   try{
     const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return;
     sfxCtx=new AC(); sfxGain=sfxCtx.createGain(); sfxGain.connect(sfxCtx.destination);
-    ['match_strike','blow_candle','gift_open','puppy_whine','puppy_yip','puppy_pant','cake_bite_1','cake_bite_2','cake_done','lily_petal_1','lily_petal_2','lily_petal_3','lily_petal_4','lily_bloom'].forEach(n=>{
+    ['match_strike','blow_candle','gift_open','puppy_whine','puppy_yip','puppy_pant','cake_bite_1','cake_bite_2','cake_done','lily_petal_1','lily_petal_2','lily_petal_3','lily_petal_4','lily_bloom','banner_rip'].forEach(n=>{
       fetch('assets/audio/'+n+'.mp3').then(r=>r.arrayBuffer()).then(buf=>new Promise((res,rej)=>{ const pr=sfxCtx.decodeAudioData(buf,res,rej); if(pr&&pr.then) pr.then(res,rej); })).then(b=>{ sfxBufs[n]=b; }).catch(()=>{});
     });
     const wake=()=>{ try{ if(sfxCtx&&sfxCtx.state==='suspended') sfxCtx.resume(); }catch(e){} };
