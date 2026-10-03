@@ -738,6 +738,44 @@ body.iconsLocked .passChip{pointer-events:none;}
 #blackoutText{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 10%;text-align:center;color:#ffe4d6;font-family:'VT323',monospace;font-size:1.9rem;line-height:1.3;letter-spacing:1px;text-shadow:0 0 10px rgba(246,201,214,.55);opacity:1;transition:opacity .6s ease;}
 #blackout{position:fixed;inset:0;background:#000;opacity:0;z-index:998;pointer-events:none;transition:opacity .4s ease;}
 </style>
+<style>
+#preloadGate{position:fixed;inset:0;z-index:10000;background:var(--cream,#fdf3ec);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:0 10%;text-align:center;transition:opacity .5s ease;}
+#preloadGate.out{opacity:0;pointer-events:none;}
+#preloadGate .pgTitle{font-family:'Press Start 2P',cursive;font-size:clamp(11px,3.6vw,15px);line-height:1.6;color:#7a2c46;}
+#preloadGate .pgSub{font-family:'VT323',monospace;font-size:1.15rem;color:#3c2b30;opacity:.8;}
+#preloadGate .pgBar{width:min(260px,70vw);height:18px;background:#fff;border:3px solid #7a2c46;box-shadow:3px 3px 0 #7a2c46;}
+#preloadGate .pgFill{height:100%;width:0;background:#f6c9d6;transition:width .2s steps(8);}
+</style>
+<script>(function(){
+var KEY='pinkPreloaded',done=false;
+try{ if(localStorage.getItem(KEY)) return; }catch(e){}
+var imgs=['pass_chip_bg','passport_frame','music_bg_v2','letter_bg','gallery_bg','traits_bg_v2','party_room_bg'].map(function(n){return 'assets/'+n+'.webp';});
+['pink','green','lavender','cream','yellow','rose'].forEach(function(c){imgs.push('assets/balloon_'+c+'.png','assets/pop_'+c+'.png');});
+[1,2,3,4,5,6].forEach(function(n){imgs.push('assets/cake_stage'+n+'.png','assets/bouquet_stage'+n+'.png');});
+['gift_box_open','puppy_no_envelope_v2','puppy','envelope_closed','envelope_open','letter_parchment','gallery_1','gallery_2','gallery_3','gallery_4'].forEach(function(n){imgs.push('assets/'+n+(n.indexOf('gallery_')==0?'.jpg':'.png'));});
+var snd=['match_strike','blow_candle','gift_open','puppy_whine','puppy_yip','puppy_pant','cake_bite_1','cake_bite_2','cake_done','lily_petal_1','lily_petal_2','lily_petal_3','lily_petal_4','lily_bloom','banner_rip','gift_vanish','camera_shutter','balloon_pop'].map(function(n){return 'assets/audio/'+n+'.mp3';});
+var total=imgs.length+snd.length+1,count=0,fill,sub,gate;
+var keep=window.__imgKeep=window.__imgKeep||[];
+function finish(){
+  if(done) return; done=true;
+  try{ localStorage.setItem(KEY,'1'); }catch(e){}
+  if(fill) fill.style.width='100%';
+  if(gate){ gate.classList.add('out'); setTimeout(function(){ if(gate.parentNode) gate.parentNode.removeChild(gate); },600); }
+}
+function tick(){
+  count++; if(fill) fill.style.width=Math.round(count/total*100)+'%';
+  if(sub) sub.textContent=Math.min(count,total)+' / '+total;
+  if(count>=total) setTimeout(finish,250);
+}
+gate=document.createElement('div'); gate.id='preloadGate';
+gate.innerHTML='<div class="pgTitle">Getting everything ready...</div><div class="pgBar"><div class="pgFill"></div></div><div class="pgSub">0 / '+total+'</div>';
+document.documentElement.appendChild(gate);
+fill=gate.querySelector('.pgFill'); sub=gate.querySelector('.pgSub');
+imgs.forEach(function(src){ var i=new Image(); i.decoding='async'; i.onload=i.onerror=tick; i.src=src; keep.push(i); });
+snd.forEach(function(src){ fetch(src).then(function(r){return r.blob();}).catch(function(){}).then(tick); });
+(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).catch(function(){}).then(tick);
+setTimeout(finish,30000); /* never leave her stuck on a bad connection */
+})();</script>
 <script>window.addEventListener('load',function(){setTimeout(function(){['pass_chip_bg','passport_frame','music_bg_v2','letter_bg','gallery_bg','traits_bg_v2','party_room_bg'].forEach(function(n){var i=new Image();i.src='assets/'+n+'.webp';});['pink','green','lavender','cream','yellow','rose'].forEach(function(n){var a=new Image();a.src='assets/pop_'+n+'.png';var b=new Image();b.src='assets/balloon_'+n+'.png';});},1200);});</script>
 </head>
 <body>
