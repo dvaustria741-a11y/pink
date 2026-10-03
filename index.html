@@ -859,7 +859,7 @@ body.iconsLocked .passChip{pointer-events:none;}
       </div>
     </div>
     <div class="pupWrap" id="pupWrap">
-      <p class="pupPrompt" id="pupPrompt">A puppy brought you something! Tap the puppy 🐶💌</p>
+      <p class="pupPrompt" id="pupPrompt">A puppy brought you something! Tap the puppy</p>
       <button class="pupBtn" id="pupBtn" aria-label="puppy"><img class="pixel pupImg" id="pupImg" src="assets/puppy.png" alt="puppy" draggable="false"></button>
     </div>
     <div id="popLayer"></div>
@@ -2027,6 +2027,8 @@ function eatCake(){
   cakeEatImg.src=CAKE_STAGES[cakeStage];
   cakeFrame.classList.remove('opening'); cakeEatImg.classList.remove('bake');
   cakeEatImg.classList.remove('munch'); void cakeEatImg.offsetWidth; cakeEatImg.classList.add('munch');
+  playSfx('cake_bite_'+(1+Math.floor(Math.random()*2)));
+  if(cakeStage===CAKE_STAGES.length-1) setTimeout(()=>playSfx('cake_done'),160);
   spawnCrumbs();
   clearCakeTalk();
   if(cakeBiteLines[cakeStage]) sayCake(cakeBiteLines[cakeStage][0],cakeBiteLines[cakeStage][1],2600);
@@ -2159,6 +2161,7 @@ function pickPetal(){
   flowerFrame.classList.remove('opening'); flowerImg.classList.remove('bloom');
   flowerImg.src=FLOWER_STAGES[flowerStage];
   flowerImg.classList.remove('munch'); void flowerImg.offsetWidth; flowerImg.classList.add('munch');
+  playSfx(flowerStage===FLOWER_STAGES.length-1?'lily_bloom':'lily_petal_'+flowerStage);
   spawnPetals(flowerStage===1?4+Math.floor(Math.random()*3):6+Math.floor(Math.random()*4));
   (FLOWER_HINTS[flowerStage]||[]).forEach((t,i)=>setTimeout(()=>spawnPetalHint(t,i+flowerStage),i*260));
   if(flowerStage===FLOWER_STAGES.length-1){
@@ -2553,13 +2556,13 @@ initPop();
 /* instant sound effects: decoded into memory at load so there's no delay when they play */
 const sfxBufs={}, sfxAudio={}; let sfxCtx=null, sfxGain=null;
 function initSfx(){
-  ['match_strike','blow_candle','gift_open','puppy_whine','puppy_yip','puppy_pant'].forEach(n=>{
+  ['match_strike','blow_candle','gift_open','puppy_whine','puppy_yip','puppy_pant','cake_bite_1','cake_bite_2','cake_done','lily_petal_1','lily_petal_2','lily_petal_3','lily_petal_4','lily_bloom'].forEach(n=>{
     try{ const a=new Audio('assets/audio/'+n+'.mp3'); a.preload='auto'; a.load(); sfxAudio[n]=a; }catch(e){}
   });
   try{
     const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return;
     sfxCtx=new AC(); sfxGain=sfxCtx.createGain(); sfxGain.connect(sfxCtx.destination);
-    ['match_strike','blow_candle','gift_open','puppy_whine','puppy_yip','puppy_pant'].forEach(n=>{
+    ['match_strike','blow_candle','gift_open','puppy_whine','puppy_yip','puppy_pant','cake_bite_1','cake_bite_2','cake_done','lily_petal_1','lily_petal_2','lily_petal_3','lily_petal_4','lily_bloom'].forEach(n=>{
       fetch('assets/audio/'+n+'.mp3').then(r=>r.arrayBuffer()).then(buf=>new Promise((res,rej)=>{ const pr=sfxCtx.decodeAudioData(buf,res,rej); if(pr&&pr.then) pr.then(res,rej); })).then(b=>{ sfxBufs[n]=b; }).catch(()=>{});
     });
     const wake=()=>{ try{ if(sfxCtx&&sfxCtx.state==='suspended') sfxCtx.resume(); }catch(e){} };
